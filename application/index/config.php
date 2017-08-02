@@ -16,6 +16,7 @@ return [
     '__PUBLIC__'=>'/public/',
     '__ROOT__' => '/',
 	'__INDEX__' => '/public/static/index/',
+	'__TEMPLATE__' => '/public/static/index/',
 	'__UPLOADS__' => '/public/uploads/',
 	]
 ];

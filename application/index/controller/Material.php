@@ -27,7 +27,7 @@ class Material extends Controller {
             ->where('id=' . $title_id)
             ->find();
         $where = array(
-            'type' => $title_id - 1
+            'type' => $title_id
         );
         $titleList = Db::table('material')->field("id,content,tag,addtime,status")
             ->where($where)
@@ -96,19 +96,20 @@ class Material extends Controller {
     public function add()
     {
         if (Request::instance()->isPost())
-        {
+        {          
             $material_id = input('post.material_id');
             $material_type = input('post.material_type');
             $tag = input('post.tag');
             $content = input('post.content');
-            if ($material_type == 6 || $material_type == 7)
+            $isFile = input('post.is_file');
+            if ($isFile==1)
             {
                 // 上传文件
                 $file = Request::instance()->file('file');
                 $info = $file->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads');
                 if ($info)
                 {
-                    $content = '/public/uploads/' . $info->getSaveName();
+                    $content = 'uploads/' . $info->getSaveName();
                 }
                 else
                 {
@@ -130,7 +131,7 @@ class Material extends Controller {
             {
                 // 添加
                 $insert = [
-                    'type' => $material_type - 1,
+                    'type' => $material_type,
                     'tag' => $tag,
                     'content' => $content,
                     'addtime' => time()
@@ -160,8 +161,8 @@ class Material extends Controller {
         $thisNav = Db::table('nav')->field('name,pid')
             ->where('id=' . $title_id)
             ->find();
-        $material_type = Db::table('nav')->field('name,id')
-            ->where('pid=' . $thisNav['pid'])
+        $material_type = Db::table('nav')->field('is_file,name,id')
+            ->where('pid=' . $thisNav['pid'].' and id != 12 ')
             ->select();
         if (isset($material_id) && $material_id)
         {
@@ -173,7 +174,6 @@ class Material extends Controller {
             $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
             $data['username'] = $username;
             $data['nav'] = nav();
-            $data['class'] = $class;
             $data['add'] = $add;
             $data['title'] = ucfirst($thisNav['name']);
             $data['material_type'] = $material_type;
@@ -184,7 +184,7 @@ class Material extends Controller {
         else
         {
             $material = array(
-                'content' => '',
+                'content' => '',             
                 'tag' => ''
             );
             $data['material'] = $material;
@@ -196,5 +196,33 @@ class Material extends Controller {
             $data['add'] = $add;
         }
         return view('index/add', $data);
+    }
+    /******增加自定义标签
+     * */
+    public function customLabel()
+    {
+        if (Request::instance()->isPost())
+        {
+           $_post = input('post.');
+           $affect = Db::table('nav')->insert($_post);
+           if ($affect)
+           {
+               $this->success('操作成功');
+           }else
+            {
+                $this->error('操作失败');
+            }
+        }
+        $class = explode("\\", __CLASS__);
+        $class = lcfirst($class[3]);
+        $data['class'] = $class;
+        $data['nav'] = nav();
+        $user = session('admin_user');
+        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+        $data['username'] = $username;
+        $data['title'] ='自定义标签';
+        $add = "增加自定义标签";
+        $data['add'] = $add;
+        return view('index/custom_label',$data);
     }
 }

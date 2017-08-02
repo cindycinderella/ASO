@@ -130,7 +130,7 @@ class Template extends Controller {
                     {
                         $zip->extractTo('template/' . $date . '/' . $file_name); // 假设解压缩到在当前路径下images文件夹的子文件夹php
                         $zip->close(); // 关闭处理的zip文件
-                        $file_path = 'public/template/' . $date . '/' . $file_name . '/' . $filename;
+                        $file_path =  $date . '/' . $file_name . '/' . $filename;
                     }
                 }
                 else
@@ -140,14 +140,27 @@ class Template extends Controller {
                     $this->error($file_error);
                     exit();
                 }
+            }else 
+            {
+                $file_path ='';
             }
             if ($template_id)
             {
-                $update = array(
-                    'tag' => $tag,
-                    'path' => $file_path,
-                    'name' => $name
-                );
+                if (empty($file_path))
+                {
+                    $update = array(
+                        'tag' => $tag,
+                        'name' => $name
+                    );
+                }else
+                {
+                    $update = array(
+                        'tag' => $tag,
+                        'path' => $file_path,
+                        'name' => $name
+                    );
+                }
+                
                 // 修改
                 $affect = Db::table('template')->where('id', $template_id)->update($update);
                 Db::table('web_side')->where('template_id', $template_id)->update([
@@ -226,6 +239,8 @@ class Template extends Controller {
             $material = array(
                 'filename' => '',
                 'name' => '',
+                'type'=>0,
+                'pertain_type'=>0,
                 'tag' => ''
             );
             $data['material'] = $material;
