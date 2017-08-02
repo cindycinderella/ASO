@@ -1,0 +1,167 @@
+{extend name="index/base" /}
+{block name="content"}		
+			<!-- start: Content -->
+			<div id="content" class="span10">
+			
+			
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home"></i>
+					<a href="{:url('index/index/home')}">首页</a> 
+					<i class="icon-angle-right"></i>
+				</li>
+				<li><a href="javascript:void(0);" class="title" >{:$title}</a>
+                <i class="icon-angle-right"></i>
+                </li>
+                <li><a href="javascript:void(0);">{:$add}</a></li>
+			</ul>
+
+			<div class="row-fluid sortable">		
+				<div class="box span12">
+					<div class="box-header" data-original-title>
+						<h2><i class="halflings-icon white th-list"></i><span class="break"></span><span class="title">{:$title}</span></h2>						
+					</div>
+					<div class="box-content">					                 	                       
+                        <form class="form-horizontal"  action="" method="POST" enctype="multipart/form-data">
+							<input type="hidden" name="status" value="1" />
+							<input type="hidden" name="is_file" value="1" />
+							<input type="hidden" name="pid" value="1" />	
+							<input type="hidden" name="url" value="index/material/title" />							
+							
+						  <fieldset>
+                            <div class="control-group">
+								<label class="control-label"><font><font>显示</font></font></label>
+								<div class="controls">
+                                  <label class="checkbox inline">
+									<div class="checker id="uniform-inlineCheckbox1"><span>
+                                    <input type="checkbox" class="inlineCheckbox1" value="1"></span></div><font><font><span>是</span>
+								  </font></font></label>
+								  <label class="checkbox inline">
+									<div class="checker id="uniform-inlineCheckbox1"><span>
+                                    <input type="checkbox" class="inlineCheckbox1" value="-1"></span></div><font><font><span>否</span>
+								  </font></font></label>
+								</div>
+							</div>    
+							<div class="control-group">
+								<label class="control-label" style="white-space: pre-wrap;"><font><font>内容是否是图片或者视频之类的</font></font></label>
+								<div class="controls">
+                                  <label class="checkbox inline">
+									<div class="checker id="uniform-inlineCheckbox2"><span>
+                                    <input type="checkbox" class="inlineCheckbox2" value="1"></span></div><font><font><span>是</span>
+								  </font></font></label>
+								  <label class="checkbox inline">
+									<div class="checker id="uniform-inlineCheckbox2"><span>
+                                    <input type="checkbox" class="inlineCheckbox2" value="-1"></span></div><font><font><span>否</span>
+								  </font></font></label>
+								</div>
+							</div>	
+                              <div class="control-group">
+								<label class="control-label" for="inputSuccess"><font><font>标签名称</font></font></label>
+								<div class="controls">
+								  <input type="text" name="name" value="" >
+								</div>
+							  </div> 
+							<div class="form-actions">
+							  <button type="submit" class="btn btn-primary">保存</button>
+							  <button type="reset" class="btn">取消</button>
+							</div>
+						  </fieldset>
+						</form>   
+                        
+                        
+                        
+					</div>
+				</div><!--/span-->
+			
+			</div><!--/row-->
+
+	</div><!--/.fluid-container-->
+	
+			<!-- end: Content -->
+		</div><!--/#content.span10-->
+		</div><!--/fluid-row-->
+		
+	
+	
+	<div class="clearfix"></div>
+	
+	<!-- start: JavaScript-->
+	<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+	<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+	
+		<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+	
+		<script src="__INDEX__js/modernizr.js"></script>
+	
+		<script src="__INDEX__js/bootstrap.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.cookie.js"></script>
+	
+		<script src='__INDEX__js/fullcalendar.min.js'></script>
+	
+		<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+		<script src="__INDEX__js/excanvas.js"></script>
+	<script src="__INDEX__js/jquery.flot.js"></script>
+	<script src="__INDEX__js/jquery.flot.pie.js"></script>
+	<script src="__INDEX__js/jquery.flot.stack.js"></script>
+	<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.chosen.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.uniform.min.js"></script>
+		
+		<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.noty.js"></script>
+	
+		<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.raty.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+	
+		<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.gritter.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+	
+		<script src="__INDEX__js/jquery.masonry.min.js"></script>
+	
+		<script src="__INDEX__js/jquery.knob.modified.js"></script>
+	
+		<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+	
+		<script src="__INDEX__js/counter.js"></script>
+	
+		<script src="__INDEX__js/retina.js"></script>
+
+		<script src="__INDEX__js/custom.js"></script>
+        <script>		
+		$(function(){
+			//实现复选框变单选
+			$('.inlineCheckbox1').change(function(){
+					$('.inlineCheckbox1').parent('span').each(function(index, element) {
+						$(this).removeClass("checked");
+					});	
+					$(this).parent('span').addClass("checked");
+					var cal = $(this).val()
+					$("input[name='status']").val(cal);					
+				})
+						
+			$('.inlineCheckbox2').change(function(){
+					$('.inlineCheckbox2').parent('span').each(function(index, element) {
+						$(this).removeClass("checked");
+					});	
+					$(this).parent('span').addClass("checked");
+					var cal = $(this).val()
+					$("input[name='is_file']").val(cal);				
+				})
+			
+			})
+        </script>
+	<!-- end: JavaScript-->
+{/block}

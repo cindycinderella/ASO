@@ -1,0 +1,40 @@
+
+<!-- start: Header -->
+<div class="container-fluid-full">
+	<div class="row-fluid">			
+		<!-- start: Main Menu -->
+		<div id="sidebar-left" class="span2">
+			<div class="nav-collapse sidebar-nav">
+				<ul class="nav nav-tabs nav-stacked main-menu">
+					
+					
+				{foreach name="nav" item="vo"}
+				   <li>
+				   <a {if !empty($vo['child_nav'])} 
+				   class="dropmenu" href="javascript:void(0);"  {else /}  href="{:url($vo.url)}"   {/if}			 
+				 >
+				   <i class="{:$vo.css_img}"></i>
+				   <span class="hidden-tablet"> {:$vo.name}</span>
+				   </a>
+				   {if !empty($vo['child_nav'])}
+					<?php $url = explode('/',$vo['url']);$url=$url[1];?>			   
+					<ul {if strpos($url,$class)!==FALSE  }
+					style="display: block;"
+					{/if}>						
+						{foreach name="$vo['child_nav']" item="nav_c"}
+						<li {if $nav_c['name'] === $title  }
+						class="active"
+						{/if}>
+						<a class="submenu" href="{:url($nav_c.url,'id='.$nav_c['id'])}">
+						<i class="{if $nav_c['css_img'] == ''  }icon-file-alt {else /}{:$nav_c.css_img} {/if}>"></i>
+						<span class="hidden-tablet">{:$nav_c.name}</span>
+						</a>
+						</li>
+						{/foreach}
+					</ul>	
+				   {/if}
+				   </li>
+				{/foreach}			
+				</ul>
+			</div>
+		</div>
