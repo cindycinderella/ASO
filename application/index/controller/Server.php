@@ -42,12 +42,10 @@ class Server extends Controller {
             $server_id =input('post.server_id');
             $server_name =input('post.server_name');
             $server_ip =input('post.server_ip');
-            $server_host =input('post.server_host');
-            $folder =input('post.folder');        
+            $server_host =input('post.server_host');     
             $data = array(
                 'server_name'=>$server_name,
                 'server_ip'=>$server_ip,
-                'folder'=>$folder,
                 'server_host'=>$server_host,
             );
             if ($server_id)
@@ -88,7 +86,6 @@ class Server extends Controller {
                 'server_name' => '',
                 'server_ip' => '',
                 'server_host' => '',
-                'folder' => ''
             );
         }
         $user = session('admin_user');
