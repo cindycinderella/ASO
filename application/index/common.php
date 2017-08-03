@@ -173,3 +173,18 @@ function formatArray($array)
     }
     return $temArray;
 }
+
+/**
+ * 随机生成字符串*
+ */
+function random($length, $chars = '0123456789')
+{
+    $hash = '';
+    $max = strlen($chars) - 1;
+    for ($i = 0; $i < $length; $i ++)
+    {
+        $hash .= $chars[mt_rand(0, $max)];
+    }
+    return $hash;
+}
+    

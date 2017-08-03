@@ -22,7 +22,7 @@ class Access extends Controller {
         $ip = _get_ip();
         //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
-        $server = Db::table('server')->field('id,folder,server_host,request_num')
+        $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
             ->find();
         if (empty($server))
@@ -34,6 +34,30 @@ class Access extends Controller {
         }
         $postData['server_id'] = $server['id'];
         $postData['request_time'] = time();
+        /** 记录客户端生成的文件夹连接*/
+        if (!empty($postData['dir']))
+        {
+            $serUrl = Db::name('server_url')->field("id")
+            ->order('id desc')
+            ->find();
+            if (empty($serUrl) && empty($id))
+            {
+                $id = 0;
+            }
+            else
+            {
+                $id = $serUrl['id'] + 1;
+            }
+            foreach ($postData['dir'] as $url)
+            {
+                $id ++;
+                $newUrl[] = array(
+                    'id' => $id,
+                    'url' => $server['server_host'] . $url
+                );
+            }
+            Db::name('server_url')->insertAll($newUrl);
+        }       
         /**
          * *******
          * 根据规则获取模板的ID
@@ -132,45 +156,37 @@ class Access extends Controller {
                 }
                 $str = $res['content'];
             }
-            $basePath = str_replace(basename($path), '', $path);
-            $file = basename($path, ".html") . '_';
-            $file .= ($server['request_num'] + 1) . ".html"; // 得到保存的文件名
-            $status = file_put_contents($basePath . $file, $str);
-            $postData['path'] = $basePath . $file;
-            if ($status)
+            $pattern="/<[img|IMG].*?src=[\'|\"]{:(.*?)}[\'|\"].*?[\/]?>/";
+            preg_match_all($pattern,$str,$img);
+            if (!empty($img))
             {
-                $nextUrl = $server['server_host'];
-                for ($i = 1; $i <= $server['request_num'] + 1; $i ++)
+                foreach ($img[1] as $vlImg)
                 {
-                    $nextUrl .= $server['folder'] . '/';
+                    $str=str_replace('{:'.$vlImg.'}','http://12900629.s21i-12.faiusr.com/4/ABUIABAEGAAgg5y6xQUolp6b2gQwrwE4rwE.png',$str);
                 }
-                $nextUrl .= 'index.php';
-                // 记录请求日志
-                $insert = array(
-                    'type' => $postData['type'],
-                    'post_data' => serialize($postData),
-                    'path' => $postData['path'],
-                    'server_id' => $postData['server_id'],
-                    'request_time' => $postData['request_time'],
-                    'template_id' => $postData['template_id']
-                );
-                Db::table('request_log')->insert($insert);
-                // 记录第几次请求
-                $update = array(
-                    'request_num' => $server['request_num'] + 1,
-                    'request_time' => $postData['request_time'],
-                    'next_url' => $nextUrl
-                );
-                Db::table('server')->where('id', $server['id'])->update($update);
-                Log::write($postData, 'request_data');
-                $returnJson = array(
-                    'request_num' => $server['request_num'] + 1,
-                    'folder' => $server['folder'],
-                    'url' => IMGSRC . $postData['path'],
-                    'status' => 200
-                );
-                return json($returnJson);
             }
+            // 记录请求日志
+            $insert = array(
+                'type' => $postData['type'],
+                'post_data' => serialize($postData),
+                'server_id' => $postData['server_id'],
+                'request_time' => $postData['request_time'],
+                'template_id' => $postData['template_id']
+            );
+            Db::table('request_log')->insert($insert);
+            // 记录第几次请求
+            $update = array(
+                'request_num' => $server['request_num'] + 1,
+                'request_time' => $postData['request_time']
+            );
+            Db::table('server')->where('id', $server['id'])->update($update);
+            Log::write($postData, 'request_data');
+            $returnJson = array(
+                'request_num' => $server['request_num'] + 1,
+                'url' => $str,
+                'status' => 200
+            );
+            return json($returnJson);
         }
     }
 
@@ -187,6 +203,39 @@ class Access extends Controller {
      */
     private function getContent($k, $arr, $server, $str)
     {
+        if ($k == 'link')
+        {
+            $serUrl = Db::name('server_url')->field("id")
+                ->order('id desc')
+                ->find();
+            if (empty($serUrl) && empty($id))
+            {
+                $id = 0;
+            }
+            else
+            {
+                $id = $serUrl['id'] + 1;
+            }
+            foreach ($arr as $link)
+            {
+                $rawParam = '{:' . $link . '}';
+                $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
+                $reParam = $server['server_host'] . $link.'_'.$folder;
+                $str = str_replace($rawParam, $reParam, $str);
+                $id ++;
+                $newUrl[] = array(
+                    'id' => $id,
+                    'type' => 2,
+                    'url' => $reParam
+                );
+            }
+            Db::name('server_url')->insertAll($newUrl);
+            return [
+                'status' => 0,
+                'content' => $str,
+                'msg' => '替换成功'
+            ];
+        }
         $rawParam = '{:' . $k . '}';
         $type = Db::table('nav')->field("id")
             ->where("name = '{$k}' ")
