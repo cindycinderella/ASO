@@ -46,9 +46,9 @@ class Index extends Controller {
             return view('login');
         }
     }
-
+    
     /**
-     * 後台首頁
+     * 後台首頁---配置
      * **
      */
     public function home()
@@ -59,10 +59,13 @@ class Index extends Controller {
             $class = lcfirst($class[3]);
             $user = session('admin_user');
             $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+            //读取config            
+            $config = Db::table('config')->select();
             $data['username'] = $username;
             $data['nav'] = nav();
             $data['class'] = $class;
             $data['title'] = '';
+            $data['config'] = $config;
             return view('home', $data);
         }
         else
@@ -70,7 +73,22 @@ class Index extends Controller {
             return view('login');
         }
     }
-
+    public function eidtConfig()
+    {
+        if(Request::instance()->isPost())
+        {
+            $postData = input('post.');
+            foreach ($postData as $k=>$val)
+            {
+                $affect = db('config')->where('name',$k)->update(['value' => $val]);
+                if (!$affect)
+                {
+                    $config = db('config')->field('remarks')->where('name',$k)->find();
+                    $this->error('修改配置——'.$config['remarks'].'——失败');
+                }
+            }
+        }
+    }
     public function loginOut()
     {
         if (session('?admin_user'))

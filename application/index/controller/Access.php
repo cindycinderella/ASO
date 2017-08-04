@@ -216,11 +216,20 @@ class Access extends Controller {
             {
                 $id = $serUrl['id'] + 1;
             }
+            $config = db('config')->field('value')->where("name='config_link'")->find();
             foreach ($arr as $link)
             {
                 $rawParam = '{:' . $link . '}';
                 $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
-                $reParam = $server['server_host'] . $link.'_'.$folder.'/';
+                if ($config['value']==1)
+                {
+                    $reParam = $server['server_host'] . $link.'_'.$folder.'/';
+                }else
+                {
+                    $sql ="SELECT server_host FROM	 server AS t1 JOIN (	SELECT ROUND(	RAND() * ((	SELECT MAX(id)	FROM	`server`) - (SELECT MIN(id) FROM server)	) + (SELECT MIN(id) FROM server)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY 	t1.id LIMIT 1";
+                    $host = Db::query($sql);
+                    $reParam = $host[0]['server_host'] . $link.'_'.$folder.'/';
+                }               
                 $str = str_replace($rawParam, $reParam, $str);
                 $id ++;
                 $newUrl[] = array(

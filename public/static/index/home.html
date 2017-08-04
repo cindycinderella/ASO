@@ -1,23 +1,65 @@
-<!-- start: Header -->
 {extend name="index/base" /}
-{block name="content"}
-<!-- start: Content -->
-	<div id="content" class="span10">
-		<ul class="breadcrumb">
-					<li>
-						<i class="icon-home"></i>
-						<a href="{:url('index/index/home')}">首页</a> 
-						<i class="icon-angle-right"></i>
-					</li>
-					<li><a href="javascript:void(0);">配置</a></li>
-		</ul>
-		<div class="clearfix"></div>
-	</div><!--/.fluid-container-->	
-	<!-- end: Content -->
-	</div><!--/#content.span10-->
-</div><!--/fluid-row-->
-		<!-- start: JavaScript-->
-		<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+{block name="content"}		
+			<!-- start: Content -->
+			<div id="content" class="span10">
+			
+			
+			<ul class="breadcrumb">
+				<li>
+					<i class="icon-home"></i>
+					<a href="{:url('index/index/home')}">首页</a> 
+					<i class="icon-angle-right"></i>
+				</li>
+				<li><a href="javascript:void(0);" class="title" >配置</a>
+                <i class="icon-angle-right"></i>
+                </li>
+			</ul>
+
+			<div class="row-fluid sortable">		
+				<div class="box span12">
+					<div class="box-header" data-original-title>
+						<h2><i class="halflings-icon white th-list"></i><span class="break"></span><span class="title">配置</span></h2>						
+					</div>
+					<div class="box-content">					                 	                       
+                        <form class="form-horizontal"  action="{:url('index/index/eidtConfig')}" method="POST" enctype="multipart/form-data">
+						  <fieldset>  
+
+						  	{foreach name="config" item="vo"}
+							<div class="control-group">
+								<label class="control-label" for="inputSuccess"><font><font>{$vo.remarks}</font></font></label>
+								<div class="controls">
+								  <input style="hheight: 20px;line-height: 20px;" type="text" name="{$vo.name}" value="{$vo.value}" >
+								  {if !empty($vo['note'])}<span style="color:red;">{$vo.note}</span>{/if}
+								</div>
+							</div>
+							{/foreach}
+										                              					
+							<div class="form-actions">
+							  <button type="submit" class="btn btn-primary">保存</button>
+							  <button type="reset" class="btn">取消</button>
+							</div>
+						  </fieldset>
+						</form>   
+                        
+                        
+                        
+					</div>
+				</div><!--/span-->
+			
+			</div><!--/row-->
+
+	</div><!--/.fluid-container-->
+	
+			<!-- end: Content -->
+		</div><!--/#content.span10-->
+		</div><!--/fluid-row-->
+		
+	
+	
+	<div class="clearfix"></div>
+	
+	<!-- start: JavaScript-->
+	<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
 	<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
 	
 		<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
@@ -71,5 +113,4 @@
 		<script src="__INDEX__js/retina.js"></script>
 
 		<script src="__INDEX__js/custom.js"></script>
-	<!-- end: JavaScript-->
 {/block}
