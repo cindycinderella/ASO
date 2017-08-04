@@ -220,7 +220,7 @@ class Access extends Controller {
             {
                 $rawParam = '{:' . $link . '}';
                 $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
-                $reParam = $server['server_host'] . $link.'_'.$folder;
+                $reParam = $server['server_host'] . $link.'_'.$folder.'/';
                 $str = str_replace($rawParam, $reParam, $str);
                 $id ++;
                 $newUrl[] = array(
