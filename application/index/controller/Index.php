@@ -80,13 +80,9 @@ class Index extends Controller {
             $postData = input('post.');
             foreach ($postData as $k=>$val)
             {
-                $affect = db('config')->where('name',$k)->update(['value' => $val]);
-                if (!$affect)
-                {
-                    $config = db('config')->field('remarks')->where('name',$k)->find();
-                    $this->error('修改配置——'.$config['remarks'].'——失败');
-                }
+                db('config')->where('name',$k)->update(['value' => $val]);               
             }
+            $this->success('操作成功', url('index/home'));
         }
     }
     public function loginOut()
