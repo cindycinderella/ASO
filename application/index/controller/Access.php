@@ -20,7 +20,7 @@ class Access extends Controller {
             ]);
         }
         $ip = _get_ip();
-        //$ip = '47.52.8.223';
+        // $ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -34,12 +34,14 @@ class Access extends Controller {
         }
         $postData['server_id'] = $server['id'];
         $postData['request_time'] = time();
-        /** 记录客户端生成的文件夹连接*/
-        if (!empty($postData['dir']))
+        /**
+         * 记录客户端生成的文件夹连接
+         */
+        if (! empty($postData['dir']))
         {
             $serUrl = Db::name('server_url')->field("id")
-            ->order('id desc')
-            ->find();
+                ->order('id desc')
+                ->find();
             if (empty($serUrl) && empty($id))
             {
                 $id = 0;
@@ -57,7 +59,7 @@ class Access extends Controller {
                 );
             }
             Db::name('server_url')->insertAll($newUrl);
-        }       
+        }
         /**
          * *******
          * 根据规则获取模板的ID
@@ -156,15 +158,54 @@ class Access extends Controller {
                 }
                 $str = $res['content'];
             }
-            $pattern="/<[img|IMG].*?src=[\'|\"]{:(.*?)}[\'|\"].*?[\/]?>/";
-            preg_match_all($pattern,$str,$img);
-            if (!empty($img))
+            $pattern = "/<[img|IMG].*?src=[\'|\"]{:(.*?)}[\'|\"].*?[\/]?>/";
+            preg_match_all($pattern, $str, $img);
+            if (! empty($img))
             {
                 foreach ($img[1] as $vlImg)
                 {
-                    $str=str_replace('{:'.$vlImg.'}','http://12900629.s21i-12.faiusr.com/4/ABUIABAEGAAgg5y6xQUolp6b2gQwrwE4rwE.png',$str);
+                    $str = str_replace('{:' . $vlImg . '}', 'http://12900629.s21i-12.faiusr.com/4/ABUIABAEGAAgg5y6xQUolp6b2gQwrwE4rwE.png', $str);
                 }
             }
+            // 镶嵌搜索引擎
+            $config = db('config')->field('value,name')
+                ->where(" name='config_baidu' or name='config_360' ")
+                ->select();
+            foreach ($config as $valConfig)
+            {
+                echo $valConfig['name'];
+                if ($valConfig['name'] == 'config_baidu' && $valConfig['value'] == 1)
+                {
+                    $content = explode("<body>", $str);
+                    $baiDu = "<script>
+                                    (function(){
+                                        var bp = document.createElement('script');
+                                        var curProtocol = window.location.protocol.split(':')[0];
+                                        if (curProtocol === 'https') {
+                                            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+                                        }
+                                        else {
+                                            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+                                        }
+                                        var s = document.getElementsByTagName('script')[0];
+                                        s.parentNode.insertBefore(bp, s);
+                                    })();
+                                    </script>";
+                    $str = $content[0] . '<body>' . $baiDu . $content[1];
+                }
+                elseif ($valConfig['name'] == 'config_360' && $valConfig['value'] == 1)
+                {
+                    $content = explode("</body>", $str);
+                    $seach = "<script>
+                                    (function(){
+                                       var src = (document.location.protocol == 'http:') ? 'http://js.passport.qihucdn.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c':'https://jspassport.ssl.qhimg.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c';
+                                       document.write('<script src='" . ' + src + ' . "' id='sozz'><\/script>');
+                                    })();
+                                   </script>";
+                    $str = $content[0] . $seach . '</body>' . $content[1];
+                }
+            }
+            
             // 记录请求日志
             $insert = array(
                 'type' => $postData['type'],
@@ -216,20 +257,23 @@ class Access extends Controller {
             {
                 $id = $serUrl['id'] + 1;
             }
-            $config = db('config')->field('value')->where("name='config_link'")->find();
+            $config = db('config')->field('value')
+                ->where("name='config_link'")
+                ->find();
             foreach ($arr as $link)
             {
                 $rawParam = '{:' . $link . '}';
                 $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
-                if ($config['value']==1)
+                if ($config['value'] == 1)
                 {
-                    $reParam = $server['server_host'] . $link.'_'.$folder.'/';
-                }else
+                    $reParam = $server['server_host'] . $link . '_' . $folder . '/';
+                }
+                else
                 {
-                    $sql ="SELECT server_host FROM	 server AS t1 JOIN (	SELECT ROUND(	RAND() * ((	SELECT MAX(id)	FROM	`server`) - (SELECT MIN(id) FROM server)	) + (SELECT MIN(id) FROM server)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY 	t1.id LIMIT 1";
+                    $sql = "SELECT server_host FROM	 server AS t1 JOIN (	SELECT ROUND(	RAND() * ((	SELECT MAX(id)	FROM	`server`) - (SELECT MIN(id) FROM server)	) + (SELECT MIN(id) FROM server)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY 	t1.id LIMIT 1";
                     $host = Db::query($sql);
-                    $reParam = $host[0]['server_host'] . $link.'_'.$folder.'/';
-                }               
+                    $reParam = $host[0]['server_host'] . $link . '_' . $folder . '/';
+                }
                 $str = str_replace($rawParam, $reParam, $str);
                 $id ++;
                 $newUrl[] = array(
