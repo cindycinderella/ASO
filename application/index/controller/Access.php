@@ -20,7 +20,7 @@ class Access extends Controller {
             ]);
         }
         $ip = _get_ip();
-        // $ip = '47.52.8.223';
+        //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -173,7 +173,6 @@ class Access extends Controller {
                 ->select();
             foreach ($config as $valConfig)
             {
-                echo $valConfig['name'];
                 if ($valConfig['name'] == 'config_baidu' && $valConfig['value'] == 1)
                 {
                     $content = explode("<body>", $str);
@@ -205,7 +204,6 @@ class Access extends Controller {
                     $str = $content[0] . $seach . '</body>' . $content[1];
                 }
             }
-            
             // 记录请求日志
             $insert = array(
                 'type' => $postData['type'],
