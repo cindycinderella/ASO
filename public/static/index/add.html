@@ -22,7 +22,7 @@
 						<h2><i class="halflings-icon white th-list"></i><span class="break"></span><span class="title">{:$title}</span></h2>						
 					</div>
 					<div class="box-content">					                 	                       
-                        <form class="form-horizontal"  action="" method="POST" enctype="multipart/form-data">
+                        <form class="form-horizontal"  action="" method="POST"  enctype="multipart/form-data">
 							<input type="hidden" name="material_id" value="{:$material_id}" />
 							<input type="hidden" name="material_type" value="{:$title_id}" />
 							<input type="hidden" name="is_file" value="-1" />
@@ -51,10 +51,11 @@
 							  <label class="control-label" for="fileInput">内容</label>
 							  <div class="controls">
 								<div class="uploader" id="uniform-fileInput">
-                                <input class="input-file uniform_on" name="file" id="fileInput" type="file">
+                                <input class="input-file uniform_on"  multiple="multiple" name="file[]" id="fileInput" type="file">
                                 <span class="filename" style="user-select: none;">No file selected</span>
                                 <span class="action" style="user-select: none;">Choose File</span>
                                 </div>
+                                <span style="color:red;">多个图片，请多选</span>
 							  </div>
 							</div>
 							<div class="control-group textarea2" style="display:none;" >
@@ -64,7 +65,7 @@
 							  </div>
 							</div>
 
-							<div class="control-group">
+							<div class="control-group allfile" style="display:none;">
 							  <label class="control-label" for="fileInput">批量上传</label>
 							  <div class="controls">
 								<div class="uploader" id="uniform-fileInput">
@@ -168,18 +169,42 @@
 						$("input[name='is_file']").val(is_file);					
 						$('.fileInput').css('display','block');
 						$('.textarea2').css('display','none');
+						$('.allfile').css('display','none');
 					}else
 					{
 						$('.textarea2').css('display','block');
 						$('.fileInput').css('display','none');
+						$('.allfile').css('display','block');
 					}
 				}
 
 			});	
 
 
+			/*******表单验证********/	
+			$('.btn-primary').click(function(){
 
-
+				var checked = $('.inlineCheckbox1:checked').val();
+				if(checked==''||checked=='undefined')
+				{
+					alert("请选择素材类型");
+					return false;
+				}
+				var tag = $("input[name='tag']").val();
+				if (tag=='')
+				{
+					alert("请输入素材标签");
+					return false;
+				}
+				var content = $('#textarea2').val();
+				var contentFile = $("input[name='allfile']").val();
+				var contentImg = $("#fileInput").val();
+				if ((contentFile==''&&content=='')||contentImg=='')
+				{
+					alert("请输入素材内容");
+					return false;
+				}				
+			})
 			//实现复选框变单选
 			$('.inlineCheckbox1').change(function(){
 					$('.inlineCheckbox1').parent('span').each(function(index, element) {
@@ -196,10 +221,12 @@
 					{										
 						$('.fileInput').css('display','block');
 						$('.textarea2').css('display','none');
+						$('.allfile').css('display','none');
 					}else
 					{
 						$('.textarea2').css('display','block');
 						$('.fileInput').css('display','none');
+						$('.allfile').css('display','block');
 					}
 				})
 			

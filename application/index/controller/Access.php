@@ -20,7 +20,7 @@ class Access extends Controller {
             ]);
         }
         $ip = _get_ip();
-        //$ip = '47.52.8.223';
+        // $ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -204,6 +204,9 @@ class Access extends Controller {
                     $str = $content[0] . $seach . '</body>' . $content[1];
                 }
             }
+            // 镶嵌统计代码
+            $str = $this->replaceCount('yldmedlink.cn', $server['server_host'], $str);
+            $str = $this->replaceCount('tchico.com.cn', $server['server_host'], $str);
             // 记录请求日志
             $insert = array(
                 'type' => $postData['type'],
@@ -424,5 +427,43 @@ class Access extends Controller {
                 'msg' => '替换成功'
             ];
         }
+    }
+    /***
+     * @param $host 要镶嵌冬季代码的域名
+     * @param $server 本次请求的服务器信息
+     * @param @return $str 替换的代码 
+     * ***************/
+    private function replaceCount($host,$serverHost,$str) 
+    {
+        if(!strpos($serverHost,$host))
+        {
+            return $str;
+        }
+        if ($host=='yldmedlink.cn')
+        {
+           
+            $seach = "<script>
+                            var _hmt = _hmt || [];
+                            (function() {
+                              var hm = document.createElement('script');
+                              hm.src = 'https://hm.baidu.com/hm.js?7d7ab280b842b76802de556f74fb57a6';
+                              var s = document.getElementsByTagName('script')[0]; 
+                              s.parentNode.insertBefore(hm, s);
+                            })();
+                            </script>";                       
+        }elseif ($host=='tchico.com.cn')
+        {
+            $seach ="<script>
+                            var _hmt = _hmt || [];
+                            (function() {
+                              var hm = document.createElement('script');
+                              hm.src = 'https://hm.baidu.com/hm.js?b3c39b03387852b8f2ca6a623b8b3b2f';
+                              var s = document.getElementsByTagName('script')[0]; 
+                              s.parentNode.insertBefore(hm, s);
+                            })();
+                            </script>";
+        }
+        $content = explode("</body>", $str);
+        return  $str = $content[0] . $seach . '</body>' . $content[1];
     }
 }

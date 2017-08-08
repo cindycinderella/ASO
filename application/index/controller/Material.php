@@ -96,7 +96,7 @@ class Material extends Controller {
     public function add()
     {
         if (Request::instance()->isPost())
-        {          
+        {               
             $material_id = input('post.material_id');
             $material_type = input('post.material_type');
             $tag = input('post.tag');
@@ -105,18 +105,21 @@ class Material extends Controller {
             if ($isFile==1)
             {
                 // 上传文件
-                $file = Request::instance()->file('file');
-                $info = $file->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads');
-                if ($info)
+                $files = Request::instance()->file('file');
+                foreach($files as $file)
                 {
-                    $content = 'uploads/' . $info->getSaveName();
-                }
-                else
-                {
-                    // 上传失败获取错误信息
-                    echo $file->getError();
-                    exit();
-                }
+                    $info  = $file->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads');
+                    if ($info)
+                    {
+                        $content[] = 'uploads/' . $info->getSaveName();
+                    }
+                    else
+                    {
+                        // 上传失败获取错误信息
+                        echo $file->getError();
+                        exit();
+                    }
+                }              
             }
             $allFile = Request::instance()->file('allfile');
             if(!empty($allFile))
@@ -131,6 +134,7 @@ class Material extends Controller {
             }
             if ($material_id)
             {
+                $content = is_array($content)?$content[0]:$content;
                 $update = array(
                     'tag' => $tag,
                     'content' => $content
@@ -140,22 +144,22 @@ class Material extends Controller {
             }
             else
             {
-                if (!empty($allData))
+                //批量添加
+                $data = array();
+                $lastID = Db::name('material')->field("id")
+                ->order('id desc')
+                ->find();
+                $id ='';
+                if (empty($lastID) && empty($id))
                 {
-                    //批量添加
-                    $data = array();
-                    $lastID = Db::name('material')->field("id")
-                    ->order('id desc')
-                    ->find();
-                    $id ='';
-                    if (empty($lastID) && empty($id))
-                    {
-                        $id = 0;
-                    }
-                    else
-                    {
-                        $id = $lastID['id'] + 1;
-                    }
+                    $id = 0;
+                }
+                else
+                {
+                    $id = $lastID['id'] + 1;
+                }
+                if (!empty($allData)&&$isFile!=1)
+                {                    
                     foreach ($allData as $k=>$infoData)
                     {
                         if (mb_strlen($infoData)<30&&$material_type=='29')
@@ -172,6 +176,18 @@ class Material extends Controller {
                     }
                     $affect = Db::name('material')->insertAll($data);
                     unset($path);
+                }elseif (is_array($content)&&$isFile==1)
+                {
+                    foreach ($content as $k=>$infoImg)
+                    {                      
+                        $id++;
+                        $data[$k]['id']=$id;
+                        $data[$k]['type'] = $material_type;
+                        $data[$k]['tag'] = $tag;
+                        $data[$k]['content'] = $infoImg;
+                        $data[$k]['addtime'] = time();
+                    }
+                    $affect = Db::name('material')->insertAll($data);
                 }else
                 {
                     // 添加
