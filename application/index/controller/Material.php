@@ -118,6 +118,17 @@ class Material extends Controller {
                     exit();
                 }
             }
+            $allFile = Request::instance()->file('allfile');
+            if(!empty($allFile))
+            {
+                $info = $allFile->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads/txt');
+                $path = 'uploads/txt/' . $info->getSaveName();
+                $allData = file_get_contents($path);
+                $allData = explode("\n", $allData);
+            }else
+            {
+                $allData = array();
+            }
             if ($material_id)
             {
                 $update = array(
@@ -129,14 +140,49 @@ class Material extends Controller {
             }
             else
             {
-                // 添加
-                $insert = [
-                    'type' => $material_type,
-                    'tag' => $tag,
-                    'content' => $content,
-                    'addtime' => time()
-                ];
-                $affect = Db::table('material')->insert($insert);
+                if (!empty($allData))
+                {
+                    //批量添加
+                    $data = array();
+                    $lastID = Db::name('material')->field("id")
+                    ->order('id desc')
+                    ->find();
+                    $id ='';
+                    if (empty($lastID) && empty($id))
+                    {
+                        $id = 0;
+                    }
+                    else
+                    {
+                        $id = $lastID['id'] + 1;
+                    }
+                    foreach ($allData as $k=>$infoData)
+                    {
+                        if (mb_strlen($infoData)<30&&$material_type=='29')
+                        {
+                            //内容标签过滤
+                            continue;
+                        }
+                        $id++;
+                        $data[$k]['id']=$id;
+                        $data[$k]['type'] = $material_type;
+                        $data[$k]['tag'] = $tag;
+                        $data[$k]['content'] = $infoData;
+                        $data[$k]['addtime'] = time();
+                    }
+                    $affect = Db::name('material')->insertAll($data);
+                    unset($path);
+                }else
+                {
+                    // 添加
+                    $insert = [
+                        'type' => $material_type,
+                        'tag' => $tag,
+                        'content' => $content,
+                        'addtime' => time()
+                    ];
+                    $affect = Db::table('material')->insert($insert);
+                }                              
             }
             if ($affect)
             {
