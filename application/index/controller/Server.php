@@ -71,7 +71,7 @@ class Server extends Controller {
         if (isset($server_id) && $server_id)
         {
             $add = "修改素材";
-            $server = Db::table('server')->field('id,server_name,server_ip,server_host,folder')
+            $server = Db::table('server')->field('id,server_name,server_ip,server_host')
                 ->where("id=$server_id")
                 ->find();
             if (empty($server))
