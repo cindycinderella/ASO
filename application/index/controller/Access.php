@@ -20,7 +20,7 @@ class Access extends Controller {
             ]);
         }
         $ip = _get_ip();
-        // $ip = '47.52.8.223';
+        //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -198,7 +198,7 @@ class Access extends Controller {
                     $seach = "<script>
                                     (function(){
                                        var src = (document.location.protocol == 'http:') ? 'http://js.passport.qihucdn.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c':'https://jspassport.ssl.qhimg.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c';
-                                       document.write('<script src='" . ' + src + ' . "' id='sozz'><\/script>');
+                                       document.write('<script src=\"'+ src + '\" id=\"sozz\"><\/script>');
                                     })();
                                    </script>";
                     $str = $content[0] . $seach . '</body>' . $content[1];
@@ -267,13 +267,13 @@ class Access extends Controller {
                 $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
                 if ($config['value'] == 1)
                 {
-                    $reParam = $server['server_host'] . $link . '_' . $folder . '/';
+                    $reParam = $server['server_host'].'index.php?id='. $link . '_' . $folder ;
                 }
                 else
                 {
                     $sql = "SELECT server_host FROM	 server AS t1 JOIN (	SELECT ROUND(	RAND() * ((	SELECT MAX(id)	FROM	`server`) - (SELECT MIN(id) FROM server)	) + (SELECT MIN(id) FROM server)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY 	t1.id LIMIT 1";
                     $host = Db::query($sql);
-                    $reParam = $host[0]['server_host'] . $link . '_' . $folder . '/';
+                    $reParam = $host[0]['server_host'] .'index.php?id='. $link . '_' . $folder;
                 }
                 $str = str_replace($rawParam, $reParam, $str);
                 $id ++;
