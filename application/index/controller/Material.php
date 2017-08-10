@@ -376,11 +376,11 @@ class Material extends Controller {
         $navInfo = Db::table('nav')->field("id,name,status,is_file")->where('id = '.$nav_id)->find();
         if (empty($navInfo))
         {
-            $add = "增加自定义标签";
+            $add = "添加标签";
             $navInfo = array('id'=>'','name'=>'','status'=>1,'is_file'=>1);
         }else
         {
-            $add = "修改自定义标签";
+            $add = "修改标签";
         }
         $class = explode("\\", __CLASS__);
         $class = lcfirst($class[3]);
