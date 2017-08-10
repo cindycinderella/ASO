@@ -185,6 +185,7 @@
 			$('.btn-primary').click(function(){
 
 				var checked = $('.inlineCheckbox1:checked').val();
+				var is_file = $('.inlineCheckbox1:checked').attr('alt');
 				if(checked==''||checked=='undefined')
 				{
 					alert("请选择素材类型");
@@ -199,7 +200,7 @@
 				var content = $('#textarea2').val();
 				var contentFile = $("input[name='allfile']").val();
 				var contentImg = $("#fileInput").val();
-				if ((contentFile==''&&content=='')||contentImg=='')
+				if ((contentFile==''&&content=='')||(contentImg==''&&is_file==1))
 				{
 					alert("请输入素材内容");
 					return false;
