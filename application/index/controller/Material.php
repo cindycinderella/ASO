@@ -162,6 +162,10 @@ class Material extends Controller {
                 {                    
                     foreach ($allData as $k=>$infoData)
                     {
+                        if(empty($infoData))
+                        {
+                            continue;
+                        }
                         if (mb_strlen($infoData)<30&&$material_type=='29')
                         {
                             //内容标签过滤
