@@ -177,7 +177,7 @@ class Material extends Controller {
                         $data[$k]['id'] = $id;
                         $data[$k]['type'] = $material_type;
                         $data[$k]['tag'] = $tag;
-                        $data[$k]['content'] = $infoData;
+                        $data[$k]['content'] = mysql_real_escape_string($infoData);
                         $data[$k]['addtime'] = time();
                     }
                     $affect = Db::name('material')->insertAll($data);
