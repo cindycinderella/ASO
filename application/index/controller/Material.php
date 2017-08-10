@@ -232,7 +232,7 @@ class Material extends Controller {
             ->where('id=' . $title_id)
             ->find();
         $material_type = Db::table('nav')->field('is_file,name,id')
-            ->where('pid=' . $thisNav['pid'] . ' and id != 12 ')
+            ->where('pid=' . $thisNav['pid'] . ' and id != 12 and status = 1')
             ->select();
         if (isset($material_id) && $material_id)
         {
