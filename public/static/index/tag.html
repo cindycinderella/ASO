@@ -18,7 +18,7 @@
 					<div class="box-header" data-original-title>
 						<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>
 						<div class="box-icon">
-							<a href="{:url('index/material/customlabel',['title_id'=>$title_id])}"><i class="halflings-icon white plus"></i></a>							
+							<a href="{:url('index/nav/customlabel',['title_id'=>$title_id])}"><i class="halflings-icon white plus"></i></a>							
 						</div>						
 					</div>
 					<div class="box-content">
@@ -48,7 +48,7 @@
 										<span style="cursor:pointer;" class="label label-important status" alt="{:$vo.id}"><font><font>否</font></font></span>
 										{/if}</td>								
 									<td style="text-align: center;">											
-										<a class="btn btn-info" href="{:url('index/material/customlabel',['title_id'=>$title_id,'nav_id'=>$vo['id']])}">
+										<a class="btn btn-info" href="{:url('index/nav/customlabel',['title_id'=>$title_id,'nav_id'=>$vo['id']])}">
 											<i class="halflings-icon white edit"></i>  
 										</a>								
 									</td>	
@@ -137,7 +137,7 @@
 				var _this = $(this);
 				$.ajax({    
                   	type: 'POST',    
-                  	url: "{:url('index/material/is_file')}",
+                  	url: "{:url('index/nav/is_file')}",
                   	dataType:"json",    
                 	data:{
 						"title_id":title_id
@@ -164,7 +164,7 @@
 				var _this = $(this);
 				$.ajax({    
                   	type: 'POST',    
-                  	url: "{:url('index/material/navStatus')}",
+                  	url: "{:url('index/nav/navStatus')}",
                   	dataType:"json",    
                 	data:{
 						"title_id":title_id
