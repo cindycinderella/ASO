@@ -126,6 +126,8 @@ class Template extends Controller {
                      * $zip->open这个方法的参数表示处理的zip文件名。
                      * 如果对zip文件对象操作成功，$zip->open这个方法会返回TRUE
                      */
+                    print_r($zip->open($path));
+                    exit;
                     if ($zip->open($path) === TRUE)
                     {
                         $zip->extractTo('template/' . $date . '/' . $file_name); // 假设解压缩到在当前路径下images文件夹的子文件夹php
