@@ -128,6 +128,7 @@ class Material extends Controller {
                 $path = 'uploads/txt/' . $info->getSaveName();
                 $allData = file_get_contents($path);
                 $allData = explode("\n", $allData);
+                $allData = array_filter($allData);               
             }else
             {
                 $allData = array();
