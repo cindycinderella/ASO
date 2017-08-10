@@ -122,6 +122,7 @@ class Nav extends Controller {
                 $this->error('操作失败');
             }
         }
+        $title_id = input('title_id');
         $nav_id = empty(input('nav_id'))?0:input('nav_id');
         $navInfo = Db::table('nav')->field("id,name,status,is_file")->where('id = '.$nav_id)->find();
         if (empty($navInfo))
@@ -142,6 +143,7 @@ class Nav extends Controller {
         $data['title'] = '自定义标签';        
         $data['add'] = $add;
         $data['nav'] = nav();
+        $data['title_id'] = $title_id;       
         $data['navInfo'] =$navInfo;
         return view('index/custom_label', $data);
     }

@@ -22,7 +22,7 @@
 					style="display: block;"
 					{/if}>						
 						{foreach name="$vo['child_nav']" item="nav_c"}
-						<li {if $nav_c['name'] === $title  }
+						<li {if $nav_c['id'] == $title_id  }
 						class="active"
 						{/if}>
 						<a class="submenu" href="{:url($nav_c.url,'id='.$nav_c['id'])}">
