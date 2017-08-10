@@ -11,7 +11,6 @@ class Template extends Controller {
 
     public function __construct()
     {
-        $this->nav = nav();
         if (! session('?admin_user'))
         {
             $this->error("请先登录!", 'index/index');

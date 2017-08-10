@@ -6,7 +6,13 @@ use think\Db;
 use think\Controller;
 
 class Server extends Controller {
-
+    public function __construct()
+    {
+        if (! session('?admin_user'))
+        {
+            $this->error("请先登录!", 'index/index');
+        }
+    }
     public function index()
     {
         $class = explode("\\", __CLASS__);

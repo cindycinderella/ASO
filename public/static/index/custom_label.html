@@ -23,9 +23,10 @@
 					</div>
 					<div class="box-content">					                 	                       
                         <form class="form-horizontal"  action="" method="POST" enctype="multipart/form-data">
-							<input type="hidden" name="status" value="1" />
-							<input type="hidden" name="is_file" value="1" />
-							<input type="hidden" name="pid" value="1" />	
+							<input type="hidden" name="status" value="{$navInfo.status}" />
+							<input type="hidden" name="is_file" value="{$navInfo.is_file}" />
+							<input type="hidden" name="pid" value="1" />
+							<input type="hidden" name="nav_id" value="{$navInfo.id}" />							
 							<input type="hidden" name="url" value="index/material/title" />							
 							
 						  <fieldset>
@@ -33,12 +34,12 @@
 								<label class="control-label"><font><font>显示</font></font></label>
 								<div class="controls">
                                   <label class="checkbox inline">
-									<div class="checker id="uniform-inlineCheckbox1"><span>
-                                    <input type="checkbox" class="inlineCheckbox1" value="1"></span></div><font><font><span>是</span>
+									<div class="checker id="uniform-inlineCheckbox1"><span {if $navInfo.status==1} class="checked"{/if} >
+                                    <input type="checkbox" class="inlineCheckbox1" {if $navInfo.status==1} checked="checked" {/if} value="1"></span></div><font><font><span>是</span>
 								  </font></font></label>
 								  <label class="checkbox inline">
-									<div class="checker id="uniform-inlineCheckbox1"><span>
-                                    <input type="checkbox" class="inlineCheckbox1" value="-1"></span></div><font><font><span>否</span>
+									<div class="checker id="uniform-inlineCheckbox1"><span {if $navInfo.status==-1} class="checked"{/if}>
+                                    <input type="checkbox" class="inlineCheckbox1" {if $navInfo.status==-1} checked="checked" {/if}  value="-1"></span></div><font><font><span>否</span>
 								  </font></font></label>
 								</div>
 							</div>    
@@ -46,19 +47,19 @@
 								<label class="control-label" style="white-space: pre-wrap;"><font><font>内容是否是图片或者视频之类的</font></font></label>
 								<div class="controls">
                                   <label class="checkbox inline">
-									<div class="checker id="uniform-inlineCheckbox2"><span>
-                                    <input type="checkbox" class="inlineCheckbox2" value="1"></span></div><font><font><span>是</span>
+									<div class="checker id="uniform-inlineCheckbox2"><span {if $navInfo.is_file==1} class="checked" {/if}>
+                                    <input type="checkbox" class="inlineCheckbox2" {if $navInfo.is_file==1} checked="checked" {/if} value="1"></span></div><font><font><span>是</span>
 								  </font></font></label>
 								  <label class="checkbox inline">
-									<div class="checker id="uniform-inlineCheckbox2"><span>
-                                    <input type="checkbox" class="inlineCheckbox2" value="-1"></span></div><font><font><span>否</span>
+									<div class="checker id="uniform-inlineCheckbox2"><span {if $navInfo.is_file==-1} class="checked" {/if}>
+                                    <input type="checkbox" class="inlineCheckbox2" {if $navInfo.is_file==-1} checked="checked" {/if} value="-1"></span></div><font><font><span>否</span>
 								  </font></font></label>
 								</div>
 							</div>	
                               <div class="control-group">
 								<label class="control-label" for="inputSuccess"><font><font>标签名称</font></font></label>
 								<div class="controls">
-								  <input type="text" name="name" value="" >
+								  <input type="text" name="name" value="{:$navInfo.name}" >
 								</div>
 							  </div> 
 							<div class="form-actions">
