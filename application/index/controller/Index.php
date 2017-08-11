@@ -55,6 +55,7 @@ class Index extends Controller {
     {
         if (session('?admin_user'))
         {
+            $title_id = 53;
             $class = explode("\\", __CLASS__);
             $class = lcfirst($class[3]);
             $user = session('admin_user');
