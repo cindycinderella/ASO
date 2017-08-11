@@ -66,6 +66,7 @@ class Index extends Controller {
             $data['nav'] = nav();
             $data['class'] = $class;
             $data['title'] = '';
+            $data['title_id'] = $title_id;
             $data['config'] = $config;
             return view('home', $data);
         }
