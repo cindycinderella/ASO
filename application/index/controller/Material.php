@@ -30,7 +30,7 @@ class Material extends Controller {
             'type' => $title_id
         );
         $titleList = Db::table('material')->field("id,content,tag,addtime,status")
-            ->where($where)
+            ->where($where)->order('id desc')
             ->paginate(15);
         $page = $titleList->render();
         $user = session('admin_user');
