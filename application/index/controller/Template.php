@@ -127,7 +127,20 @@ class Template extends Controller {
                      */
                     if ($zip->open($path) !== FALSE)
                     {
-                        $zip->extractTo('template/' . $date . '/' . $file_name); // 假设解压缩到在当前路径下images文件夹的子文件夹php
+                        if (empty($template_id))
+                        {
+                            if (is_dir('template/' . $date . '/' . $file_name))
+                            {
+                                $is_path = 'template/' . $date . '/' . $file_name.rand(1111,9999);
+                            }else
+                            {
+                                $is_path = 'template/' . $date . '/' . $file_name;
+                            }
+                        }else 
+                        {
+                            $is_path = 'template/' . $date . '/' . $file_name;
+                        }
+                        $zip->extractTo($is_path); // 假设解压缩到在当前路径下images文件夹的子文件夹php
                         $zip->close(); // 关闭处理的zip文件
                         $file_path =  $date . '/' . $file_name . '/' . $filename;
                     }
