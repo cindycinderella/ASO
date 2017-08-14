@@ -114,9 +114,6 @@ class Template extends Controller {
                     'size' => 8388608,
                     'ext' => 'zip'
                 ])->move(ROOT_PATH . 'public' . DS . 'template' . DS . 'zip', '');
-                var_dump($info);
-                echo ROOT_PATH . 'public' . DS . 'template' . DS . 'zip';
-                exit;
                 if ($info)
                 {
                     $path = ROOT_PATH . 'public/template/' . DS . 'zip/' . $info->getSaveName();
