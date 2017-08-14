@@ -164,7 +164,7 @@ class Material extends Controller {
                 {
                     foreach ($allData as $k => $infoData)
                     {
-                        if (empty($infoData))
+                        if (empty(trim($infoData)))
                         {
                             continue;
                         }
