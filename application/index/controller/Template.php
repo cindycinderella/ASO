@@ -114,9 +114,10 @@ class Template extends Controller {
                     'size' => 8388608,
                     'ext' => 'zip'
                 ])->move(ROOT_PATH . 'public' . DS . 'template' . DS . 'zip', '');
+                var_dump($info);
                 if ($info)
                 {
-                    $path = ROOT_PATH . 'public/template/' . DS . 'zip/' . $info->getSaveName();
+                    echo$path = ROOT_PATH . 'public/template/' . DS . 'zip/' . $info->getSaveName();
                     $file_name = explode(".", $info->getSaveName());
                     $file_name = $file_name[0];
                     $zip = new \ZipArchive(); // 新建一个ZipArchive的对象
@@ -125,6 +126,7 @@ class Template extends Controller {
                      * $zip->open这个方法的参数表示处理的zip文件名。
                      * 如果对zip文件对象操作成功，$zip->open这个方法会返回TRUE
                      */
+                    exit;
                     if ($zip->open($path, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== FALSE)
                     {
                         $zip->extractTo('template/' . $date . '/' . $file_name); // 假设解压缩到在当前路径下images文件夹的子文件夹php
