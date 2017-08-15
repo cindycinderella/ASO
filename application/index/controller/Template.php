@@ -116,7 +116,7 @@ class Template extends Controller {
                 ])->move(ROOT_PATH . 'public' . DS . 'template' . DS . 'zip', '');
                 if ($info)
                 {
-                    echo $path = 'template' . DS . 'zip/' . $info->getSaveName();
+                    $path = ROOT_PATH . 'public/template' . DS . 'zip/' . $info->getSaveName();
                     $file_name = explode(".", $info->getSaveName());
                     $file_name = $file_name[0];
                     $zip = new \ZipArchive(); // 新建一个ZipArchive的对象
@@ -140,7 +140,6 @@ class Template extends Controller {
                         {
                             $is_path =  $date . '/' . $file_name;
                         }
-                        echo 'template/'.$is_path;
                         $zip->extractTo('template/'.$is_path); // 假设解压缩到在当前路径下images文件夹的子文件夹php
                         $zip->close(); // 关闭处理的zip文件
                         $file_path =  $is_path . '/' . $filename;
@@ -175,7 +174,7 @@ class Template extends Controller {
                 }
                 
                 // 修改
-                Db::table('template')->where('id', $template_id)->update($update);
+                $affect = Db::table('template')->where('id', $template_id)->update($update);
                 Db::table('web_side')->where('template_id', $template_id)->update([
                     'type' => $web_type,
                     'pertain_type' => $pertain_type

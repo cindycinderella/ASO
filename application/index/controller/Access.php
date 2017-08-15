@@ -304,9 +304,9 @@ class Access extends Controller {
         $where = array(
             'status' => 1,
             'tag' => $server['tag'],
-            'type' => $type['id']
+            't1.type' => $type['id']
         );
-        $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1 JOIN (	SELECT ROUND(	RAND() * (	(SELECT MAX(id) FROM material) - (SELECT MIN(id) FROM material)) + (SELECT MIN(id) FROM material)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY	t1.id LIMIT 20';
+        $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1 JOIN (	SELECT ROUND(	RAND() * (	(SELECT MAX(id) FROM material) - (SELECT MIN(id) FROM material)) + (SELECT MIN(id) FROM material)) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = '.$type['id'].' ORDER BY	t1.id LIMIT 20';
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
