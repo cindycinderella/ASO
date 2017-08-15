@@ -125,7 +125,7 @@ class Template extends Controller {
                      * $zip->open这个方法的参数表示处理的zip文件名。
                      * 如果对zip文件对象操作成功，$zip->open这个方法会返回TRUE
                      */
-                    if ($zip->open($path,\ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== FALSE)
+                    if ($zip->open($path) !== FALSE)
                     {
                         if (empty($template_id))
                         {
