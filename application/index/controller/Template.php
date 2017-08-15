@@ -140,6 +140,7 @@ class Template extends Controller {
                         {
                             $is_path =  $date . '/' . $file_name;
                         }
+                        echo 'template/'.$is_path;
                         $zip->extractTo('template/'.$is_path); // 假设解压缩到在当前路径下images文件夹的子文件夹php
                         $zip->close(); // 关闭处理的zip文件
                         $file_path =  $is_path . '/' . $filename;
