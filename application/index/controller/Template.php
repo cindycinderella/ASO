@@ -116,7 +116,7 @@ class Template extends Controller {
                 ])->move(ROOT_PATH . 'public' . DS . 'template' . DS . 'zip', '');
                 if ($info)
                 {
-                    $path = ROOT_PATH . 'public/template' . DS . 'zip/' . $info->getSaveName();
+                    echo $path = 'template' . DS . 'zip/' . $info->getSaveName();
                     $file_name = explode(".", $info->getSaveName());
                     $file_name = $file_name[0];
                     $zip = new \ZipArchive(); // 新建一个ZipArchive的对象
