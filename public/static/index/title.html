@@ -40,7 +40,7 @@
 							  <tbody>
 							{foreach name="title_list" item="vo"}
 								<tr>
-									<td style="text-align: center;overflow: hidden;width: 100%;height: 30px;display: inline-block;"><font><font>{:$vo.content}</font></font></td>
+									<td style="text-align: center;overflow: hidden;width: 100%;height: 30px;display: inline-block;"><font><font>{:html_entity_decode($vo.content)}</font></font></td>
 									<td style="text-align: center;"><font><font>{:$vo.tag}</font></font></td>
 									<td style="text-align: center;"><font><font>{:date("Y-m-d H:i:s",$vo.addtime)}</font></font></td>
 									<td style="text-align: center;">
