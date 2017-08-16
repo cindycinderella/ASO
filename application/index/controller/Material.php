@@ -126,7 +126,7 @@ class Material extends Controller {
             {
                 $info = $allFile->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads/txt');
                 $path = 'uploads/txt/' . $info->getSaveName();
-                $allData = file_get_contents($path);
+                $allData = file_get_contents($path);               
                 $allData = explode("\n", $allData);
                 $allData = array_filter($allData);
             }
@@ -168,7 +168,7 @@ class Material extends Controller {
                         {
                             continue;
                         }
-                        if (mb_strlen($infoData) < 30 && $material_type == '29')
+                        if (mb_strlen($infoData) < 30 && $material_type == '56')
                         {
                             // 内容标签过滤
                             continue;
