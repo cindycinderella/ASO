@@ -319,7 +319,7 @@ class Access extends Controller {
         {
             if (count($titleList) == 1)
             {
-                $reParam = $titleList[0]['content'];
+                $reParam = html_entity_decode($titleList[0]['content']);
             }
             else
             {
@@ -331,12 +331,12 @@ class Access extends Controller {
                     {
                         $reNum = 1;
                     }
-                    $reParam = $titleList[$reNum - 1]['content']; // 得到此次请求的模板内容
+                    $reParam = html_entity_decode($titleList[$reNum - 1]['content']); // 得到此次请求的模板内容
                 }
                 else
                 {
                     $reNum = $server['request_num'];
-                    $reParam = $titleList[$reNum]['content']; // 得到此次请求的模板ID
+                    $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
                 }
             }
             $imgType = strtolower(strrchr($reParam, '.'));
@@ -363,7 +363,7 @@ class Access extends Controller {
                 $rawParam = '{:' . $val . '}';
                 if (count($titleList) == 1)
                 {
-                    $reParam = $titleList[0]['content'];
+                    $reParam = html_entity_decode($titleList[0]['content']);
                     $imgType = strtolower(strrchr($reParam, '.'));
                     if (in_array($imgType, array(
                         '.gif',
@@ -385,7 +385,7 @@ class Access extends Controller {
                         $reNum = ($server['request_num'] + $kk + 1) % count($titleList);
                         if (isset($titleList[$reNum - 1]['content']))
                         {
-                            $reParam = $titleList[$reNum - 1]['content']; // 得到此次请求的模板内容
+                            $reParam = html_entity_decode($titleList[$reNum - 1]['content']); // 得到此次请求的模板内容
                             $imgType = strtolower(strrchr($reParam, '.'));
                             if (in_array($imgType, array(
                                 '.gif',
@@ -404,7 +404,7 @@ class Access extends Controller {
                         $reNum = $server['request_num'] + $kk;
                         if (isset($titleList[$reNum]['content']))
                         {
-                            $reParam = $titleList[$reNum]['content']; // 得到此次请求的模板ID
+                            $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
                             $imgType = strtolower(strrchr($reParam, '.'));
                             if (in_array($imgType, array(
                                 '.gif',
