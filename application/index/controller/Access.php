@@ -19,8 +19,8 @@ class Access extends Controller {
                 'msg' => '请求数据为空'
             ]);
         }
-        $ip = _get_ip();
-        // $ip = '47.52.8.223';
+        //$ip = _get_ip();
+        $ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
