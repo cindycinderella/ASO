@@ -179,6 +179,11 @@ class Material extends Controller {
                         $data[$k]['tag'] = $tag;
                         $data[$k]['content'] = htmlentities($infoData);
                         $data[$k]['addtime'] = time();
+                        if (count($data)==5000)
+                        {
+                            Db::name('material')->insertAll($data);
+                            $data = array();
+                        }
                     }
                     $affect = Db::name('material')->insertAll($data);
                     unset($path);
@@ -187,12 +192,21 @@ class Material extends Controller {
                 {
                     foreach ($content as $k => $infoImg)
                     {
+                        if (empty(trim($infoData)))
+                        {
+                            continue;
+                        }
                         $id ++;
                         $data[$k]['id'] = $id;
                         $data[$k]['type'] = $material_type;
                         $data[$k]['tag'] = $tag;
                         $data[$k]['content'] = $infoImg;
                         $data[$k]['addtime'] = time();
+                        if (count($data)==5000)
+                        {
+                            Db::name('material')->insertAll($data);
+                            $data = array();
+                        }
                     }
                     $affect = Db::name('material')->insertAll($data);
                 }

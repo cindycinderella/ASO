@@ -43,6 +43,10 @@ class Index extends Controller {
         }
         else
         {
+            if (session('?admin_user'))
+            {
+                $this->redirect('index/home');
+            }
             return view('login');
         }
     }
