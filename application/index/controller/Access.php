@@ -309,7 +309,7 @@ class Access extends Controller {
         $limit = count($arr);
         if ($k=='article_title')
         {
-            $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
+            echo $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
             JOIN (	SELECT ROUND(	RAND() * (
             (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
             (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
