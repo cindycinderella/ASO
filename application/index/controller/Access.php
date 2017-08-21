@@ -20,7 +20,7 @@ class Access extends Controller {
             ]);
         }
         $ip = _get_ip();
-        //$ip = '47.52.8.223';
+        // $ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -70,7 +70,7 @@ class Access extends Controller {
             'tem.status' => 1,
             'w.type' => $postData['type'],
             'tem.type' => $postData['webType']
-        ); // type 10 为PC端 11是H5
+        ); // webType 10 为PC端 11是H5 type 访问类型
         $template = Db::table('template')->alias('tem')
             ->field("tem.id,tem.path,tem.tag")
             ->join('web_side w', 'tem.id = w.template_id')
@@ -267,13 +267,13 @@ class Access extends Controller {
                 $folder = random(5, '0123456789abcdefghijklmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ');
                 if ($config['value'] == 1)
                 {
-                    $reParam = $server['server_host'].'index.php?id='. $link . '_' . $folder ;
+                    $reParam = $server['server_host'] . 'index.php?id=' . $link . '_' . $folder;
                 }
                 else
                 {
                     $sql = "SELECT server_host FROM	 server AS t1 JOIN (	SELECT ROUND(	RAND() * ((	SELECT MAX(id)	FROM	`server`) - (SELECT MIN(id) FROM server)	) + (SELECT MIN(id) FROM server)) AS id) AS t2 WHERE	t1.id >= t2.id ORDER BY 	t1.id LIMIT 1";
                     $host = Db::query($sql);
-                    $reParam = $host[0]['server_host'] .'index.php?id='. $link . '_' . $folder;
+                    $reParam = $host[0]['server_host'] . 'index.php?id=' . $link . '_' . $folder;
                 }
                 $str = str_replace($rawParam, $reParam, $str);
                 $id ++;
@@ -306,7 +306,8 @@ class Access extends Controller {
             'tag' => $server['tag'],
             't1.type' => $type['id']
         );
-        $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1 JOIN (	SELECT ROUND(	RAND() * (	(SELECT MAX(id) FROM material) - (SELECT MIN(id) FROM material)) + (SELECT MIN(id) FROM material)) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = '.$type['id'].' ORDER BY	t1.id LIMIT 20';
+        $limit = count($arr);
+        $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1 JOIN (	SELECT ROUND(	RAND() * (	(SELECT MAX(id) FROM material) - (SELECT MIN(id) FROM material)) + (SELECT MIN(id) FROM material)) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT ' . $limit;
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
@@ -315,55 +316,31 @@ class Access extends Controller {
                 'msg' => '未找到标签内容'
             ];
         }
-        if (count($arr) == 1)
+        foreach ($arr as $kk => $val)
         {
+            $rawParam = '{:' . $val . '}';
             if (count($titleList) == 1)
             {
                 $reParam = html_entity_decode($titleList[0]['content']);
+                $imgType = strtolower(strrchr($reParam, '.'));
+                if (in_array($imgType, array(
+                    '.gif',
+                    '.jpg',
+                    '.png',
+                    '.jpeg'
+                )))
+                {
+                    $reParam = IMGSRC . $reParam;
+                }
+                $str = str_replace($rawParam, $reParam, $str);
+                break;
             }
             else
-            {
-                if ($server['request_num'] >= count($titleList))
+            {                
+                $reNum =$kk;
+                if (isset($titleList[$reNum]['content']))
                 {
-                    // 请求的次数大于总的模板数 用求于的方式选出第几个模板
-                    $reNum = ($server['request_num'] + 1) % count($titleList);
-                    if ($reNum == 0)
-                    {
-                        $reNum = 1;
-                    }
-                    $reParam = html_entity_decode($titleList[$reNum - 1]['content']); // 得到此次请求的模板内容
-                }
-                else
-                {
-                    $reNum = $server['request_num'];
                     $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
-                }
-            }
-            $imgType = strtolower(strrchr($reParam, '.'));
-            if (in_array($imgType, array(
-                '.gif',
-                '.jpg',
-                '.png',
-                '.jpeg'
-            )))
-            {
-                $reParam = IMGSRC . $reParam;
-            }
-            $str = str_replace($rawParam, $reParam, $str);
-            return [
-                'status' => 0,
-                'content' => $str,
-                'msg' => '替换成功'
-            ];
-        }
-        else
-        {
-            foreach ($arr as $kk => $val)
-            {
-                $rawParam = '{:' . $val . '}';
-                if (count($titleList) == 1)
-                {
-                    $reParam = html_entity_decode($titleList[0]['content']);
                     $imgType = strtolower(strrchr($reParam, '.'));
                     if (in_array($imgType, array(
                         '.gif',
@@ -375,72 +352,34 @@ class Access extends Controller {
                         $reParam = IMGSRC . $reParam;
                     }
                     $str = str_replace($rawParam, $reParam, $str);
-                    break;
-                }
-                else
-                {
-                    if ($server['request_num'] >= count($titleList))
-                    {
-                        // 请求的次数大于总的模板数 用求于的方式选出第几个模板
-                        $reNum = ($server['request_num'] + $kk + 1) % count($titleList);
-                        if (isset($titleList[$reNum - 1]['content']))
-                        {
-                            $reParam = html_entity_decode($titleList[$reNum - 1]['content']); // 得到此次请求的模板内容
-                            $imgType = strtolower(strrchr($reParam, '.'));
-                            if (in_array($imgType, array(
-                                '.gif',
-                                '.jpg',
-                                '.png',
-                                '.jpeg'
-                            )))
-                            {
-                                $reParam = IMGSRC . $reParam;
-                            }
-                            $str = str_replace($rawParam, $reParam, $str);
-                        }
-                    }
-                    else
-                    {
-                        $reNum = $server['request_num'] + $kk;
-                        if (isset($titleList[$reNum]['content']))
-                        {
-                            $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
-                            $imgType = strtolower(strrchr($reParam, '.'));
-                            if (in_array($imgType, array(
-                                '.gif',
-                                '.jpg',
-                                '.png',
-                                '.jpeg'
-                            )))
-                            {
-                                $reParam = IMGSRC . $reParam;
-                            }
-                            $str = str_replace($rawParam, $reParam, $str);
-                        }
-                    }
                 }
             }
-            return [
-                'status' => 0,
-                'content' => $str,
-                'msg' => '替换成功'
-            ];
         }
+        return [
+            'status' => 0,
+            'content' => $str,
+            'msg' => '替换成功'
+        ];
     }
-    /***
-     * @param $host 要镶嵌冬季代码的域名
-     * @param $server 本次请求的服务器信息
-     * @param @return $str 替换的代码 
-     * ***************/
-    private function replaceCount($host,$serverHost,$str) 
+
+    /**
+     * *
+     *
+     * @param $host 要镶嵌冬季代码的域名            
+     * @param $server 本次请求的服务器信息            
+     * @param @return $str
+     *            替换的代码
+     *            **************
+     */
+    private function replaceCount($host, $serverHost, $str)
     {
-        if(!strpos($serverHost,$host))
+        if (! strpos($serverHost, $host))
         {
             return $str;
         }
-        if ($host=='yldmedlink.cn')
+        if ($host == 'yldmedlink.cn')
         {
-           
+            
             $seach = "<script>
                             var _hmt = _hmt || [];
                             (function() {
@@ -449,10 +388,11 @@ class Access extends Controller {
                               var s = document.getElementsByTagName('script')[0]; 
                               s.parentNode.insertBefore(hm, s);
                             })();
-                            </script>";                       
-        }elseif ($host=='tchico.com.cn')
+                            </script>";
+        }
+        elseif ($host == 'tchico.com.cn')
         {
-            $seach ="<script>
+            $seach = "<script>
                             var _hmt = _hmt || [];
                             (function() {
                               var hm = document.createElement('script');
@@ -463,6 +403,6 @@ class Access extends Controller {
                             </script>";
         }
         $content = explode("</body>", $str);
-        return  $str = $content[0] . $seach . '</body>' . $content[1];
+        return $str = $content[0] . $seach . '</body>' . $content[1];
     }
 }
