@@ -128,7 +128,7 @@ class Template extends Controller {
                     if ($zip->open($path) !== FALSE)
                     {
                         if (empty($template_id))
-                        {
+                        {                          
                             if (is_dir('template/' . $date . '/' . $file_name))
                             {
                                 $is_path = $date . '/' . $file_name.rand(1111,9999);
@@ -171,14 +171,14 @@ class Template extends Controller {
                         'path' => $file_path,
                         'name' => $name
                     );
-                }
-                
+                }                
                 // 修改
-                $affect = Db::table('template')->where('id', $template_id)->update($update);
+                Db::table('template')->where('id', $template_id)->update($update);
                 Db::table('web_side')->where('template_id', $template_id)->update([
                     'type' => $web_type,
                     'pertain_type' => $pertain_type
                 ]);
+                $affect = 1;
             }
             else
             {
