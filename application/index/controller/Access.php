@@ -307,16 +307,12 @@ class Access extends Controller {
             't1.type' => $type['id']
         );
         $limit = count($arr);
-        if ($k=='article_title')
-        {
-            echo $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
+         $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
             JOIN (	SELECT ROUND(	RAND() * (
             (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
             (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
             (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')
-            ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT ' . $limit;
-        }
-                 
+            ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT ' . $limit;    
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
