@@ -126,7 +126,15 @@ class Material extends Controller {
             {
                 $info = $allFile->rule('date')->move(ROOT_PATH . 'public' . DS . 'uploads/txt');
                 $path = 'uploads/txt/' . $info->getSaveName();
-                $allData = file_get_contents($path);               
+                $allData = file_get_contents($path);    
+                $encode = mb_detect_encoding($allData, array("ASCII","UTF-8","GB2312","GBK","BIG5"));
+                if ($encode=='EUC-CN')
+                {
+                    $allData = iconv("GBK", "UTF-8", $allData);
+                }else
+                {
+                    $allData = iconv($encode, "UTF-8", $allData);
+                }
                 $allData = explode("\n", $allData);
                 $allData = array_filter($allData);
             }
@@ -163,7 +171,7 @@ class Material extends Controller {
                 if (! empty($allData) && $isFile != 1)
                 {
                     foreach ($allData as $k => $infoData)
-                    {
+                    {                       
                         if (empty(trim($infoData)))
                         {
                             continue;
@@ -246,7 +254,7 @@ class Material extends Controller {
             ->where('id=' . $title_id)
             ->find();
         $material_type = Db::table('nav')->field('is_file,name,id')
-            ->where('pid=' . $thisNav['pid'] . ' and id != 12 and status = 1')
+            ->where('pid=' . $thisNav['pid'] . ' and id != 12')
             ->select();
         if (isset($material_id) && $material_id)
         {
