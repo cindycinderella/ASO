@@ -161,14 +161,14 @@ class Nav extends Controller {
         $where = array(
             'type' => $title_id
         );
-        $navList = Db::table('nav')->field("id,name,status,is_file")->where('pid = 1')->paginate(15);
+        $navList = Db::table('nav')->field("id,name,status,is_file")->order('id desc ')->where('pid = 1')->paginate(15);
         $page = $navList->render();
         $user = session('admin_user');
         $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
         $data['username'] = $username;
         $data['nav'] = nav();
         $data['nav_list'] = $navList;
-        $data['page'] = '';
+        $data['page'] = $page;
         $data['title'] = ucfirst($thisNav['name']);
         $data['class'] = $class;
         $data['title_id'] = $title_id;
