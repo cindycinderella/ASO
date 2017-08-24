@@ -300,13 +300,19 @@ class Access extends Controller {
                 'status' => 403,
                 'msg' => '未找到标签'
             ];
-        }        
-        $limit = count($arr)+20;
-        $sql = "SELECT	* FROM	material WHERE 	id >= (SELECT floor((
-                (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
-                (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
-                ) * RAND() * 100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}'))) AND `status` = 1
-                AND type = '{$type['id']}' LIMIT " . $limit;
+        }
+        $where = array(
+            'status' => 1,
+            'tag' => $server['tag'],
+            't1.type' => $type['id']
+        );
+        $limit = count($arr);
+        $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
+            JOIN (	SELECT ROUND(	RAND() * (
+            (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
+            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
+            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')
+            ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT ' . $limit;
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
@@ -317,17 +323,18 @@ class Access extends Controller {
         }
         foreach ($arr as $kk => $val)
         {
+            $rawParam = '{:' . $val . '}';
             if (!isset($titleList[$kk]['content']))
             {
-                $sql = "SELECT	* FROM	material WHERE 	id >= (SELECT floor((
-                (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
-                (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
-                ) * RAND() * 100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}'))) AND `status` = 1
-                AND type = '{$type['id']}' LIMIT 1";
-                $ontent = Db::query($sql);
-                $titleList[$kk]['content'] = $ontent[0]['content'];
+                $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
+            JOIN (	SELECT ROUND(	RAND() * (
+            (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
+            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
+            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')
+            ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT 1';
+                $content = Db::query($sql);
+                $titleList[$kk]['content'] =$content[0]['content'];
             }
-            $rawParam = '{:' . $val . '}';
             $reParam = html_entity_decode($titleList[$kk]['content']);
             $imgType = strtolower(strrchr($reParam, '.'));
             if (in_array($imgType, array(
@@ -341,7 +348,6 @@ class Access extends Controller {
             }
             $str = str_replace($rawParam, $reParam, $str);
         }
-
         return [
             'status' => 0,
             'content' => $str,
