@@ -200,7 +200,7 @@ class Material extends Controller {
                 {
                     foreach ($content as $k => $infoImg)
                     {
-                        if (empty(trim($infoData)))
+                        if (empty(trim($infoImg)))
                         {
                             continue;
                         }
