@@ -228,7 +228,6 @@ class Access extends Controller {
                 'url' => $str,
                 'status' => 200
             );
-            exit();
             return json($returnJson);
         }
     }
@@ -342,7 +341,7 @@ class Access extends Controller {
             }
             $str = str_replace($rawParam, $reParam, $str);
         }
-        
+
         return [
             'status' => 0,
             'content' => $str,
