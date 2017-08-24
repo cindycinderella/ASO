@@ -309,9 +309,9 @@ class Access extends Controller {
         $limit = count($arr);
          $sql = "SELECT	* FROM	material WHERE 	id >= (	
              (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') - 
-             (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = ''{$type['id']}''	)
+             (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
              ) * RAND()*100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
-             AND type = ''{$type['id']}'' LIMIT " . $limit;
+             AND type = '{$type['id']}' LIMIT " . $limit;
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
