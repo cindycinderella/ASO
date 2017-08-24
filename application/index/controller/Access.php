@@ -341,7 +341,6 @@ class Access extends Controller {
                 $reParam = IMGSRC . $reParam;
             }
             $str = str_replace($rawParam, $reParam, $str);
-            break;
         }
         
         return [
