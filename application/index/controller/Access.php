@@ -307,6 +307,10 @@ class Access extends Controller {
             't1.type' => $type['id']
         );
         $limit = count($arr);
+        if ($limit == 1)
+        {
+            $limit = 20;
+        }
         $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
             JOIN (	SELECT ROUND(	RAND() * (
             (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
@@ -324,29 +328,48 @@ class Access extends Controller {
         foreach ($arr as $kk => $val)
         {
             $rawParam = '{:' . $val . '}';
-            if (!isset($titleList[$kk]['content']))
+            if (count($arr) == 1)
             {
-                $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
+                $ke = rand(0, 19);
+                $reParam = html_entity_decode($titleList[$ke]['content']);
+                $imgType = strtolower(strrchr($reParam, '.'));
+                if (in_array($imgType, array(
+                    '.gif',
+                    '.jpg',
+                    '.png',
+                    '.jpeg'
+                )))
+                {
+                    $reParam = IMGSRC . $reParam;
+                }
+                $str = str_replace($rawParam, $reParam, $str);
+            }
+            else
+            {
+                if (! isset($titleList[$kk]['content']))
+                {
+                    $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
             JOIN (	SELECT ROUND(	RAND() * (
             (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
             (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
             (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')
             ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT 1';
-                $content = Db::query($sql);
-                $titleList[$kk]['content'] =$content[0]['content'];
+                    $content = Db::query($sql);
+                    $titleList[$kk]['content'] = $content[0]['content'];
+                }
+                $reParam = html_entity_decode($titleList[$kk]['content']);
+                $imgType = strtolower(strrchr($reParam, '.'));
+                if (in_array($imgType, array(
+                    '.gif',
+                    '.jpg',
+                    '.png',
+                    '.jpeg'
+                )))
+                {
+                    $reParam = IMGSRC . $reParam;
+                }
+                $str = str_replace($rawParam, $reParam, $str);
             }
-            $reParam = html_entity_decode($titleList[$kk]['content']);
-            $imgType = strtolower(strrchr($reParam, '.'));
-            if (in_array($imgType, array(
-                '.gif',
-                '.jpg',
-                '.png',
-                '.jpeg'
-            )))
-            {
-                $reParam = IMGSRC . $reParam;
-            }
-            $str = str_replace($rawParam, $reParam, $str);
         }
         return [
             'status' => 0,
