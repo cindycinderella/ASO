@@ -301,7 +301,7 @@ class Access extends Controller {
                 'msg' => '未找到标签'
             ];
         }        
-        $limit = count($arr);
+        $limit = count($arr)+20;
         $sql = "SELECT	* FROM	material WHERE 	id >= (SELECT floor((
                 (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
                 (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
