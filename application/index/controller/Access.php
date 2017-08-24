@@ -306,7 +306,7 @@ class Access extends Controller {
             'tag' => $server['tag'],
             't1.type' => $type['id']
         );
-        $limit = count($arr);
+        $limit = count($arr)+5;
          $sql = "SELECT	* FROM	material WHERE 	id >= (	
              (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') - 
              (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
