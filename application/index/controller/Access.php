@@ -228,6 +228,7 @@ class Access extends Controller {
                 'url' => $str,
                 'status' => 200
             );
+            exit();
             return json($returnJson);
         }
     }
@@ -300,14 +301,9 @@ class Access extends Controller {
                 'status' => 403,
                 'msg' => '未找到标签'
             ];
-        }
-        $where = array(
-            'status' => 1,
-            'tag' => $server['tag'],
-            't1.type' => $type['id']
-        );
-        $limit = count($arr)+5;
-         $sql = "SELECT	* FROM	material WHERE 	id >= (	
+        }        
+        $limit = count($arr) + 5;
+        $sql = "SELECT	* FROM	material WHERE 	id >= (	
              (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') - 
              (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
              ) * RAND()*100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
@@ -322,43 +318,32 @@ class Access extends Controller {
         }
         foreach ($arr as $kk => $val)
         {
+            if (!isset($titleList[$kk]['content']))
+            {
+                $sql = "SELECT	* FROM	material WHERE 	id >= (
+                (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
+                (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
+                ) * RAND()*100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
+                AND type = '{$type['id']}' LIMIT 1";
+                $ontent = Db::query($sql);
+                $titleList[$kk]['content'] = $ontent[0]['content'];
+            }
             $rawParam = '{:' . $val . '}';
-            if (count($titleList) == 1)
+            $reParam = html_entity_decode($titleList[$kk]['content']);
+            $imgType = strtolower(strrchr($reParam, '.'));
+            if (in_array($imgType, array(
+                '.gif',
+                '.jpg',
+                '.png',
+                '.jpeg'
+            )))
             {
-                $reParam = html_entity_decode($titleList[0]['content']);
-                $imgType = strtolower(strrchr($reParam, '.'));
-                if (in_array($imgType, array(
-                    '.gif',
-                    '.jpg',
-                    '.png',
-                    '.jpeg'
-                )))
-                {
-                    $reParam = IMGSRC . $reParam;
-                }
-                $str = str_replace($rawParam, $reParam, $str);
-                break;
+                $reParam = IMGSRC . $reParam;
             }
-            else
-            {
-                $reNum = $kk;
-                if (isset($titleList[$reNum]['content']))
-                {
-                    $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
-                    $imgType = strtolower(strrchr($reParam, '.'));
-                    if (in_array($imgType, array(
-                        '.gif',
-                        '.jpg',
-                        '.png',
-                        '.jpeg'
-                    )))
-                    {
-                        $reParam = IMGSRC . $reParam;
-                    }
-                    $str = str_replace($rawParam, $reParam, $str);
-                }
-            }
+            $str = str_replace($rawParam, $reParam, $str);
+            break;
         }
+        
         return [
             'status' => 0,
             'content' => $str,
