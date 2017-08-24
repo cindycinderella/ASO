@@ -19,7 +19,7 @@ class Access extends Controller {
                 'msg' => '请求数据为空'
             ]);
         }
-        //$ip = _get_ip();
+        // $ip = _get_ip();
         $ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
@@ -307,12 +307,11 @@ class Access extends Controller {
             't1.type' => $type['id']
         );
         $limit = count($arr);
-         $sql = 'SELECT t1.id,t1.content,t1.status FROM	material AS t1
-            JOIN (	SELECT ROUND(	RAND() * (
-            (SELECT MAX(id) FROM material where status = 1 and type = ' . $type['id'] . ') -
-            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')) +
-            (SELECT MIN(id) FROM material  where status = 1 and type = ' . $type['id'] . ')
-            ) AS id) AS t2 WHERE	t1.id >= t2.id and t1.status = 1 and t1.type = ' . $type['id'] . ' ORDER BY	t1.id LIMIT ' . $limit;    
+         $sql = "SELECT	* FROM	material WHERE 	id >= (	
+             (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') - 
+             (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = ''{$type['id']}''	)
+             ) * RAND()*100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
+             AND type = ''{$type['id']}'' LIMIT " . $limit;
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
@@ -341,8 +340,8 @@ class Access extends Controller {
                 break;
             }
             else
-            {                
-                $reNum =$kk;
+            {
+                $reNum = $kk;
                 if (isset($titleList[$reNum]['content']))
                 {
                     $reParam = html_entity_decode($titleList[$reNum]['content']); // 得到此次请求的模板ID
