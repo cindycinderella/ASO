@@ -69,7 +69,7 @@
 							  <label class="control-label" for="fileInput">批量上传</label>
 							  <div class="controls">
 								<div class="uploader" id="uniform-fileInput">
-                                <input class="input-file uniform_on" name="allfile" id="fileInput" type="file">
+                                <input class="input-file uniform_on" name="allfile"  type="file">
                                 <span class="filename" style="user-select: none;">No file selected</span>
                                 <span class="action" style="user-select: none;">Choose File</span>
                                 </div>
@@ -200,11 +200,13 @@
 				var content = $('#textarea2').val();
 				var contentFile = $("input[name='allfile']").val();
 				var contentImg = $("#fileInput").val();
-				if ((contentFile==''&&content=='')||(contentImg==''&&is_file==1))
+				if ((contentFile==''&&content==''&&is_file==0)||(contentImg==''&&is_file==1))
 				{
 					alert("请输入素材内容");
 					return false;
-				}				
+				}
+				$(this).html("上传中，请勿重复点击！！");
+				$(this).removeClass('btn-primary');				
 			})
 			//实现复选框变单选
 			$('.inlineCheckbox1').change(function(){
