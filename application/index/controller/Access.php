@@ -302,11 +302,11 @@ class Access extends Controller {
             ];
         }        
         $limit = count($arr);
-        $sql = "SELECT	* FROM	material WHERE 	id >= (	
-             (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') - 
-             (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
-             ) * RAND() + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
-             AND type = '{$type['id']}' LIMIT " . $limit;
+        $sql = "SELECT	* FROM	material WHERE 	id >= (SELECT floor((
+                (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
+                (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
+                ) * RAND() * 100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}'))) AND `status` = 1
+                AND type = '{$type['id']}' LIMIT " . $limit;
         $titleList = Db::query($sql);
         if (empty($titleList))
         {
@@ -319,10 +319,10 @@ class Access extends Controller {
         {
             if (!isset($titleList[$kk]['content']))
             {
-                $sql = "SELECT	* FROM	material WHERE 	id >= (
+                $sql = "SELECT	* FROM	material WHERE 	id >= (SELECT floor((
                 (	SELECT MAX(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}') -
                 (SELECT	MIN(id)	FROM	material	WHERE	`status` = 1	AND type = '{$type['id']}'	)
-                ) * RAND()  + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}') AND `status` = 1
+                ) * RAND() * 100 + (SELECT	MIN(id)	FROM		material	WHERE	`status` = 1	AND type = '{$type['id']}'))) AND `status` = 1
                 AND type = '{$type['id']}' LIMIT 1";
                 $ontent = Db::query($sql);
                 $titleList[$kk]['content'] = $ontent[0]['content'];
