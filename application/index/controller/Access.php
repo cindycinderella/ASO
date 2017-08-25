@@ -69,7 +69,7 @@ class Access extends Controller {
         $templateWhere = array(
             'tem.status' => 1,
             'w.type' => $postData['type'],
-            'tem.id'=>11,
+            'tem.id'=>12,
             'tem.type' => $postData['webType']
         ); // webType 10 为PC端 11是H5 type 访问类型
         $template = Db::table('template')->alias('tem')
