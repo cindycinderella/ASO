@@ -19,8 +19,8 @@ class Access extends Controller {
                 'msg' => '请求数据为空'
             ]);
         }
-        //$ip = _get_ip();
-        $ip = '47.52.8.223';
+        $ip = _get_ip();
+        //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -112,8 +112,6 @@ class Access extends Controller {
          * 得到带入的词语
          * ******
          */
-        var_dump('template' . DS . $templatePath);
-        
         if (file_exists('template' . DS . $templatePath))
         {
             $path = 'template' . DS . $templatePath;
@@ -295,7 +293,7 @@ class Access extends Controller {
         }elseif ($k=='dd_articletime')
         {
             $rawParam = '{:' . $k . '}';
-            $rawParam = date("Y-m-d H",time());
+            $reParam = date("Y-m-d H",time());
             $str = str_replace($rawParam, $reParam, $str);
             return [
                 'status' => 0,
