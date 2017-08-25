@@ -290,6 +290,16 @@ class Access extends Controller {
                 'content' => $str,
                 'msg' => '替换成功'
             ];
+        }elseif ($k=='dd_articletime')
+        {
+            $rawParam = '{:' . $k . '}';
+            $rawParam = date("Y-m-d H",time());
+            $str = str_replace($rawParam, $reParam, $str);
+            return [
+                'status' => 0,
+                'content' => $str,
+                'msg' => '替换成功'
+            ];
         }
         $rawParam = '{:' . $k . '}';
         $type = Db::table('nav')->field("id")
