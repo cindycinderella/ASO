@@ -19,8 +19,8 @@ class Access extends Controller {
                 'msg' => '请求数据为空'
             ]);
         }
-        //$ip = _get_ip();
-        $ip = '47.52.8.223';
+        $ip = _get_ip();
+        //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
         $server = Db::table('server')->field('id,server_host,request_num')
             ->where('server_ip', $ip)
@@ -75,7 +75,8 @@ class Access extends Controller {
             ->field("tem.id,tem.path,tem.tag")
             ->join('web_side w', 'tem.id = w.template_id')
             ->where($templateWhere)
-            ->select();       
+            ->select();
+        
         if (empty($template))
         {
             return json([
@@ -104,7 +105,7 @@ class Access extends Controller {
         }
         $postData['template_id'] = $templateId;
         $postData['template_path'] = $templatePath;
-        var_dump('template' . DS . $templatePath);
+        
         /**
          * ***
          * 得到带入的词语
