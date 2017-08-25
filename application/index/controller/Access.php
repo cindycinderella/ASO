@@ -104,7 +104,7 @@ class Access extends Controller {
         }
         $postData['template_id'] = $templateId;
         $postData['template_path'] = $templatePath;
-        var_dump(file_exists('template' . DS . $templatePath));
+        var_dump('template' . DS . $templatePath);
         /**
          * ***
          * 得到带入的词语
