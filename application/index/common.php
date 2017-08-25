@@ -1,5 +1,5 @@
 <?php
-// | Author: Brooks <liu21st@gmail.com>
+// | Author: Brooks <240990281@qq.com>
 // 应用公共文件
 use think\Db;
 
@@ -187,4 +187,135 @@ function random($length, $chars = '0123456789')
     }
     return $hash;
 }
+
+/**
+ * ****CURL POST 等待返回****
+ */
+function _get_curl_post($url, $postdata = array())
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $tmpInfo = curl_exec($ch);
+    curl_close($ch);
+    if ($tmpInfo)
+    {
+        return $tmpInfo;
+    }
+}
+
+/**
+ * *****curl POST不等待返回**********
+ */
+function _sock_post($url, $data = array(), $is_return = false)
+{
+    $query = http_build_query($data);
+    $info = parse_url($url);
+    if (empty($info['port']) || $info['port'] == '0')
+    {
+        $info['port'] = '80';
+    }
+    $fp = fsockopen($info["host"], $info['port'], $errno, $errstr, 8);
+    if (isset($info['query']))
+    {
+        $head = "POST " . $info['path'] . "?" . $info["query"] . " HTTP/1.0\r\n";
+    }
+    else
+    {
+        $head = "POST " . $info['path'] . " HTTP/1.0\r\n";
+    }
+    $head .= "Host: " . $info['host'] . "\r\n";
+    $head .= "Referer: http://" . $info['host'] . $info['path'] . "\r\n";
+    $head .= "Content-type: application/x-www-form-urlencoded\r\n";
+    $head .= "Content-Length: " . strlen(trim($query)) . "\r\n";
+    $head .= "\r\n";
+    $head .= trim($query);
+    $write = fputs($fp, $head);
+    if ($is_return)
+    {
+        while (! feof($fp))
+        {
+            $line = fread($fp, 4096);
+            echo $line;
+        }
+    }
+}
+
+function _get_post($url, $postdata = array())
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_NOSIGNAL, true); // 支持毫秒级别超时设置
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1); // 设置超时
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        'Expect:'
+    )); // 设置POST无限制
+    $tmpInfo = curl_exec($ch);
+    curl_close($ch);
+    if ($tmpInfo)
+    {
+        return $tmpInfo;
+    }
+}
+
+/**
+ * 写日志，方便测试（看网站需求，也可以改成把记录存入数据库）
+ * 注意：服务器需要开通fopen配置
+ *
+ * @param $word 要写入日志里的文本内容
+ *            默认值：空值
+ */
+function debug_log($word, $filename = "debug", $time = TRUE)
+{
+    $date = date("Ymd");
+    $path = '../runtime/log' . '/' . $filename . "-" . $date . ".log";
+    if (! file_exists($path))
+    {
+        if ($time)
+        {
+            $html = date("Y-m-d H:i:s") . ":" . $word;
+        }
+        else
+        {
+            $html = $word;
+        }
+        $html .= "\n";
+        file_put_contents($path, $html);
+        return $path;
+    }
     
+    if (! is_writable($path))
+    {
+        exit($path . "没有写入权限");
+    }
+    if ($time)
+    {
+        $html = date("Y-m-d H:i:s") . ":" . $word;
+    }
+    else
+    {
+        $html = $word;
+    }
+    $html .= " \n";
+    file_put_contents($path, $html, FILE_APPEND);
+    return $path;
+}

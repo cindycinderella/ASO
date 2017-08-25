@@ -1,0 +1,252 @@
+{extend name="index/base" /}
+{block name="content"}		
+<style type="text/css">
+	.table th, .table td {
+		vertical-align: middle;
+	}	
+</style>
+<!-- start: Content -->
+<div id="content" class="span10">
+
+
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i>
+			<a href="{:url('index/index/home')}">首页</a> 
+			<i class="icon-angle-right"></i>
+		</li>
+		<li><a href="javascript:void(0);">{:$title}</a></li>
+	</ul>
+	<div style="margin-bottom: 10px;">
+	<a class="btn btn-large {if condition=" ($status==1 && $data_id==0) OR $data_id != 0"} btn-primary {/if}" {if condition="$status==1 OR $data_id != 0"} href="{:url('index/data/analysisLog',['id'=>$title_id])}"{else /} href="javascript:void(0);" {/if}   style="padding: 4px 50px;">全部</a>
+	<a class="btn btn-large {if condition="($status==0 && $data_id==0) OR $data_id != 0"} btn-primary{/if} " {if condition="$status==0 OR $data_id != 0 "} href="{:url('index/data/analysisLog',['id'=>$title_id,'status'=>1])}"{else /}href="javascript:void(0);"{/if}  style="padding: 4px 50px;">特别关心</a>
+		<div class="controls" style="float: right;width: 140px;margin-right: 140px;">
+			<select id="selectError" name="file_name" data-rel="chosen">
+				<option value="0">日志文件名</option>
+				{foreach name="data_list" item="list"}
+				<option {if condition=" $list.id == $data_id"} selected="selected" {/if} value="{:$list.id}">{:$list.file_name}</option>
+				{/foreach}					
+			</select>
+		</div>
+
+	</div>
+	<div class="row-fluid sortable">		
+		<div class="box span12">
+			<div class="box-header" data-original-title>
+				<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>														
+			</div>
+			<div class="box-content alerts">
+					<div class="alert alert-success" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>
+					<div class="alert alert-error" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>														
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th style="text-align: center;" colspan="2"><font><font>日志文件名</font></font></th>	
+							<th style="text-align: center;"><font><font>百度</font></font></th>
+							<th style="text-align: center;"><font><font>360</font></font></th>
+							<th style="text-align: center;"><font><font>搜狗</font></font></th>
+							<th style="text-align: center;"><font><font>谷歌</font></font></th>	
+							<th style="text-align: center;"><font><font>必应</font></font></th>
+							<th style="text-align: center;"><font><font></font></font></th>								  
+							<th style="text-align: center;"><font><font>操作</font></font></th>  									  
+						</tr>
+					</thead>   
+					<tbody>
+						{foreach name="analysis" item="vo"}
+						<tr>									
+							<td style="text-align: center;" rowspan="4"><font><font>{:$vo['today']['file_name']}</font></font></td>													
+						</tr>		
+						<tr>									
+							<td style="text-align: center;" ><font><font>{:$vo['today']['date']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['today']['baidu']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['today']['hao_sou']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['today']['sogou']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['today']['google']}</font></font></td>	
+							<td style="text-align: center;"><font><font>{:$vo['today']['bing']}</font></font></td>	
+							<td style="text-align: center;" rowspan="4"><a class="setLove" alt="{:$vo['today']['id']}" style="cursor: pointer;"><i class="glyphicons-icon {if condition="$vo['today']['status']==1"}heart{else /}heart_empty{/if} "></i></a></td>
+							<td style="text-align: center;" rowspan="4"><a class="btn btn-info" href="{:url('index/data/analysisDetails',['id'=>$title_id,'data_id'=>$vo['today']['data_id']])}">
+								<i class="halflings-icon white search"></i>  
+							</a></td>								
+						</tr>
+						<tr>									
+							<td style="text-align: center;" ><font><font>{:$vo['yestoday']['date']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['yestoday']['baidu']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['yestoday']['hao_sou']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['yestoday']['sogou']}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo['yestoday']['google']}</font></font></td>	
+							<td style="text-align: center;"><font><font>{:$vo['yestoday']['bing']}</font></font></td>						
+						</tr>
+						<tr>				
+							<td style="text-align: center;" ><font><font>对比</font></font></td>					
+							<td style="text-align: center;" >
+								{if condition="$vo['compared']['baidu']>=0"}
+								<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['compared']['baidu']}</font></font></span>
+								{else /} 
+								<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['compared']['baidu'])}</font></font></span>
+								{/if}</td>	
+								<td style="text-align: center;">
+									{if condition="$vo['compared']['hao_sou']>=0"}
+									<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['compared']['hao_sou']}</font></font></span>
+									{else /} 
+									<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['compared']['hao_sou'])}</font></font></span>
+									{/if}
+								</td>
+								<td style="text-align: center;">{if condition="$vo['compared']['sogou']>=0"}
+									<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['compared']['sogou']}</font></font></span>
+									{else /} 
+									<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['compared']['sogou'])}</font></font></span>
+									{/if}</td>
+									<td style="text-align: center;">{if condition="$vo['compared']['google']>=0"}
+										<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['compared']['google']}</font></font></span>
+										{else /} 
+										<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['compared']['google'])}</font></font></span>
+										{/if}</td>	
+										<td style="text-align: center;">{if condition="$vo['compared']['bing']>=0"}
+											<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['compared']['bing']}</font></font></span>
+											{else /} 
+											<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['compared']['bing'])}</font></font></span>
+											{/if}</td>								
+										</tr>
+										{/foreach}								
+									</tbody>
+								</table>  
+								<div class="pagination pagination-centered" style="float:right">
+									{:$page}
+								</div>        
+							</div>
+						</div><!--/span-->
+
+					</div><!--/row-->
+
+				</div><!--/.fluid-container-->
+
+				<!-- end: Content -->
+			</div><!--/#content.span10-->
+		</div><!--/fluid-row-->
+
+
+		<form style="display: none;" method="POST" action="{:url('index/data/analysis')}" id="analysis">
+			<input type="hidden" class="analysis_id" name="analysis_id" value="">
+			<input type="file" name="file[]" multiple="" >
+		</form>
+		<div class="clearfix"></div>
+
+		<!-- start: JavaScript-->
+		<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+		<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+		<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+		<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+		<script src="__INDEX__js/modernizr.js"></script>
+
+		<script src="__INDEX__js/bootstrap.min.js"></script>
+
+		<script src="__INDEX__js/jquery.cookie.js"></script>
+
+		<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+		<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+		<script src="__INDEX__js/excanvas.js"></script>
+		<script src="__INDEX__js/jquery.flot.js"></script>
+		<script src="__INDEX__js/jquery.flot.pie.js"></script>
+		<script src="__INDEX__js/jquery.flot.stack.js"></script>
+		<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+		<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+		<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+		<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+		<script src="__INDEX__js/jquery.noty.js"></script>
+
+		<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+		<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+		<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+		<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+		<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+		<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+		<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+		<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+		<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+		<script src="__INDEX__js/counter.js"></script>
+
+		<script src="__INDEX__js/retina.js"></script>
+
+		<script src="__INDEX__js/custom.js"></script>
+		<script src="__INDEX__js/jquery.form.js"></script>
+		<script>		
+		$(function(){
+						
+		 //设置特别关心
+			 $('.setLove').click(function(){			 	
+			 	var analysis_id = $(this).attr('alt');
+			 	var _this = $(this);
+			 	$.ajax({    
+                  	type: 'POST',    
+                  	url: "{:url('index/data/setLove')}",
+                  	dataType:"json",    
+                	data:{
+						"analysis_id":analysis_id
+						},
+					success:function(data)
+					{
+			        	if (data.status==0)
+			        	{
+			        		if (data.type==0)
+			        		{
+			        			_this.find('i').addClass('heart_empty');
+			        			_this.find('i').removeClass('heart')
+			        		}else
+			        		{
+			        			_this.find('i').removeClass('heart_empty');
+			        			_this.find('i').addClass('heart')
+			        		}
+			        		$('.alert-success').find('strong').html(data.msg);
+			        	 	$('.alert-success').css('display','block')
+			        	 	$('.alert-success').fadeOut(3000);		
+			        	}else
+			        	{
+			        		$('.alert-error').find('strong').html(data.msg);
+			        	 	$('.alert-error').css('display','block')
+			        	 	$('.alert-error').fadeOut(3000)
+			        	}	
+			        }	
+
+				});
+
+			 })
+			//搜索文件名
+			$('#selectError').change(function(){
+
+				if($(this).val()==0)
+				{
+					$('.alert-error').find('strong').html("请选择日志文件名");
+	        	 	$('.alert-error').css('display','block')
+	        	 	$('.alert-error').fadeOut(3000)
+				}	
+				var data_id = $(this).val();
+				window.location.href ="index/data/analysislog/id/{:$title_id}/data_id/"+data_id+".html";
+			})
+		})
+	</script>
+	<!-- end: JavaScript-->
+	{/block}

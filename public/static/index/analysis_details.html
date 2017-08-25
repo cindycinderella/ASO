@@ -1,0 +1,955 @@
+{extend name="index/base" /}
+{block name="content"}		
+<style type="text/css">
+.table{border: 1px solid #ddd;}
+.table th, .table td {
+vertical-align: middle;
+}
+.table th, .table td {
+border: none;
+}	
+.table tr{
+	width: 100%;
+} 
+</style>
+<!-- start: Content -->
+<div id="content" class="span10">
+
+
+<ul class="breadcrumb">
+<li>
+<i class="icon-home"></i>
+<a href="{:url('index/index/home')}">首页</a> 
+<i class="icon-angle-right"></i>
+</li>
+<li><a href="javascript:void(0);">{:$title}</a>
+<i class="icon-angle-right"></i></li>
+<li><a href="javascript:void(0);">{:$add}</a></li>
+</ul>	
+<div class="row-fluid sortable">		
+<div class="box span12">
+<div class="box-header" data-original-title>
+<h2><i class="halflings-icon white th-list"></i><span class="break"></span>分析详情</h2>														
+</div>
+<div class="box-content alerts">
+<div class="alert alert-success" style="display: none;">
+<button type="button" class="close" data-dismiss="alert">×</button>
+<strong></strong>
+</div>
+<div class="alert alert-error" style="display: none;">
+<button type="button" class="close" data-dismiss="alert">×</button>
+<strong></strong>
+</div>														
+<table class="table table-striped">
+<thead>
+<tr>
+<th style="text-align: center;"><font><font>日期</font></font></th>	
+<th style="text-align: center;"><font><font>百度</font></font></th>
+<th style="text-align: center;"><font><font>360</font></font></th>
+<th style="text-align: center;"><font><font>搜狗</font></font></th>
+<th style="text-align: center;"><font><font>谷歌</font></font></th>	
+<th style="text-align: center;"><font><font>必应</font></font></th>
+<th style="text-align: center;"><font><font></font></font></th>							  									  
+</tr>
+</thead>   
+<tbody>
+{foreach name="analysis" key = "k" item="vo"}							
+<tr>				
+{if  condition="$k< 2" }					
+<td style="text-align: center;" ><font><font>{:$vo['date']}</font></font></td>
+<td style="text-align: center;"><font><font>{:$vo['baidu']}</font></font></td>
+<td style="text-align: center;"><font><font>{:$vo['hao_sou']}</font></font></td>
+<td style="text-align: center;"><font><font>{:$vo['sogou']}</font></font></td>
+<td style="text-align: center;"><font><font>{:$vo['google']}</font></font></td>	
+<td style="text-align: center;"><font><font>{:$vo['bing']}</font></font></td>
+{else /} 
+<td style="text-align: center;" ><font><font>{:$vo['date']}</font></font></td>
+<td style="text-align: center;" >
+{if condition="$vo['baidu']>=0"}
+<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['baidu']}</font></font></span>
+{else /} 
+<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['baidu'])}</font></font></span>
+{/if}</td>	
+<td style="text-align: center;">
+{if condition="$vo['hao_sou']>=0"}
+<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['hao_sou']}</font></font></span>
+{else /} 
+<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['hao_sou'])}</font></font></span>
+{/if}
+</td>
+<td style="text-align: center;">{if condition="$vo['sogou']>=0"}
+<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['sogou']}</font></font></span>
+{else /} 
+<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['sogou'])}</font></font></span>
+{/if}</td>
+<td style="text-align: center;">{if condition="$vo['google']>=0"}
+<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['google']}</font></font></span>
+{else /} 
+<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['google'])}</font></font></span>
+{/if}</td>	
+<td style="text-align: center;">{if condition="$vo['bing']>=0"}
+<span style="cursor:pointer;" class="label label-success"><font><font>{:$vo['bing']}</font></font></span>
+{else /} 
+<span style="cursor:pointer;" class="label label-important"><font><font>{:abs($vo['bing'])}</font></font></span>
+{/if}</td>			
+{/if}												
+</tr>						
+{/foreach}								
+</tbody>
+</table> 
+<!-- 图形表	 -->
+<div style="margin-bottom: 10px;margin-top: 40px; width: 100%;float: left;">
+<div style="float: left;" class="left">
+{foreach name="spider_date"  key="kk" item="date"}	
+<a class="btn btn-large {if condition='$kk > 0'} btn-primary {/if} " href="javascript:void(0);" style="padding: 2px;font-size: 14px;">{:$date.date}</a>
+{/foreach}	
+<a class="btn btn-large btn-primary" href="javascript:void(0);" style="padding: 2px;font-size: 14px;">最近七天</a>
+</div>
+<div class="right" style="float: right;">
+<a class="btn btn-large" href="javascript:void(0);" alt="1" style="padding: 2px;font-size: 14px;">抓取TOP</a>
+<a class="btn btn-large btn-primary" href="javascript:void(0);" alt="2" style="padding: 2px;font-size: 14px;">蜘蛛抓取</a>
+<a class="btn btn-large btn-primary" href="javascript:void(0);" alt="3" style="padding: 2px;font-size: 14px;">页面状态码</a>
+<a class="btn btn-large btn-primary" href="javascript:void(0);" alt="4" style="padding: 2px;font-size: 14px;">目录页占比</a>
+<a class="btn btn-large btn-primary" href="javascript:void(0);" alt="5" style="padding: 2px;font-size: 14px;">页面上一级</a>
+</div>										
+</div>
+<table class="table table-striped cas" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px; width: 49%;float: left;">
+<thead>
+<tr>
+<th style="text-align: left; padding-left: 38px;" colspan="5"><font><font>百度总抓取IP(TOP)</font></font></th>
+</tr>
+<tr>
+<th style="text-align: center;">IP</th>
+<th style="text-align: center;">URL</th>
+<th style="text-align: center;">抓取次数</th>
+<th style="text-align: center;">总停留时间(/h)</th>	
+</tr>
+</thead>   
+<tbody>
+{foreach name="$spider_date[0]['total_data']"  item="da"}
+<tr>
+<td style="text-align: center;">{:$da.ip}</td>
+<td style="text-align: center;"><a style="text-decoration: underline; cursor: pointer;" alt="1" class="btn-settings" >查看详情</a></td>
+<td style="text-align: center;">{:$da.num}</td>
+<td style="text-align: center;">{:$da.total_stay_time}</td>
+</tr>
+{/foreach}
+</tbody></table>	
+<table class="table table-striped cas"  border="0" style="margin-top: 20px;width: 49%; float: left;">
+<thead>
+<tr>
+<th style="text-align: left; padding-left: 38px;" colspan="5">百度有效抓取IP(TOP)</th>
+</tr>
+<tr>
+
+<th style="text-align: center;">IP</th>
+<th style="text-align: center;">URL</th>
+<th style="text-align: center;">抓取次数</th>	
+</tr>
+</thead>   
+<tbody>
+{foreach name="$spider_date[0]['data']"  item="dat"}
+<tr>
+<td style="text-align: center;">{:$dat.ip}</td>
+<td style="text-align: center;"><a style="text-decoration: underline; cursor: pointer;" alt="2" class="btn-settings">查看详情</a></td>
+<td style="text-align: center;">{:$dat.valid}</td>
+</tr>
+{/foreach}
+
+</tbody></table>	
+<div id="container" style="height:400px;float: left;margin-bottom: 10px; width: 49%;"></div>	
+<div id="containers" style="height:400px;float: left;margin-bottom: 10px;width: 49%;"></div>
+</div>
+</div><!--/span-->
+
+</div><!--/row-->
+
+</div><!--/.fluid-container-->
+
+<!-- end: Content -->
+</div><!--/#content.span10-->
+</div><!--/fluid-row-->
+
+
+<div class="modal hide fade" id="myModal" style="left: 39%;width: 50%">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">×</button>
+			<h3></h3>
+		</div>
+		<div class="modal-body" style="max-height: 530px;">
+			<input type="hidden" id="ip" value="">	
+			<input type="hidden" id="type" value="">
+			<input type="hidden" id="analysis_type" value="1">
+			<input type="hidden" id="time" value="{:$spider_date[0]['date']}">
+			<table class="table table-striped" style="margin-bottom: 0;">
+			<thead>
+			<tr>
+			<th style="text-align: center;">URL</th>	
+			<th style="text-align: center;">抓起次数</th>								  									  
+			</tr>
+			</thead>   
+			<tbody>																									
+			</tbody>
+			</table>
+		</div>
+		<div class="modal-footer">
+			<a href="#" class="btn" data-dismiss="modal">Close</a>
+			<!-- <a href="#" class="btn btn-primary">Save changes</a> -->
+		</div>
+</div>
+<div class="clearfix"></div>
+
+<!-- start: JavaScript-->
+<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+<script src="__INDEX__js/modernizr.js"></script>
+
+<script src="__INDEX__js/bootstrap.min.js"></script>
+
+<script src="__INDEX__js/jquery.cookie.js"></script>
+
+<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+<script src="__INDEX__js/excanvas.js"></script>
+<script src="__INDEX__js/jquery.flot.js"></script>
+<script src="__INDEX__js/jquery.flot.pie.js"></script>
+<script src="__INDEX__js/jquery.flot.stack.js"></script>
+<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+<script src="__INDEX__js/jquery.noty.js"></script>
+
+<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+<script src="__INDEX__js/counter.js"></script>
+
+<script src="__INDEX__js/retina.js"></script>
+
+<script src="__INDEX__js/custom.js"></script>
+<script src="__INDEX__js/jquery.form.js"></script>
+
+<script src="__INDEX__js/highcharts.js"></script>
+<script src="__INDEX__js/data.js"></script>
+<script src="__INDEX__js/drilldown.js"></script>
+<script type="text/javascript">		
+	//抓取TOP
+	function getTop(data_id,time)
+	{
+		$.ajax({    
+	          	type: 'POST',    
+	          	url: '{:url("index/data/getSpider")}', 
+	          	dataType:"json",    
+	        	data:{
+					"data_id":data_id,
+					"time":time
+					}, 
+		  		success:function(data)
+		  		{
+		  			if (data.status==201)
+		  			{
+		  				$('.cas').show();
+		  				$('.alert-success').find('strong').html(data.msg);
+		        	 	$('.alert-success').css('display','block')
+		        	 	$('.alert-success').fadeOut(3000)
+		        	 	$('.cas tbody').html('');
+		        	 	$('#container').html('');
+		        	 	$('#containers').html('');
+		  			}else if (data.status==200)
+			  			{	
+			  				$('.cas').show();
+			  				var total_data = data.data.total_data;	
+			  				var total_html =''		  				
+			  				for (var i = 0; i < total_data.length; i++) 
+			  				{
+			  					total_html+='<tr><td style="text-align: center;">'+total_data[i].ip+'</td><td style="text-align: center;"><a style="text-decoration: underline; cursor: pointer;" alt="1" class="btn-settings" >查看详情</a></td><td style="text-align: center;">'+total_data[i].num+'</td><td style="text-align: center;">'+total_data[i].total_stay_time+'</td></tr>';
+			  				}
+			  				var total_valid = data.data.total_valid;	
+			  				var valid_html =''		  				
+			  				for (var i = 0; i < total_valid.length; i++) 
+			  				{
+			  					valid_html+='<tr><td style="text-align: center;">'+total_valid[i].ip+'</td><td style="text-align: center;"><a style="text-decoration: underline; cursor: pointer;" alt="2" class="btn-settings" >查看详情</a></td><td style="text-align: center;">'+total_valid[i].valid+'</td></tr>';
+			  				}	
+			  				$('.cas').each(function(index,element){
+			  					if (index==0) 
+			  					{
+			  						$(this).find('tbody').html(total_html);
+			  					}else
+			  					{
+			  						$(this).find('tbody').html(valid_html);
+			  					}
+			  				})
+			  				//图表
+			  				var categoriesIP =data.data.categories
+			  				var categories_data_num = data.data.categories_data
+			  				var validIP =data.data.valid
+			  				var valid_data_num = data.data.valid_data
+			  				containerFunction(categoriesIP,categories_data_num);
+			  				containersFunction(validIP,valid_data_num);
+			  			}	
+			  		},
+			        error:function(xhr){ 
+			        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+		        	 	$('.alert-error').css('display','block')
+		        	 	$('.alert-error').fadeOut(3000)
+			        } 	
+				});	
+	}
+	//蜘蛛抓取
+	function getEngine(data_id,time)
+	{
+		$.ajax({    
+          	type: 'POST',    
+          	url: '{:url("index/data/getEngine")}', 
+          	dataType:"json",    
+        	data:{
+				"data_id":data_id,
+				"time":time
+				}, 
+	  		success:function(data)
+	  		{
+	  			if (data.status==201)
+	  			{
+	  				$('.cas').hide();;
+	  				$('.alert-success').find('strong').html(data.msg);
+	        	 	$('.alert-success').css('display','block')
+	        	 	$('.alert-success').fadeOut(3000)
+	        	 	$('.cas tbody').html('');
+	        	 	$('#container').html('');
+	        	 	$('#containers').html('');
+	  			}else if (data.status==200)
+	  			{	
+	  				$('.cas').hide();;
+	  				//图表
+	  				var pie =data.pie.pie
+	  				console.log(pie);
+	  				pieEngine(time,pie,"各大搜索引擎抓取次数占比")
+	  				var dataTime =data.pie.time
+	  				var dataNum  = data.pie.data;
+	  				var unit = data.pie.unit;
+	  				containersFunctionS(dataNum,dataTime,unit,"抓取次数曲线图","抓取次数");
+	  				$('#container').css('margin-top','30px');
+	  				$('#containers').css('margin-top','30px');
+	  			}	
+	  		},
+	        error:function(xhr){ 
+	        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+        	 	$('.alert-error').css('display','block')
+        	 	$('.alert-error').fadeOut(3000)
+	        } 	
+		});	
+	}
+	//页面状态嘛
+	function getHttpdCode(data_id,time)
+	{
+		$.ajax({    
+          	type: 'POST',    
+          	url: '{:url("index/data/getHttpdCode")}', 
+          	dataType:"json",    
+        	data:{
+				"data_id":data_id,
+				"time":time
+				}, 
+	  		success:function(data)
+	  		{
+	  			if (data.status==201)
+	  			{
+	  				$('.cas').hide();;
+	  				$('.alert-success').find('strong').html(data.msg);
+	        	 	$('.alert-success').css('display','block')
+	        	 	$('.alert-success').fadeOut(3000)
+	        	 	$('.cas tbody').html('');
+	        	 	$('#container').html('');
+	        	 	$('#containers').html('');
+	  			}else if (data.status==200)
+	  			{	
+	  				$('.cas').hide();;
+	  				//图表
+	  				var pie =data.pie.pie
+	  				console.log(pie);
+	  				pieEngine(time,pie,'页面状态码占比')
+	  				var dataTime =data.pie.time
+	  				var dataNum  = data.pie.data;
+	  				var unit = data.pie.unit;
+	  				containersFunctionS(dataNum,dataTime,unit,"页面状态码曲线图","次数");
+	  				$('#container').css('margin-top','30px');
+	  				$('#containers').css('margin-top','30px');
+	  			}	
+	  		},
+	        error:function(xhr){ 
+	        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+        	 	$('.alert-error').css('display','block')
+        	 	$('.alert-error').fadeOut(3000)
+	        } 	
+		});	
+	}
+	//目录页占比
+	function getEatalog(data_id,time)
+	{
+		$.ajax({    
+          	type: 'POST',    
+          	url: '{:url("index/data/getEatalog")}', 
+          	dataType:"json",    
+        	data:{
+				"data_id":data_id,
+				"time":time
+				}, 
+	  		success:function(data)
+	  		{
+	  			if (data.status==201)
+	  			{
+	  				$('.cas').hide();;
+	  				$('.alert-success').find('strong').html(data.msg);
+	        	 	$('.alert-success').css('display','block')
+	        	 	$('.alert-success').fadeOut(3000)
+	        	 	$('.cas tbody').html('');
+	        	 	$('#container').html('');
+	        	 	$('#containers').html('');
+	  			}else if (data.status==200)
+	  			{	
+	  				$('.cas').hide();;
+	  				//图表
+	  				var pie =data.pie.pie
+	  				pieEngine(time,pie,'各个目录页占比')
+	  				var dataTime =data.pie.time
+	  				var dataNum  = data.pie.data;
+	  				var unit = data.pie.unit;
+	  				var categories  =data.pie.data;
+	  				var categories_data =data.pie.categories_data
+	  				console.log(categories);
+	  				console.log(categories_data);
+	  				var title=time+' 各个时间段目录页份额';
+	  				dirlldown(categories,categories_data,title,unit);
+	  				$('#container').css('margin-top','30px');
+	  				$('#containers').css('margin-top','30px');
+	  			}	
+	  		},
+	        error:function(xhr){ 
+	        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+        	 	$('.alert-error').css('display','block')
+        	 	$('.alert-error').fadeOut(3000)
+	        } 	
+		});	
+	}
+	//上一页占比
+	function getReferer(data_id,time)
+	{
+		$.ajax({    
+          	type: 'POST',    
+          	url: '{:url("index/data/getReferer")}', 
+          	dataType:"json",    
+        	data:{
+				"data_id":data_id,
+				"time":time
+				}, 
+	  		success:function(data)
+	  		{
+	  			if (data.status==201)
+	  			{
+	  				$('.cas').hide();;
+	  				$('.alert-success').find('strong').html(data.msg);
+	        	 	$('.alert-success').css('display','block')
+	        	 	$('.alert-success').fadeOut(3000)
+	        	 	$('.cas tbody').html('');
+	        	 	$('#container').html('');
+	        	 	$('#containers').html('');
+	  			}else if (data.status==200)
+	  			{	
+	  				$('.cas').hide();;
+	  				//图表
+	  				var pie =data.pie.pie
+	  				pieEngine(time,pie,'各个Referer占比')
+	  				var dataTime =data.pie.time
+	  				var dataNum  = data.pie.data;
+	  				var unit = data.pie.unit;
+	  				var categories  =data.pie.data;
+	  				var categories_data =data.pie.categories_data
+	  				console.log(categories);
+	  				console.log(categories_data);
+	  				var title=time+' 各个时间段Referer份额';
+	  				dirlldown(categories,categories_data,title,unit);
+	  				$('#container').css('margin-top','30px');
+	  				$('#containers').css('margin-top','30px');
+	  			}	
+	  		},
+	        error:function(xhr){ 
+	        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+        	 	$('.alert-error').css('display','block')
+        	 	$('.alert-error').fadeOut(3000)
+	        } 	
+		});	
+	}
+	$(function(){
+		//分析类型切换
+		$(document).on('click','.right .btn-primary',function(e){
+			$('.right a').addClass('btn-primary');
+			$(this).removeClass('btn-primary');
+			var time = $('#time').val();
+			var type = $(this).attr('alt');
+			$('#analysis_type').val(type);
+			var data_id = '{:$data_id}';
+			$('.cas').each(function(index,element){
+				if (index==0) 
+				{
+					$(this).find('tbody').html('');
+				}else
+				{
+					$(this).find('tbody').html('');
+				}
+			})
+			$('#container').html('');
+			$('#containers').html('');
+			if (type==1)
+			{
+				getTop(data_id,time);
+			}else if(type==2)
+			{
+				getEngine(data_id,time);
+			}else if (type==3)
+			{
+				getHttpdCode(data_id,time);
+			}else if (type==4) 
+			{
+				getEatalog(data_id,time)
+			}else if (type==5) 
+			{
+				getReferer(data_id,time)
+			}
+
+		})
+		//时间切换
+		$(document).on('click','.left .btn-primary',function(e){	
+			$('.left a').addClass('btn-primary');
+			$(this).removeClass('btn-primary');
+			var time = $(this).html();
+			$('#time').val(time);
+			var data_id = '{:$data_id}';
+			var type = $('#analysis_type').val();
+			console.log(type);
+			if (type==1)
+			{
+				getTop(data_id,time);
+			}else if(type==2)
+			{
+				getEngine(data_id,time);
+			}else if (type==3)
+			{
+				getHttpdCode(data_id,time);
+			}else if (type==4) 
+			{
+				getEatalog(data_id,time)
+			}else if (type==5) 
+			{
+				getReferer(data_id,time)
+			}
+		})
+		//查看URL详情 
+		$(document).on('click','.btn-settings',function(e){			
+			var time = $('#time').val();
+			var ip = $(this).parents('td').prev('td').html();	
+			$('#ip').val(ip);
+			var data_id ="{:$data_id}"; 	
+			var type = $(this).attr('alt');
+			$('#type').val(type);
+			$.ajax({    
+                  	type: 'POST',    
+                  	url: '{:url("index/data/getUrl")}', 
+                  	dataType:"json",    
+                	data:{
+						"data_id":data_id,
+						"ip":ip,
+						"time":time
+						}, 
+			  		success:function(data)
+			  		{
+			  			if (data.status !=200 )
+			  			{
+			  				$('.alert-error').find('strong').html(data.msg);
+			        	 	$('.alert-error').css('display','block')
+			        	 	$('.alert-error').fadeOut(3000)
+			        	 	return false;
+			  			}
+			  			$('#myModal .modal-header h3').html(ip+'页面URL信息');		
+			  			var html = '';
+			  			var obj = data.baidu.data;
+			  			for (var i = 0; i <obj.length; i++) 
+			  			{
+			  			 	html+='<tr><td style="text-align: center;">'+obj[i].url+'</td><td style="text-align: center;">';
+			  			 	if (type==2) 
+			  			 	{
+			  			 		html+='1</td></tr>';
+			  			 	}
+			  			 	else
+		  			 		{
+		  			 			html+= obj[i].num+'</td></tr>';
+		  			 		}
+			  			}
+			  			$('#myModal .modal-body .pagination').remove();
+			  			var page = '<div class="pagination pagination-centered" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
+			  			$('#myModal .modal-body .table tbody').html(html);
+			  			$('#myModal .modal-body .table').after(page);
+			  			e.preventDefault();
+						$('#myModal').modal({backdrop: 'static', keyboard: false});
+			  		},
+			        error:function(xhr){ 
+			        	$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+		        	 	$('.alert-error').css('display','block')
+		        	 	$('.alert-error').fadeOut(3000)
+			        } 	
+				});	
+			
+		});	
+
+		//查看详情翻页
+		$(document).on('click','.pagination-centered .pagination li a',function(e){
+			var _this = $(this);
+            var subHref = _this.attr('href');
+            var ip = $('#ip').val();
+            e.preventDefault();    
+            var data_id ="{:$data_id}";    
+            var type = $('#type').val();
+            var time = $('#time').val();  
+            $.ajax({
+                 url:  subHref,               
+                 type: 'POST',  
+             	 data:{
+					"data_id":data_id,
+					"ip":ip,
+					"time":time
+					},   
+                 dataType: 'json',
+                 success: function(data) {
+                     if (data.status !=200 )
+			  			{
+			  				$('.alert-error').find('strong').html(data.msg);
+			        	 	$('.alert-error').css('display','block')
+			        	 	$('.alert-error').fadeOut(3000)
+			        	 	return false;
+			  			}
+			  			$('#myModal .modal-header h3').html(ip+'页面URL信息');		
+			  			var html = '';
+			  			var obj = data.baidu.data;
+			  			for (var i = 0; i <obj.length; i++) 
+			  			{
+			  			 	html+='<tr><td style="text-align: center;">'+obj[i].url+'</td><td style="text-align: center;">';
+			  			 	if (type == 2) 
+			  			 	{
+			  			 		html+='1</td></tr>';
+			  			 	}
+			  			 	else
+		  			 		{
+		  			 			html+= obj[i].num+'</td></tr>';
+		  			 		}
+			  			}
+			  			$('#myModal .modal-body .pagination').remove();
+			  			var page = '<div class="pagination pagination-centered" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
+			  			$('#myModal .modal-body .table tbody').html(html);
+			  			$('#myModal .modal-body .table').after(page);
+						$('#myModal').modal({backdrop: 'static', keyboard: false});
+                 },
+                 error: function() {
+            		$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+		        	$('.alert-error').css('display','block')
+		        	$('.alert-error').fadeOut(3000)
+                 }
+            });
+
+		})
+
+
+		$('#container').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: '总抓取次数TOP'
+	        },
+	        subtitle: {
+	            text: '数据来源: BMTASO'
+	        },
+	        xAxis: {
+	        	 title: {
+	                text: 'IP'
+	            },
+	            categories: {:$spider_date[0]['categories']}
+	        },
+	        yAxis: {
+	            title: {
+	                text: '次数'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: false          // 开启数据标签
+	                },
+	                enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+	            }
+	        },
+	        series: [{
+	            name: '抓取次数',
+	            data: {:$spider_date[0]['categories_data']}
+	        }]
+	    });
+		$('#containers').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: '有效抓取次数TOP'
+	        },
+	        subtitle: {
+	            text: '数据来源: BMTASO'
+	        },
+	        xAxis: {
+	        	 title: {
+	                text: 'IP'
+	            },
+	            categories: {:$spider_date[0]['valid']}
+	        },
+	        yAxis: {
+	            title: {
+	                text: '次数'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: false          // 开启数据标签
+	                },
+	                enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+	            }
+	        },
+	        series: [{
+	            name: '抓取次数',
+	            data: {:$spider_date[0]['valid_data']}
+	        }]
+	    });
+	})
+function containerFunction(categories,categories_data)
+{	
+	console.log(typeof(categories_data))
+	$('#container').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: '总抓取次数TOP'
+	        },
+	        subtitle: {
+	            text: '数据来源: BMTASO'
+	        },
+	        xAxis: {
+	        	 title: {
+	                text: 'IP'
+	            },
+	            categories: categories
+	        },
+	        yAxis: {
+	            title: {
+	                text: '次数'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: false          // 开启数据标签
+	                },
+	                enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+	            }
+	        },
+	        series: [{
+	            name: '抓取次数',
+	            data: categories_data
+	        }]
+	    });
+}
+function containersFunction(categories,categories_data)
+{
+	
+	$('#containers').highcharts({
+	        chart: {
+	            type: 'line'
+	        },
+	        title: {
+	            text: '有效抓取次数TOP'
+	        },
+	        subtitle: {
+	            text: '数据来源: BMTASO'
+	        },
+	        xAxis: {
+	        	 title: {
+	                text: 'IP'
+	            },
+	            categories: categories
+	        },
+	        yAxis: {
+	            title: {
+	                text: '次数'
+	            }
+	        },
+	        plotOptions: {
+	            line: {
+	                dataLabels: {
+	                    enabled: false          // 开启数据标签
+	                },
+	                enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+	            }
+	        },
+	        series: [{
+	            name: '抓取次数',
+	            data: categories_data
+	        }]
+	    });
+}
+//多条线
+function containersFunctionS(categories,time,unit,title,text)
+{
+	var chart = new Highcharts.Chart('containers', {
+	    title: {
+	        text: title,
+	        x: -20
+	    },
+	    subtitle: {
+	        text: '数据来源: BMTASO',
+	        x: -20
+	    },
+	    xAxis: {
+	    	title: {
+	            text: unit
+	        },
+	        categories: time
+	    },
+	    yAxis: {
+	        title: {
+	            text: text
+	        },
+	        plotLines: [{
+	            value: 0,
+	            width: 1,
+	            color: '#808080'
+	        }]
+	    },	  
+	    legend: {
+	        line: {
+	                dataLabels: {
+	                    enabled: false          // 开启数据标签
+	                },
+	                enableMouseTracking: true // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+	            }
+	    },
+	    series: categories
+	});
+}
+function pieEngine(time,pie,name)
+{
+	$('#container').highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        },
+        title: {
+            text: time+name
+        },
+        tooltip: {
+            headerFormat: '{series.name}<br>',
+            pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+        },
+         plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
+                },
+                showInLegend: true
+            }
+        },      
+        
+        series: [{
+            type: 'pie',
+            name: time+name,
+            data: pie
+        }]
+    });
+}
+function dirlldown(categories,categories_data,title,unit)
+{
+	Highcharts.chart('containers', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: title
+        },
+        subtitle: {
+            text: '点击可查看具体的版本数据，数据来源: <a href="javascript:void(0);">BMTASO</a>.'
+        },
+        xAxis: {
+            type: 'category',
+            title: {
+                text: unit
+            }
+        },
+        yAxis: {
+            title: {
+                text: '次数'
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                borderWidth: 0,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.y}'
+                }
+            }
+        },
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+        },
+        series: categories_data,
+        drilldown: {
+            series: categories
+        }
+    });
+}
+</script>
+<!-- end: JavaScript-->
+{/block}
