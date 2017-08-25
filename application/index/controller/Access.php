@@ -112,6 +112,8 @@ class Access extends Controller {
          * 得到带入的词语
          * ******
          */
+        var_dump('template' . DS . $templatePath);
+        
         if (file_exists('template' . DS . $templatePath))
         {
             $path = 'template' . DS . $templatePath;
