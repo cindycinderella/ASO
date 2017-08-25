@@ -75,8 +75,7 @@ class Access extends Controller {
             ->field("tem.id,tem.path,tem.tag")
             ->join('web_side w', 'tem.id = w.template_id')
             ->where($templateWhere)
-            ->select();
-        print_r($template);
+            ->select();       
         if (empty($template))
         {
             return json([
@@ -105,7 +104,7 @@ class Access extends Controller {
         }
         $postData['template_id'] = $templateId;
         $postData['template_path'] = $templatePath;
-        
+        var_dump(file_exists('template' . DS . $templatePath));
         /**
          * ***
          * 得到带入的词语
