@@ -155,10 +155,91 @@ border: none;
 <td style="text-align: center;">{:$dat.valid}</td>
 </tr>
 {/foreach}
-
 </tbody></table>	
 <div id="container" style="height:400px;float: left;margin-bottom: 10px; width: 49%;"></div>	
 <div id="containers" style="height:400px;float: left;margin-bottom: 10px;width: 49%;"></div>
+<table class="table table-striped">
+<thead>
+<tr>
+<th>自定义需求</th>				  									  
+</tr>
+<tr>
+<th>
+<div class="controls">
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">页面状态码</span>
+</label>
+</th>
+<th>
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">IP</span>
+</label>
+</th>
+<th>
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">蜘蛛总抓取次数</span>
+</label>
+</th>
+<th>
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">上一级页面</span></label>
+</th>
+<th>
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">停留时间</span></label>
+</th>
+<th>	
+<label class="checkbox inline">
+<div class="checker " id="uniform-inlineCheckbox1">
+<span><input type="checkbox" alt="" class="inlineCheckbox1" value=""></span>
+</div><span class="title_name">蜘蛛有效抓取次数</span>
+</label>
+</div>
+</th>				  									  
+</tr>
+<tr>
+<th>
+<div class="controls">
+	<select id="selectErrors" name="type" data-rel="chosen">
+		<option value="1">百度</option>
+		<option value="2">360</option>
+		<option value="3">搜狗</option>
+		<option value="4">必应</option>
+		<option value="5">Google</option>
+	</select>
+</div>
+<th>
+<input type="text" " name="seach" value=""/>
+</th>
+</tr>
+tr>
+<th style="text-align: center;">百度</th>	
+<th style="text-align: center;">URL</th>
+<th style="text-align: center;">页面状态码</th>
+<th style="text-align: center;">IP</th>
+<th style="text-align: center;">蜘蛛抓取总次数</th>	
+<th style="text-align: center;">蜘蛛有效抓取次数</th>
+<th style="text-align: center;">停留时间</th>		
+<th style="text-align: center;">上一级页面</th>								  									  
+</tr>
+</thead>   
+</thead>   
+<tbody>
+</tbody>
+</table>
+
+
+
 </div>
 </div><!--/span-->
 
@@ -507,6 +588,7 @@ border: none;
 		});	
 	}
 	$(function(){
+		//$('#selectErrors_chzn').css('width','140px');
 		//分析类型切换
 		$(document).on('click','.right .btn-primary',function(e){
 			$('.right a').addClass('btn-primary');

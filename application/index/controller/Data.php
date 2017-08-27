@@ -912,7 +912,7 @@ class Data extends Controller {
             }
             $spiderDate[$k]['valid'] = rtrim($spiderDate[$k]['valid'], ",") . ']';
             $spiderDate[$k]['valid_data'] = rtrim($spiderDate[$k]['valid_data'], ",") . ']';
-        }
+        }    
         $user = session('admin_user');
         $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
         $data['username'] = $username;
@@ -2274,4 +2274,17 @@ class Data extends Controller {
             ]);
         }
     }
+    public  function customize()
+    {
+        if (Request::instance()->isAjax())
+        {
+            $data_id = input('post.data_id');
+            $time = input('post.time');
+            //自定义需求
+            $logInfo = Db::name('log_info')
+            ->where("ua like '%Baiduspider%'  AND data_id ={$data_id} and status = 1 AND details_time<='".date("Y-m-d 23:59:59", strtotime($time))."'")
+            ->order("path DESC")->paginate(10);
+            $page = $logInfo->render();
+        }       
+    } 
 }

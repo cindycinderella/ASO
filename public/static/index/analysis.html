@@ -242,9 +242,11 @@
 					$('.alert-error').find('strong').html("请选择日志文件名");
 	        	 	$('.alert-error').css('display','block')
 	        	 	$('.alert-error').fadeOut(3000)
+	        	 	return false;
 				}	
 				var data_id = $(this).val();
-				window.location.href ="index/data/analysislog/id/{:$title_id}/data_id/"+data_id+".html";
+				var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/analysislog/id/{:$title_id}/data_id/"+data_id+".html"
+				window.location.href =url;
 			})
 		})
 	</script>

@@ -15,7 +15,7 @@ return [
     'view_replace_str'  =>  [
     '__PUBLIC__'=>'/public/',
     '__ROOT__' => '/',
-	'__INDEX__' => '/public/static/index/',
+	'__INDEX__' => '/static/index/',
 	'__TEMPLATE__' => '/public/static/index/',
 	'__UPLOADS__' => '/public/uploads/',
 	]
