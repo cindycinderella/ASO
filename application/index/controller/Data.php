@@ -556,7 +556,7 @@ class Data extends Controller {
                     // 360
                     $haoSou = stripos($logInfo['ua'], "haosouspider");
                     $haoSpider = stripos($logInfo['ua'], "360Spider");
-                    if ($baiduSpider !== false || $haoSpider !== false)
+                    if ($haoSou !== false || $haoSpider !== false)
                     {
                         $haoSoupath[$time][] = $logInfo['path'];
                         continue;
@@ -913,6 +913,10 @@ class Data extends Controller {
             $spiderDate[$k]['valid'] = rtrim($spiderDate[$k]['valid'], ",") . ']';
             $spiderDate[$k]['valid_data'] = rtrim($spiderDate[$k]['valid_data'], ",") . ']';
         }    
+        // 获取日志文件名
+        $dataList = Db::name('data_list')->field('id,file_name')
+        ->where('status = 1')
+        ->select();
         $user = session('admin_user');
         $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
         $data['username'] = $username;
@@ -921,6 +925,7 @@ class Data extends Controller {
         $data['class'] = $class;
         $data['title_id'] = $title_id;
         $data['data_id'] = $data_id;
+        $data['data_list'] = $dataList;
         $data['spider_date'] = $spiderDate;
         $data['add'] = '分析详情';
         $data['analysis'] = $analysisList;
@@ -1120,7 +1125,7 @@ class Data extends Controller {
                     // 360
                     $haoSou = stripos($info['ua'], "haosouspider");
                     $haoSpider = stripos($info['ua'], "360Spider");
-                    if ($baiduSpider !== false || $haoSpider !== false)
+                    if ($haoSou !== false || $haoSpider !== false)
                     {
                         $spider[$h]['haosou'] += 1;
                         continue;
@@ -2278,13 +2283,115 @@ class Data extends Controller {
     {
         if (Request::instance()->isAjax())
         {
-            $data_id = input('post.data_id');
+            $dataId = input('post.data_id');
             $time = input('post.time');
+            $type = input('post.type');
+            $seach = input('post.search');
+            $where =" data_id ={$dataId} and status = 1 AND  DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$time}'";
+            if (!empty($type))
+            {
+                switch ($type)
+                {
+                    case 1:
+                        $where.=" and ua like '%Baiduspider%' ";
+                        break;
+                    case 2:
+                        $where.=" and (ua like '%haosouspider%' OR ua like '%360Spider%')";
+                        break;
+                    case 3:
+                        $where.=" and ua like '%Sogou%' ";
+                        break;
+                    case 4:
+                        $where.=" and ua like '%bingbot%' ";
+                        break;
+                   case 5:
+                        $where.=" and ua like '%googlebot%' ";
+                         break;
+                }
+            }
+            if (!empty($seach))
+            {
+                $where.=" and path like '%$seach%' ";
+            }
             //自定义需求
             $logInfo = Db::name('log_info')
-            ->where("ua like '%Baiduspider%'  AND data_id ={$data_id} and status = 1 AND details_time<='".date("Y-m-d 23:59:59", strtotime($time))."'")
+            ->where($where)
             ->order("path DESC")->paginate(10);
+            $customize = array();
+            foreach ($logInfo as $k=>$info)
+            {
+                $dataList = Db::name('log_info')->where($where." and ip ='{$info['ip']}' ")
+                ->order("details_time asc ")
+                ->select();
+                $temp = '';
+                $totalStayTime = 0;
+                $path = array();
+                foreach ($dataList as $key => $log_info)
+                {
+                    $path[] = $log_info['path'];
+                    if ($temp == '')
+                    {
+                        $temp = $log_info['details_time'];
+                    }
+                    // 总抓取时间
+                    if ($key + 1 >= count($dataList))
+                    {
+                        $totalStayTime += strtotime($log_info['details_time']) - strtotime($temp);
+                        $totalStayTime += 30 * 60;
+                        $temp = '';
+                    }
+                    else
+                    {
+                        if ($dataList[$key + 1]['details_time'] - $log_info['details_time'] > 30 * 60)
+                        {
+                            $totalStayTime += strtotime($log_info['details_time']) - strtotime($temp);
+                            $totalStayTime += 30 * 60;
+                            $temp = '';
+                        }
+                    }
+                }
+                $customize[$k] = $info;
+                $customize[$k]['stay_time'] = sprintf("%.2f", $totalStayTime / 3600);
+                $customize[$k]['search_total'] = count($path);
+                $customize[$k]['search'] = count(array_count_values($path));
+                // 百度
+                $baiduSpider = stripos($info['ua'], "Baiduspider");
+                if ($baiduSpider !== false)
+                {
+                    $uaName = '百度';
+                }
+                // 360
+                $haoSou = stripos($info['ua'], "haosouspider");
+                $haoSpider = stripos($info['ua'], "360Spider");
+                if ($haoSou !== false || $haoSpider !== false)
+                {
+                    $uaName = '360';
+                }
+                // 微软 bing
+                $bingSpider = stripos($info['ua'], "bingbot");
+                if ($bingSpider !== false)
+                {
+                    $uaName = '必应';
+                }
+                // Sogou
+                $sogouSpider = stripos($info['ua'], "Sogou");
+                if ($sogouSpider !== false)
+                {
+                    $uaName = '搜狗';
+                }
+                // google
+                $googleSpider = stripos($info['ua'], "googlebot");
+                if ($googleSpider !== false)
+                {
+                    $uaName = 'Google';
+                }
+                $customize[$k]['ua_name'] =$uaName;
+            }
             $page = $logInfo->render();
+            $data['data'] = $customize;
+            $data['page'] = $page;
+            $data['status'] = 200;
+            return json($data);
         }       
     } 
 }
