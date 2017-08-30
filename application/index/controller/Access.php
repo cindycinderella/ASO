@@ -68,6 +68,7 @@ class Access extends Controller {
          */
         $templateWhere = array(
             'tem.status' => 1,
+            'tem.id' => 24,
             'w.type' => $postData['type'],
             'tem.type' => $postData['webType']
         ); // webType 10 为PC端 11是H5 type 访问类型
