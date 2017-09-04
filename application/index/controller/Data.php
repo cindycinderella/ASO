@@ -1243,8 +1243,6 @@ class Data extends Controller {
                 $key ++;
             }
         }
-        print_r($insertHttpdCode);
-        exit();
         $insertPath = debug_log(json_encode($insertHttpdCode), "httpd_code", false);
         $url = "http://" . $_SERVER['HTTP_HOST'] . url('index/insert/insertPath');
         $postData = array(
