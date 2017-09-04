@@ -847,7 +847,7 @@
 
 		//自定义翻页
 		$(document).on('click','#customize li a',function(){
-			var subHref = _this.attr('href');
+			var subHref = $(this).attr('href');
 			e.preventDefault();
 			var data_id = {:$data_id};
 			var time = $('#time').val();
