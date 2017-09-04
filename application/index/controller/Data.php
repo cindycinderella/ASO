@@ -531,6 +531,12 @@ class Data extends Controller {
                     ->select();
                 // 分析蜘蛛抓取
                 $this->engineShare($dataInfo['id'], $logData);
+                // 分析页面状态码
+                $this->httpdCode($dataInfo['id'], $logData);
+                // 分析目录页
+                $this->catalog($dataInfo['id'], $logData);
+                // 分析referer
+                $this->referer($dataInfo['id'], $logData);
                 $baiduPath = array();
                 $haoSoupath = array();
                 $bing = array();
@@ -539,11 +545,7 @@ class Data extends Controller {
                 $updateIds = '';
                 foreach ($logData as $logInfo)
                 {
-                    // 分析页面状态码
-                    $this->httpdCode($dataInfo['id'], $logInfo);
-                    // 分析目录页
-                    $this->catalog($dataInfo['id'], $logInfo);
-                    //分析referer 
+                    
                     $time = date("Y-m-d", strtotime($logInfo['details_time']));
                     $updateIds .= $logInfo['id'] . ',';
                     // 百度
@@ -912,11 +914,11 @@ class Data extends Controller {
             }
             $spiderDate[$k]['valid'] = rtrim($spiderDate[$k]['valid'], ",") . ']';
             $spiderDate[$k]['valid_data'] = rtrim($spiderDate[$k]['valid_data'], ",") . ']';
-        }    
+        }
         // 获取日志文件名
         $dataList = Db::name('data_list')->field('id,file_name')
-        ->where('status = 1')
-        ->select();
+            ->where('status = 1')
+            ->select();
         $user = session('admin_user');
         $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
         $data['username'] = $username;
@@ -1036,7 +1038,8 @@ class Data extends Controller {
         {
             foreach ($url['path'] as $kiss => $urlInfo)
             {
-                $baiDuUrl[$key]['id'] = $key;
+                $id ++;
+                $baiDuUrl[$key]['id'] = $id;
                 $baiDuUrl[$key]['num'] = $urlInfo;
                 $baiDuUrl[$key]['url'] = $kiss;
                 $baiDuUrl[$key]['ip'] = $url['ip'];
@@ -1045,6 +1048,7 @@ class Data extends Controller {
                 $key ++;
             }
         }
+        
         if (empty($insertSpider))
         {
             return;
@@ -1056,21 +1060,14 @@ class Data extends Controller {
             'data' => $insertSpider
         );
         _sock_post($url, $postData);
-        $urlPost = array();
-        foreach ($baiDuUrl as $bkey => $baiDuInfo)
-        {
-            $urlPost[] = $baiDuInfo;
-            if ($bkey % 100 == 0 || count($baiDuUrl) - 1 == $bkey)
-            {
-                $postData = array(
-                    'key' => 'kjakjdLAMDo1293138SMAKDA1LADLladlaxqu',
-                    'table' => 'baidu_url',
-                    'data' => $urlPost
-                );
-                _sock_post($url, $postData);
-                $urlPost = array();
-            }
-        }
+        $insertPath = debug_log(json_encode($baiDuUrl), "baidu_url", false);
+        $url = "http://" . $_SERVER['HTTP_HOST'] . url('index/insert/insertPath');
+        $postData = array(
+            'key' => 'kjakjdLAMDo1293138SMAKDA1LADLladlaxqu',
+            'table' => 'baidu_url',
+            'data' => $insertPath
+        );
+        _sock_post($url, $postData);
         return [
             'status' => 200
         ];
@@ -1190,28 +1187,31 @@ class Data extends Controller {
         _sock_post($url, $postData);
     }
     // HTTP CODE 分析
-    private function httpdCode($dataId, $logInfo)
+    private function httpdCode($dataId, $logData)
     {
         $sql = " SELECT DATE_FORMAT(details_time, '%Y-%m-%d') AS `date` FROM log_info WHERE data_id = {$dataId} AND `status` = 0 GROUP BY  `date` ORDER BY `date` desc";
         $date = Db::query($sql);
         $insert = array();
         foreach ($date as $dateInfo)
         {
-            if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
+            foreach ($logData as $logInfo)
             {
-                $h = date("H", strtotime($logInfo['details_time']));
-                $h = $dateInfo['date'] . " $h:00:00";
-                if (! isset($insert[$h]))
+                if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
                 {
-                    $insert[$h] = array();
-                }
-                if (array_key_exists($logInfo['http_code'], $insert[$h]))
-                {
-                    $insert[$h][$logInfo['http_code']] += 1;
-                }
-                else
-                {
-                    $insert[$h][$logInfo['http_code']] = 1;
+                    $h = date("H", strtotime($logInfo['details_time']));
+                    $h = $dateInfo['date'] . " $h:00:00";
+                    if (! isset($insert[$h]))
+                    {
+                        $insert[$h] = array();
+                    }
+                    if (array_key_exists($logInfo['http_code'], $insert[$h]))
+                    {
+                        $insert[$h][$logInfo['http_code']] += 1;
+                    }
+                    else
+                    {
+                        $insert[$h][$logInfo['http_code']] = 1;
+                    }
                 }
             }
         }
@@ -1253,7 +1253,7 @@ class Data extends Controller {
         _sock_post($url, $postData);
     }
     // 目录页占比
-    private function catalog($dataId, $logInfo)
+    private function catalog($dataId, $logData)
     {
         $sql = " SELECT DATE_FORMAT(details_time, '%Y-%m-%d') AS `date` FROM log_info WHERE data_id = {$dataId} AND `status` = 0 GROUP BY  `date` ORDER BY `date` desc";
         $date = Db::query($sql);
@@ -1261,51 +1261,54 @@ class Data extends Controller {
         $insertDay = array();
         foreach ($date as $dateInfo)
         {
-            if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
+            foreach ($logData as $logInfo)
             {
-                if (substr($logInfo['path'], - 1) === '/')
+                if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
                 {
-                    $h = date("H", strtotime($logInfo['details_time']));
-                    $h = $dateInfo['date'] . " $h:00:00";
-                    if (! isset($insert[$h]))
+                    if (substr($logInfo['path'], - 1) === '/')
                     {
-                        $insert[$h] = array();
-                    }
-                    if (! isset($insertDay[$dateInfo['date']]))
-                    {
-                        $insertDay[$dateInfo['date']] = array();
-                    }
-                    $logInfo['path'] = urldecode($logInfo['path']);
-                    $encode = mb_detect_encoding($logInfo['path'], array(
-                        "ASCII",
-                        "UTF-8",
-                        "GB2312",
-                        "GBK",
-                        "BIG5"
-                    ));
-                    if ($encode == 'EUC-CN')
-                    {
-                        $logInfo['path'] = iconv("GBK", "UTF-8", $logInfo['path']);
-                    }
-                    else
-                    {
-                        $logInfo['path'] = iconv($encode, "UTF-8", $logInfo['path']);
-                    }
-                    if (array_key_exists($logInfo['path'], $insert[$h]))
-                    {
-                        $insert[$h][$logInfo['path']] += 1;
-                    }
-                    else
-                    {
-                        $insert[$h][$logInfo['path']] = 1;
-                    }
-                    if (array_key_exists($logInfo['path'], $insertDay[$dateInfo['date']]))
-                    {
-                        $insertDay[$dateInfo['date']][$logInfo['path']] += 1;
-                    }
-                    else
-                    {
-                        $insertDay[$dateInfo['date']][$logInfo['path']] = 1;
+                        $h = date("H", strtotime($logInfo['details_time']));
+                        $h = $dateInfo['date'] . " $h:00:00";
+                        if (! isset($insert[$h]))
+                        {
+                            $insert[$h] = array();
+                        }
+                        if (! isset($insertDay[$dateInfo['date']]))
+                        {
+                            $insertDay[$dateInfo['date']] = array();
+                        }
+                        $logInfo['path'] = urldecode($logInfo['path']);
+                        $encode = mb_detect_encoding($logInfo['path'], array(
+                            "ASCII",
+                            "UTF-8",
+                            "GB2312",
+                            "GBK",
+                            "BIG5"
+                        ));
+                        if ($encode == 'EUC-CN')
+                        {
+                            $logInfo['path'] = iconv("GBK", "UTF-8", $logInfo['path']);
+                        }
+                        else
+                        {
+                            $logInfo['path'] = iconv($encode, "UTF-8", $logInfo['path']);
+                        }
+                        if (array_key_exists($logInfo['path'], $insert[$h]))
+                        {
+                            $insert[$h][$logInfo['path']] += 1;
+                        }
+                        else
+                        {
+                            $insert[$h][$logInfo['path']] = 1;
+                        }
+                        if (array_key_exists($logInfo['path'], $insertDay[$dateInfo['date']]))
+                        {
+                            $insertDay[$dateInfo['date']][$logInfo['path']] += 1;
+                        }
+                        else
+                        {
+                            $insertDay[$dateInfo['date']][$logInfo['path']] = 1;
+                        }
                     }
                 }
             }
@@ -1379,7 +1382,7 @@ class Data extends Controller {
         _sock_post($url, $postData);
     }
     // 记录页面上一级
-    private function referer($dataId, $logInfo)
+    private function referer($dataId, $logData)
     {
         $sql = " SELECT DATE_FORMAT(details_time, '%Y-%m-%d') AS `date` FROM log_info WHERE data_id = {$dataId} AND `status` = 0 GROUP BY  `date` ORDER BY `date` desc";
         $date = Db::query($sql);
@@ -1388,47 +1391,49 @@ class Data extends Controller {
             ->select();
         $insert = array();
         $insertDay = array();
-        
         foreach ($date as $dateInfo)
         {
-            if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
+            foreach ($logData as $logInfo)
             {
-                $h = date("H", strtotime($logInfo['details_time']));
-                $h = $dateInfo['date'] . " $h:00:00";
-                if (! isset($insert[$h]))
+                if ($logInfo['details_time'] >= $dateInfo['date'] && $logInfo['details_time'] <= $dateInfo['date'] . ' 23:59:59')
                 {
-                    $insert[$h] = array();
-                }
-                if (! empty($logInfo['referer']))
-                {
-                    if (isset($insert[$h]['referer']))
+                    $h = date("H", strtotime($logInfo['details_time']));
+                    $h = $dateInfo['date'] . " $h:00:00";
+                    if (! isset($insert[$h]))
                     {
-                        unset($insert[$h]['referer']);
+                        $insert[$h] = array();
                     }
-                    if (array_key_exists($logInfo['referer'], $insert[$h]))
+                    if (! empty($logInfo['referer']))
                     {
-                        $insert[$h][$logInfo['referer']] += 1;
+                        if (isset($insert[$h]['referer']))
+                        {
+                            unset($insert[$h]['referer']);
+                        }
+                        if (array_key_exists($logInfo['referer'], $insert[$h]))
+                        {
+                            $insert[$h][$logInfo['referer']] += 1;
+                        }
+                        else
+                        {
+                            $insert[$h][$logInfo['referer']] = 1;
+                        }
+                        if (! isset($insertDay[$dateInfo['date']]))
+                        {
+                            $insertDay[$dateInfo['date']] = array();
+                        }
+                        if (array_key_exists($logInfo['referer'], $insertDay[$dateInfo['date']]))
+                        {
+                            $insertDay[$dateInfo['date']][$logInfo['referer']] += 1;
+                        }
+                        else
+                        {
+                            $insertDay[$dateInfo['date']][$logInfo['referer']] = 1;
+                        }
                     }
                     else
                     {
-                        $insert[$h][$logInfo['referer']] = 1;
+                        $insert[$h]['referer'] = 0;
                     }
-                    if (! isset($insertDay[$dateInfo['date']]))
-                    {
-                        $insertDay[$dateInfo['date']] = array();
-                    }
-                    if (array_key_exists($logInfo['referer'], $insertDay[$dateInfo['date']]))
-                    {
-                        $insertDay[$dateInfo['date']][$logInfo['referer']] += 1;
-                    }
-                    else
-                    {
-                        $insertDay[$dateInfo['date']][$logInfo['referer']] = 1;
-                    }
-                }
-                else
-                {
-                    $insert[$h]['referer'] = 0;
                 }
             }
         }
@@ -2113,11 +2118,11 @@ class Data extends Controller {
             {
                 $data['unit'] = "时间(/天)";
                 $dateArr = Db::name('catalog')->field('date')
-                ->where('stype = 2 and type = 1 and data_id = ' . $dataId)
-                ->group('date')
-                ->order('date asc')
-                ->limit(7)
-                ->select();
+                    ->where('stype = 2 and type = 1 and data_id = ' . $dataId)
+                    ->group('date')
+                    ->order('date asc')
+                    ->limit(7)
+                    ->select();
                 $cataDate = array();
                 foreach ($dateArr as $dateinfo)
                 {
@@ -2126,17 +2131,17 @@ class Data extends Controller {
                 $maxDate = max($cataDate);
                 $minDate = min($cataDate);
                 $sum = Db::name('catalog')->field("sum(num) as num")
-                ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1 and date >= "' . $minDate . '" and date<="' . $maxDate . ' 23:59:59"')
-                ->find();
+                    ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1 and date >= "' . $minDate . '" and date<="' . $maxDate . ' 23:59:59"')
+                    ->find();
                 $code = array();
                 $httpdCode = array();
                 $key = 0;
                 foreach ($cataDate as $info)
                 {
                     $allCata = Db::name('catalog')->field("date,path,num")
-                    ->where('stype = 2 and type = 1 and data_id = ' . $dataId . ' and date >= "' . $info . '" and date<="' . $info . ' 23:59:59"')
-                    ->order('date asc')
-                    ->select();
+                        ->where('stype = 2 and type = 1 and data_id = ' . $dataId . ' and date >= "' . $info . '" and date<="' . $info . ' 23:59:59"')
+                        ->order('date asc')
+                        ->select();
                     foreach ($allCata as $cataInfo)
                     {
                         if ($cataInfo['date'] >= $info && $cataInfo['date'] <= $info . ' 23:59:59')
@@ -2192,12 +2197,12 @@ class Data extends Controller {
             {
                 $data['unit'] = "时间(/h)";
                 $sum = Db::name('catalog')->field("sum(num) as num")
-                ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1 and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
-                ->find();
+                    ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1 and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
+                    ->find();
                 $catalogData = Db::name('catalog')->field("date,path,num")
-                ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1  and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
-                ->order('date asc')
-                ->select();
+                    ->where('stype = 2 and data_id = ' . $dataId . ' and type = 1  and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
+                    ->order('date asc')
+                    ->select();
                 $code = array();
                 foreach ($catalogData as $key => $sumInfo)
                 {
@@ -2215,9 +2220,9 @@ class Data extends Controller {
                     }
                 }
                 $catalog = Db::name('catalog')->field("date,path,num")
-                ->where('stype = 2 and data_id = ' . $dataId . ' and type = 2  and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
-                ->order('date asc')
-                ->select();
+                    ->where('stype = 2 and data_id = ' . $dataId . ' and type = 2  and date >= "' . $date . '" and date<="' . $date . ' 23:59:59"')
+                    ->order('date asc')
+                    ->select();
                 $cata = array();
                 foreach ($catalog as $logInfo)
                 {
@@ -2279,7 +2284,8 @@ class Data extends Controller {
             ]);
         }
     }
-    public  function customize()
+
+    public function customize()
     {
         if (Request::instance()->isAjax())
         {
@@ -2287,42 +2293,42 @@ class Data extends Controller {
             $time = input('post.time');
             $type = input('post.type');
             $seach = input('post.search');
-            $where =" data_id ={$dataId} and status = 1 AND  DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$time}'";
-            if (!empty($type))
+            $where = " data_id ={$dataId} and status = 1 AND  DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$time}'";
+            if (! empty($type))
             {
                 switch ($type)
                 {
                     case 1:
-                        $where.=" and ua like '%Baiduspider%' ";
-                        break;
+                        $where .= " and ua like '%Baiduspider%' ";
+                    break;
                     case 2:
-                        $where.=" and (ua like '%haosouspider%' OR ua like '%360Spider%')";
-                        break;
+                        $where .= " and (ua like '%haosouspider%' OR ua like '%360Spider%')";
+                    break;
                     case 3:
-                        $where.=" and ua like '%Sogou%' ";
-                        break;
+                        $where .= " and ua like '%Sogou%' ";
+                    break;
                     case 4:
-                        $where.=" and ua like '%bingbot%' ";
-                        break;
-                   case 5:
-                        $where.=" and ua like '%googlebot%' ";
-                         break;
+                        $where .= " and ua like '%bingbot%' ";
+                    break;
+                    case 5:
+                        $where .= " and ua like '%googlebot%' ";
+                    break;
                 }
             }
-            if (!empty($seach))
+            if (! empty($seach))
             {
-                $where.=" and path like '%$seach%' ";
+                $where .= " and path like '%$seach%' ";
             }
-            //自定义需求
-            $logInfo = Db::name('log_info')
-            ->where($where)
-            ->order("path DESC")->paginate(10);
+            // 自定义需求
+            $logInfo = Db::name('log_info')->where($where)
+                ->order("path DESC")
+                ->paginate(10);
             $customize = array();
-            foreach ($logInfo as $k=>$info)
+            foreach ($logInfo as $k => $info)
             {
-                $dataList = Db::name('log_info')->where($where." and ip ='{$info['ip']}' ")
-                ->order("details_time asc ")
-                ->select();
+                $dataList = Db::name('log_info')->where($where . " and ip ='{$info['ip']}' ")
+                    ->order("details_time asc ")
+                    ->select();
                 $temp = '';
                 $totalStayTime = 0;
                 $path = array();
@@ -2385,13 +2391,13 @@ class Data extends Controller {
                 {
                     $uaName = 'Google';
                 }
-                $customize[$k]['ua_name'] =$uaName;
+                $customize[$k]['ua_name'] = $uaName;
             }
             $page = $logInfo->render();
             $data['data'] = $customize;
             $data['page'] = $page;
             $data['status'] = 200;
             return json($data);
-        }       
-    } 
+        }
+    }
 }
