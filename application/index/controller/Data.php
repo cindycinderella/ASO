@@ -530,7 +530,7 @@ class Data extends Controller {
                     ->order('details_time desc')
                     ->select();
                 // 分析蜘蛛抓取
-                $this->engineShare($dataId, $logData);
+                $this->engineShare($dataInfo['id'], $logData);
                 $baiduPath = array();
                 $haoSoupath = array();
                 $bing = array();
@@ -540,9 +540,9 @@ class Data extends Controller {
                 foreach ($logData as $logInfo)
                 {
                     // 分析页面状态码
-                    $this->httpdCode($dataId, $logInfo);
+                    $this->httpdCode($dataInfo['id'], $logInfo);
                     // 分析目录页
-                    $this->catalog($dataId, $logInfo);
+                    $this->catalog($dataInfo['id'], $logInfo);
                     //分析referer 
                     $time = date("Y-m-d", strtotime($logInfo['details_time']));
                     $updateIds .= $logInfo['id'] . ',';
@@ -962,12 +962,12 @@ class Data extends Controller {
         {
             // 查询当前日期的TOP10
             $ipSql = "SELECT DATE_FORMAT(details_time, '%Y-%m-%d') as date,data_id,ip,count(id) as num  FROM log_info WHERE
-        ua LIKE '%Baiduspider%' AND data_id = {$dataID} AND `status` = 0 AND DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$spider['date']}' GROUP BY  ip ORDER BY num desc LIMIT 10";
+        ua LIKE '%Baiduspider%' AND data_id = {$dataID} AND `status` = 0 AND DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$spider['date']}' GROUP BY  ip,date  ORDER BY num desc LIMIT 10";
             $logData = Db::query($ipSql);
             foreach ($logData as $ksd => $info)
             {
                 $date = Db::name('baidu_spider')->field('id')
-                    ->where("date = '{$info['date']}' and ip = '{$info['ip']}' ")
+                    ->where("date = '{$info['date']}' and ip = '{$info['ip']}' and data_id ='{$info['data_id']}' ")
                     ->order('id desc ')
                     ->find();
                 if (! empty($date))
