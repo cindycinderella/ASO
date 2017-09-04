@@ -774,7 +774,7 @@
 						}
 					}
 					$('#myModal .modal-body .pagination').remove();
-					var page = '<div class="pagination pagination-centered" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
+					var page = '<div class="pagination pagination-centered settings-page" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
 					$('#myModal .modal-body .table tbody').html(html);
 					$('#myModal .modal-body .table').after(page);
 					e.preventDefault();
@@ -790,7 +790,7 @@
 		});	
 
 		//查看详情翻页
-		$(document).on('click','.pagination-centered .pagination li a',function(e){
+		$(document).on('click','.settings-page .pagination li a',function(e){
 			var _this = $(this);
 			var subHref = _this.attr('href');
 			var ip = $('#ip').val();
@@ -846,7 +846,7 @@
 		})
 
 		//自定义翻页
-		$(document).on('click','#customize li a',function(){
+		$(document).on('click','#customize .pagination li a',function(e){
 			var subHref = $(this).attr('href');
 			e.preventDefault();
 			var data_id = {:$data_id};
