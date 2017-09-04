@@ -33,10 +33,10 @@ class Insert extends Controller {
             if ($postTable=='catalog')
             {
                 $stype = input('post.stype');
-                $engineShare = Db::name("$postTable")->where( "date = '{$data[0]['date']}' and stype = ".$stype)->find();
+                $engineShare = Db::name("$postTable")->where( "date = '{$data[0]['date']}' and data_id = '{$data[0]['data_id']}'  and stype = ".$stype)->find();
             }else
             {
-                $engineShare = Db::name("$postTable")->where( "date = '{$data[0]['date']}'")->find();
+                $engineShare = Db::name("$postTable")->where( "date = '{$data[0]['date']}' and data_id = '{$data[0]['data_id']}'")->find();
             }            
             if (empty($engineShare))
             {
