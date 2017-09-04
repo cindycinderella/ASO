@@ -2323,8 +2323,6 @@ class Data extends Controller {
             $logInfo = Db::name('log_info')->where($where)
                 ->order("path DESC")
                 ->paginate(10);
-            print_r($logInfo);
-            exit;
             $customize = array();
             foreach ($logInfo as $k => $info)
             {
