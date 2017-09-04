@@ -321,6 +321,7 @@
 	        	 	$('.alert-error').fadeOut(3000)
 					return false;
 				}
+				var _this = $(this);
 				$("#myupload").ajaxSubmit({     
 					dataType:"json",    
                 	beforeSend: function() { //开始上传 
@@ -328,6 +329,7 @@
                 		var percentVal = '0%';
                 		progress_bar.width(percentVal);
                 		percent.html(percentVal);
+                		_this.unbind('click');
                 	},
                 	uploadProgress: function(event, position, total, percentComplete) { 
 			  			var percentVal = percentComplete + '%'; //获得进度 
@@ -336,6 +338,7 @@
 			  		}, 
 			  		success:function(data)
 			  		{
+			  			_this.bind('click');
 			  			if (data.status!=200)
 			  			{
 				  			$('.alert-error').find('strong').html(data.message);
