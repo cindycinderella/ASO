@@ -583,12 +583,12 @@
 	  	});	
 	}
 	//自定义需求
-	function customize(data_id,time,type,search)
+	function customize(data_id,time,type,search,url)
 	{
 		$('.customize tbody').html('');
 		$.ajax({    
 			type: 'POST',    
-			url: '{:url("index/data/customize")}', 
+			url: url, 
 			dataType:"json",    
 			data:{
 				"data_id":data_id,
@@ -648,13 +648,13 @@
 		})
 		var data_id = {:$data_id};
 		var time = $('#time').val();
-		customize(data_id,time,1,'');
+		customize(data_id,time,1,'','{:url("index/data/customize")}');
 		$('#selectErrors').change(function(){
 			var data_id = {:$data_id};
 			var time = $('#time').val();
 			var type = $(this).val();
 			var search = $('.search').val();
-			customize(data_id,time,type,search);
+			customize(data_id,time,type,search,'{:url("index/data/customize")}');
 		})
 		$('.input-append .btn').click(function(){
 			var search = $('.search').val();
@@ -667,7 +667,7 @@
 			var data_id = {:$data_id};
 			var time = $('#time').val();
 			var type = $('#selectErrors').val();
-			customize(data_id,time,type,search);
+			customize(data_id,time,type,search,'{:url("index/data/customize")}');
 		})
 		//分析类型切换
 		$(document).on('click','.right .btn-primary',function(e){
@@ -846,13 +846,14 @@
 		})
 
 		//自定义翻页
-		$(document).on('click','#customize',function(){
-
+		$(document).on('click','#customize li a',function(){
+			var subHref = _this.attr('href');
+			e.preventDefault();
 			var data_id = {:$data_id};
 			var time = $('#time').val();
 			var type = $('#selectErrors').val();
 			var search = $('.search').val();
-			customize(data_id,time,type,search);
+			customize(data_id,time,type,search,subHref);
 		})
 		$('#container').highcharts({
 			chart: {
