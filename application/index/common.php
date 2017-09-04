@@ -319,3 +319,79 @@ function debug_log($word, $filename = "debug", $time = TRUE)
     file_put_contents($path, $html, FILE_APPEND);
     return $path;
 }
+
+/**
+ * ***curl 获取页面***
+ */
+function getPage($url)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; MSIE 5.01; Windows NT 5.0)');
+    $weigth = curl_exec($ch);
+    curl_close($ch);
+    return $weigth;
+}
+// 二维数组去掉重复值
+function array_unique_fb($array2D, $true = TRUE)
+{
+    foreach ($array2D as $v)
+    {
+        $v = join(',', $v); // 降维,也可以用implode,将一维数组转换为用逗号连接的字符串
+        if ($true)
+        {
+            preg_match('/((\w+)*\.)*(\w+)\.(?:com|cn|xin|shop|ltd|club|top|wang|site|vip|net|cc|ren|biz|red|link|mobi|info|org|com\.cn|net\.cn|org\.cn|gov\.cn|name|ink|pro|tv|kim|group)/i', $v, $main);
+            if (empty($main))
+            {
+                continue;
+            }
+            $temp[] = $main[0];
+        }
+        else
+        {
+            $temp[] = $v;
+        }
+    }
+    $temp = array_unique($temp); // 去掉重复的字符串,也就是重复的一维数组
+    $tem = array();
+    foreach ($temp as $k => $v)
+    {
+        $tem[] = $v; // 再将拆开的数组重新组装
+    }
+    $tem = array_values($tem);
+    return $tem;
+}
+
+/**
+ * 把秒数转换为时分秒的格式
+ * 
+ * @param Int $times
+ *            时间，单位 秒
+ * @return String
+ */
+function secToTime($times)
+{
+    $result = '00:00:00';
+    if ($times > 0)
+    {
+        $hour = floor($times / 3600);
+        $minute = floor(($times - 3600 * $hour) / 60);       
+        $second = floor((($times - 3600 * $hour) - 60 * $minute) % 60);
+        if ($hour<10)
+        {
+            $hour='0'.$hour;
+        }
+        if ($minute<10)
+        {
+            $minute='0'.$minute;
+        }
+        if ($second<10)
+        {
+            $second='0'.$second;
+        }
+        $result = $hour . ':' . $minute . ':' . $second;
+    }
+    return $result;
+}

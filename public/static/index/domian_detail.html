@@ -1,0 +1,493 @@
+{extend name="index/base" /}
+{block name="content"}		
+<style type="text/css">
+	.table{border: 1px solid #ddd;}
+	.table th, .table td {
+		vertical-align: middle;
+	}
+	.table th, .table td {
+		border: none;
+	}	
+	.table tr{
+		width: 100%;
+	}
+	.old th, .old td {
+		border: 1px solid #ddd;
+	}
+	.pagination ul{float: right;}	
+</style>
+<!-- start: Content -->
+<div id="content" class="span10">
+
+
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i>
+			<a href="{:url('index/index/home')}">首页</a> 
+			<i class="icon-angle-right"></i>
+		</li>
+		<li><a href="javascript:void(0);">{:$title}</a>
+			<i class="icon-angle-right"></i></li>
+			<li><a href="javascript:void(0);">SEO综合分析</a></li>
+		</ul>	
+		<div class="row-fluid sortable">		
+			<div class="box span12">
+				<div class="box-header" data-original-title>
+					<h2><i class="halflings-icon white th-list"></i><span class="break"></span>SEO综合分析</h2>														
+				</div>
+				<div class="box-content alerts">
+					<div class="alert alert-success" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>
+					<div class="alert alert-error" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th style="text-align: center;"></th>	
+								<th style="text-align: center;">权重</th>
+								<th style="text-align: center;">收录</th>						  									  
+							</tr>
+						</thead>   
+						<tbody>
+							<tr>
+								<th style="text-align: center;">百度</th>	
+								<td style="text-align: center;">{:$domain.baidu_weights}</td>
+								<td style="text-align: center;">{:$domain.baidu_record}</td>						  									  
+							</tr>
+							<tr>
+								<th style="text-align: center;">360</th>	
+								<td style="text-align: center;">{:$domain.haosou_weights}</td>
+								<td style="text-align: center;">{:$domain.haosou_record}</td>						  									  
+							</tr>
+						</tbody>
+					</table> 
+
+					<table class="table table-striped keywords" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px; width: 49%;float: left; height: 450px">
+						<thead>
+							<tr>
+								<th style="text-align: left; padding-left: 38px;" colspan="3">关键词排名</th>
+							</tr>
+							<tr>
+								<th style="text-align: center;">关键词</th>
+								<th style="text-align: center;">百度</th>
+								<th style="text-align: center;">360</th>
+							</tr>
+						</thead>   
+						<tbody>
+							{foreach name="keywords"  item="keywords_vo"}
+							<tr>
+								<td style="text-align: center;">{:$keywords_vo.words}</td>
+								<td style="text-align: center;">{:$keywords_vo.baidu_rank}</td>
+								<td style="text-align: center;">{:$keywords_vo.haosou_rank}</td>
+							</tr>
+							{/foreach}
+						</tbody>					
+					</table>	
+
+					<table class="table table-striped baidu"  border="0" style="margin-top: 20px;width: 49%; float: left;height: 450px">
+						<thead>
+							<tr>
+								<th style="text-align: left; padding-left: 38px;" colspan="3">百度收录量</th>
+							</tr>
+							<tr>
+								<th style="text-align: center;">收录量</th>
+								<th style="text-align: center;">变化情况</th>
+								<th style="text-align: center;">日期</th>	
+							</tr>
+						</thead>   
+						<tbody>
+							{foreach name="recruit"  item="recruit_vo"}
+							<tr>								
+								<td style="text-align: center;">{:$recruit_vo.baidu_record}</td>
+								<td style="text-align: center;">
+									{if condition="$recruit_vo.status==1"}
+									<span style="cursor:pointer;" class="label label-success">{:$recruit_vo.diff}</span>
+									{else /} 
+									<span style="cursor:pointer;" class="label label-important">{:$recruit_vo.diff}</span>
+									{/if}
+								</td>
+								<td style="text-align: center;">{:$recruit_vo.date}</td>
+							</tr>
+							{/foreach}
+						</tbody>						
+					</table>	
+					<div class="pagination pagination-centered keywords_page" style="float:left;margin:0;width: 49%; margin-top: -26px;">
+						{:$keywords_page}
+					</div>
+					<div class="pagination pagination-centered recruit_page" style="float:right;margin:0;width: 49%; margin-top: -26px;margin-right: 26px;">
+						{:$recruit_page}
+					</div>
+					<div style="margin-bottom: 10px;margin-top: 40px; width: 100%;float: left;">
+						<div style="float: left;" class="left">	
+							<a class="btn btn-large" href="javascript:void(0);" style="padding: 2px;font-size: 14px;">昨天</a>	
+							<a class="btn btn-large btn-primary" href="javascript:void(0);" style="padding: 2px;font-size: 14px;">最近七天</a>
+						</div>
+					</div>
+					<table class="old table table-striped" style="margin-top: 20px;float: left;">
+						<thead>
+							<tr>
+								<th style="text-align: center; line-height: 54px;" rowspan="2">来源类型</th>
+								<th style="text-align: center;" colspan="3">网站基础标识</th>
+								<th style="text-align: center;" colspan="2">流量质量</th>
+							</tr>
+							<tr>
+								<th style="text-align: center;">浏览量(PV)</th>
+								<th style="text-align: center;">访问数(UV)</th>
+								<th style="text-align: center;">IP数</th>
+								<th style="text-align: center;">跳出率</th>
+								<th style="text-align: center;">平均访问时长</th>
+							</tr>							
+						</thead>   
+						<tbody>
+							{foreach name="site_profile"  item="vo"}
+							<tr style="position: relative;">
+								<td  style="text-align:left; padding-left: 20px;">
+									{if !empty($vo['child'])}	
+									<div class="box-icon"  alt ="{:$vo.id}" style="width: 20px;height: 20px;float: left;left: 5px;top: 10px">
+										<a href="javascript:void(0);"><i class="halflings-icon plus"></i></a>							
+									</div>
+									{/if}
+									{switch name="vo.type"}
+									{case value="1"}百度自然搜索{/case}
+									{case value="2"}直接访问{/case}
+									{case value="3"}其他搜索引擎{/case}
+									{case value="4"}外部链接{/case}
+									{case value="5"}当前汇总{/case}
+									{/switch}
+								</td>
+								<td style="text-align: center;">{:$vo.pv_count}</td>
+								<td style="text-align: center;">{:$vo.visitor_count}</td>
+								<td style="text-align: center;">{:$vo.ip_count}</td>
+								<td style="text-align: center;">{:$vo.bounce_ratio}%</td>
+								<td style="text-align: center;">{:$vo.visit_time}</td>
+							</tr>
+							{if !empty($vo['child'])}
+							{foreach name="vo.child"  item="child"}
+							<tr alt="{:$vo.id}" class="child" style="display: none;">
+								<td  style="text-align:left;">								
+									<span style="padding-left: 50px;">{:$child.name}</span>
+								</td>
+								<td style="text-align: center;">{:$child.pv_count}</td>
+								<td style="text-align: center;">{:$child.visitor_count}</td>
+								<td style="text-align: center;">{:$child.ip_count}</td>
+								<td style="text-align: center;">{:$child.bounce_ratio}%</td>
+								<td style="text-align: center;">{:$child.visit_time}</td>
+							</tr>
+							{/foreach}
+							{/if}
+							{/foreach}
+						</tbody>
+					</table>	
+				</div>
+			</div><!--/span-->
+
+		</div><!--/row-->
+
+	</div><!--/.fluid-container-->
+
+	<!-- end: Content -->
+</div><!--/#content.span10-->
+</div><!--/fluid-row-->
+<div class="clearfix"></div>
+
+<!-- start: JavaScript-->
+<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+<script src="__INDEX__js/modernizr.js"></script>
+
+<script src="__INDEX__js/bootstrap.min.js"></script>
+
+<script src="__INDEX__js/jquery.cookie.js"></script>
+
+<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+<script src="__INDEX__js/excanvas.js"></script>
+<script src="__INDEX__js/jquery.flot.js"></script>
+<script src="__INDEX__js/jquery.flot.pie.js"></script>
+<script src="__INDEX__js/jquery.flot.stack.js"></script>
+<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+<script src="__INDEX__js/jquery.noty.js"></script>
+
+<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+<script src="__INDEX__js/counter.js"></script>
+
+<script src="__INDEX__js/retina.js"></script>
+
+<script src="__INDEX__js/custom.js"></script>
+<script src="__INDEX__js/jquery.form.js"></script>
+
+<script src="__INDEX__js/highcharts.js"></script>
+<script src="__INDEX__js/data.js"></script>
+<script src="__INDEX__js/drilldown.js"></script>
+<script type="text/javascript">		
+	$(function(){		
+		//关键词排名翻页
+		$(document).on('click','.keywords_page li a',function(e){
+			var _this = $(this);
+			var subHref = _this.attr('href');
+			subHref =subHref.replace("domain",'getKeywords')
+			e.preventDefault();    
+			var site_id ="{:$site_id}";    
+			$.ajax({
+				url:  subHref,               
+				type: 'POST',  
+				data:{
+					"site_id":site_id,
+				},   
+				dataType: 'json',
+				success: function(data) {
+					if (data.status !=200 )
+					{
+						$('.alert-error').find('strong').html(data.msg);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}							
+					var html = '';
+					var obj = data.keywords.data;
+					for (var i = 0; i <obj.length; i++) 
+					{
+						html+='<tr>';
+						html+='<td style="text-align: center;">'+obj[i].words+'</td>';
+						html+='<td style="text-align: center;">'+obj[i].baidu_rank+'</td>';
+						html+='<td style="text-align: center;">'+obj[i].haosou_rank+'</td>';
+						html+='</tr>';
+					}
+					$('.keywords_page').remove();
+					var page = '<div class="pagination pagination-centered keywords_page" style="float:left;margin:0;width: 49%; margin-top: -26px;">';
+					page+=data.keywords_page
+					page+='</div>';
+					$('.keywords tbody').html(html); 
+					$('.recruit_page').before(page);
+				},
+				error: function() {
+					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+				}
+			});
+
+		})
+
+		//百度收录量翻页
+		$(document).on('click','.recruit_page li a',function(e){
+			var _this = $(this);
+			var subHref = _this.attr('href');
+			subHref =subHref.replace("domain",'getRecord')
+			e.preventDefault();    
+			var site_id ="{:$site_id}";    
+			$.ajax({
+				url:  subHref,               
+				type: 'POST',  
+				data:{
+					"site_id":site_id,
+				},   
+				dataType: 'json',
+				success: function(data) {
+					if (data.status !=200 )
+					{
+						$('.alert-error').find('strong').html(data.msg);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}							
+					var html = '';
+					var obj = data.recruit;
+					for (var i = 0; i <obj.length; i++) 
+					{
+						html+='<tr>';
+						html+='<td style="text-align: center;">'+obj[i].baidu_record+'</td>';
+						html+='<td style="text-align: center;">';
+						if (obj[i].status==1) 
+						{
+							html+='<span style="cursor:pointer;" class="label label-success">'+obj[i].diff+'</span>';
+						}else
+						{
+							html+='<span style="cursor:pointer;" class="label label-important">'+obj[i].diff+'</span>';
+						}						
+						+obj[i].diff+'</td>';
+						html+='<td style="text-align: center;">'+obj[i].date+'</td>';
+						html+='</tr>';
+					}
+					$('.recruit_page').remove();
+					var page = '<div class="pagination pagination-centered recruit_page" style="float:right;margin:0;margin-right: 26px;max-width: 49%; margin-top: -26px;">';
+					page+=data.recruit_page
+					page+='</div>';
+					$('.baidu tbody').html(html); 
+					$('.keywords_page').after(page);
+				},
+				error: function() {
+					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+				}
+			});
+
+		})
+
+
+
+
+
+		$(document).on('click','.box-icon',function(){
+			var id = $(this).attr('alt');
+			$(this).find('i').removeClass('plus');
+			$(this).find('i').addClass('minus');
+			$(this).removeClass('box-icon');
+			$(this).addClass('box-icons');
+			$(this).unbind('click');
+			$('.child').each(function(index,e){
+				if ($(this).attr('alt')==id)
+				{
+					$(this).fadeIn(1000);
+				}
+			})
+
+		})
+
+		$(document).on('click','.box-icons',function(){
+			var id = $(this).attr('alt');
+			$(this).find('i').removeClass('minus');
+			$(this).find('i').addClass('plus');
+			$(this).removeClass('box-icons');
+			$(this).addClass('box-icon');
+			$(this).unbind('click');
+			$('.child').each(function(index,e){
+				if ($(this).attr('alt')==id)
+				{
+					$(this).hide();
+				}
+
+			})
+		})
+		$(document).on('click','.btn-primary',function(){
+			$('.left a').addClass('btn-primary');
+			$(this).removeClass('btn-primary');
+			var siteId = "{:$site_id}";
+			var time =$(this).html();
+			$.ajax({    
+				type: 'POST',    
+				url: '{:url("index/baidu/getWeeks")}', 
+				dataType:"json",    
+				data:{
+					"site_id":siteId,
+					"time":time
+				}, 
+				success:function(data)
+				{					
+					if (data.status==201)
+					{						
+						$('.alert-success').find('strong').html(data.msg);
+						$('.alert-success').css('display','block')
+						$('.alert-success').fadeOut(3000)
+					}else if (data.status==200)
+					{	
+						$('.old tbody').html('');
+						var data = data.data;
+						var len = data.length;
+						var html ='';
+						for (var i = 0; i < len; i++) 
+						{
+							html+='<tr style="position: relative;">';
+							html+='<td  style="text-align:left; padding-left: 20px;">';
+							if (data[i].child!=''&&data[i].child!='undefined')
+							{
+								html+='<div class="box-icon"  alt ="'+data[i].id+'" style="width: 20px;height: 20px;float: left;left: 5px;top: 10px">';
+								html+='<a href="javascript:void(0);"><i class="halflings-icon plus"></i></a>';						
+								html+='</div>';
+							}							
+							switch(data[i].type)
+							{
+								case 1:						  
+								html+='百度自然搜索';								
+								break;
+								case 2:
+								html+='直接访问';
+								break;
+								case 3:
+								html+='其他搜索引擎';
+								break;	
+								case 4:
+								html+='外部链接';
+								break;
+								case 5:
+								html+='当前汇总';
+								break;							
+							}	
+							html+='</td>';
+							console.log(html)
+							html+='<td style="text-align: center;">'+data[i].pv_count+'</td>';
+							html+='<td style="text-align: center;">'+data[i].visitor_count+'</td>';
+							html+='<td style="text-align: center;">'+data[i].ip_count+'</td>';
+							html+='<td style="text-align: center;">'+data[i].bounce_ratio+'%</td>';
+							html+='<td style="text-align: center;">'+data[i].visit_time+'</td>';
+							html+='</tr>';							
+							if (data[i].child!=''&&data[i].child!='undefined')
+							{
+								var childs= data[i].child;		
+								for (var j = 0; j < childs.length; j++) 
+								{
+									// alert(childs.length)
+									html+='<tr alt="'+data[i].id+'" class="child" style="display: none;">';
+									html+='<td  style="text-align:left;">';								
+									html+='<span style="padding-left: 50px;">'+childs[j].name+'</span>';
+									html+='</td>';
+									html+='<td style="text-align: center;">'+childs[j].pv_count+'</td>';
+									html+='<td style="text-align: center;">'+childs[j].visitor_count+'</td>';
+									html+='<td style="text-align: center;">'+childs[j].ip_count+'</td>';
+									html+='<td style="text-align: center;">'+childs[j].bounce_ratio+'%</td>';
+									html+='<td style="text-align: center;">'+childs[j].visit_time+'</td>';
+									html+='</tr>';
+								}
+
+							}
+						}	
+						$('.old tbody').html(html)
+					}	
+				},
+				error:function(xhr){ 
+					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+				} 	
+			});		
+		})
+	})
+</script>
+<!-- end: JavaScript-->
+{/block}
