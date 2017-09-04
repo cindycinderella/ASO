@@ -618,7 +618,7 @@
 						html+='<td style="text-align: center;">'+dataList[i].stay_time+'</td>';
 						html+='<td style="text-align: center;">'+dataList[i].referer+'</td></tr>';
 					}
-					var page = '<div class="pagination pagination-centered" style="float:right">'+data.page+'</div>';
+					var page = '<div class="pagination pagination-centered" id="customize" style="float:right">'+data.page+'</div>';
 					$('.customize tbody').html(html);
 					$('.customize').show();
 					$('.customize').after(page);
@@ -804,8 +804,6 @@
 				data:{
 					"data_id":data_id,
 					"ip":ip,
-					"type":type,
-					"search":search,
 					"time":time
 				},   
 				dataType: 'json',
@@ -847,7 +845,15 @@
 
 		})
 
+		//自定义翻页
+		$(document).on('click','#customize',function(){
 
+			var data_id = {:$data_id};
+			var time = $('#time').val();
+			var type = $('#selectErrors').val();
+			var search = $('.search').val();
+			customize(data_id,time,type,search);
+		})
 		$('#container').highcharts({
 			chart: {
 				type: 'line'
