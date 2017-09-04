@@ -1654,7 +1654,7 @@ class Data extends Controller {
             if ($date == '最近七天')
             {
                 $sql = " SELECT DATE_FORMAT(date, '%Y-%m-%d') AS `date` FROM engine_share WHERE 
-                data_id = {$dataId}  GROUP BY  DATE_FORMAT(date, '%Y-%m-%d') ORDER BY `date` desc";
+                data_id = {$dataId}  GROUP BY  DATE_FORMAT(date, '%Y-%m-%d') ORDER BY `date` desc limit 7";
                 $dateArr = Db::query($sql);
                 $engineDate = array();
                 foreach ($dateArr as $dateinfo)
@@ -1796,7 +1796,7 @@ class Data extends Controller {
             if ($date == '最近七天')
             {
                 $sql = " SELECT DATE_FORMAT(date, '%Y-%m-%d') AS `date` FROM httpd_code WHERE
-                data_id = {$dataId}  GROUP BY  DATE_FORMAT(date, '%Y-%m-%d') ORDER BY `date` desc";
+                data_id = {$dataId}  GROUP BY  DATE_FORMAT(date, '%Y-%m-%d') ORDER BY `date` desc limit 7";
                 $dateArr = Db::query($sql);
                 $dataDate = array();
                 foreach ($dateArr as $dateinfo)
