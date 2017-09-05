@@ -1757,7 +1757,8 @@ class Data extends Controller {
                         $pieData[$key][] = "谷歌";
                     break;
                 }
-                $pieData[$key][] = (float) $sprintf;
+                //$pieData[$key][] = (float) $sprintf;
+                $pieData[$key][] = (int) $info;
                 $key ++;
             }
             
@@ -1917,8 +1918,8 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
-                $pieData[$key][] = (float) $sprintf;
+                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
             $data['pie'] = $pieData;
@@ -2094,8 +2095,8 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
-                $pieData[$key][] = (float) $sprintf;
+                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
             $data['pie'] = $pieData;
@@ -2271,8 +2272,8 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
-                $pieData[$key][] = (float) $sprintf;
+                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
             $data['pie'] = $pieData;

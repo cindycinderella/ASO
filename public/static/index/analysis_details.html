@@ -1088,7 +1088,8 @@ function pieEngine(time,pie,name)
 		},
 		tooltip: {
 			headerFormat: '{series.name}<br>',
-			pointFormat: '{point.name}: <b>{point.percentage:.1f}%</b>'
+			pointFormat: '{point.name}: <b>{point.percentage:.2f}%</b>',
+			footerFormat: '(总计 {point.y} 个)'
 		},
 		plotOptions: {
 			pie: {
@@ -1096,7 +1097,7 @@ function pieEngine(time,pie,name)
 				cursor: 'pointer',
 				dataLabels: {
 					enabled: true,
-					format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+					format: '<b>{point.name}</b>: {point.percentage:.2f} %',
 					style: {
 						color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
 					}
