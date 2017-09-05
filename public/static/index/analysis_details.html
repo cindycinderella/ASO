@@ -251,6 +251,7 @@
 							<div class="modal hide fade" id="myModal" style="left: 39%;width: 50%">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal">×</button>
+									<button type="button" class="exportUrl" style="float: right; margin-right: 60px" >导出</button>
 									<h3></h3>
 								</div>
 								<div class="modal-body" style="max-height: 530px;">
@@ -640,6 +641,14 @@
 			$(this).unbind('click');
 			var type = $('#selectErrors').val();
 			var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/exportCustomize/data_id/{:$data_id}/type/"+type+".html"
+			window.open(url);
+		})
+		//导出URL详情
+		$('.exportUrl').click(function(){
+			var time = $('#time').val();	
+			var ip = $('#ip').val();
+			var type = $('#type').val();
+			var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/exportUrl/data_id/{:$data_id}/type/"+type+"/ip/"+ip+"/time/"+time+".html"
 			window.open(url);
 		})
 		//切换日志详情

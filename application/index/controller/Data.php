@@ -1553,7 +1553,8 @@ class Data extends Controller {
             else
             {
                 $where = " ip = '{$ip}' and data_id = $dataId and date = '{$time}' ";
-                $baiDuData = Db::table('baidu_url')->where($where)
+                $baiDuData = Db::table('baidu_url')->field('url,num')
+                    ->where($where)
                     ->order('num desc,id desc ')
                     ->paginate(12);
             }
@@ -1663,7 +1664,10 @@ class Data extends Controller {
                 $dateArr = Db::query($sql);
                 if (empty($dateArr))
                 {
-                    return json(['status'=>201,'msg'=>'改时间段没有数据']);
+                    return json([
+                        'status' => 201,
+                        'msg' => '改时间段没有数据'
+                    ]);
                 }
                 $engineDate = array();
                 foreach ($dateArr as $dateinfo)
@@ -1742,13 +1746,14 @@ class Data extends Controller {
             $key = 0;
             foreach ($sum as $k => $info)
             {
-                if ($allSum==0)
+                if ($allSum == 0)
                 {
                     $sprintf = 0;
-                }else
+                }
+                else
                 {
                     $sprintf = sprintf("%.2f", ($info / $allSum) * 100);
-                }               
+                }
                 switch ($k)
                 {
                     case 'baidu':
@@ -1767,7 +1772,7 @@ class Data extends Controller {
                         $pieData[$key][] = "谷歌";
                     break;
                 }
-                //$pieData[$key][] = (float) $sprintf;
+                // $pieData[$key][] = (float) $sprintf;
                 $pieData[$key][] = (int) $info;
                 $key ++;
             }
@@ -1928,7 +1933,7 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                // $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
                 $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
@@ -2079,7 +2084,7 @@ class Data extends Controller {
                 $categoriesData['colorByPoint'] = true;
                 $categories = array();
                 $key = 0;
-                $dataArr =array();
+                $dataArr = array();
                 foreach ($cata as $cataKey => $cataInfo)
                 {
                     $categories[$key]['name'] = (string) $cataKey;
@@ -2106,7 +2111,7 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                // $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
                 $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
@@ -2256,7 +2261,7 @@ class Data extends Controller {
                 $categoriesData['name'] = '目录份额';
                 $categoriesData['colorByPoint'] = true;
                 $categories = array();
-                $dataArr =array();
+                $dataArr = array();
                 $key = 0;
                 foreach ($cata as $cataKey => $cataInfo)
                 {
@@ -2284,7 +2289,7 @@ class Data extends Controller {
             foreach ($code as $k => $codeInfo)
             {
                 $pieData[$key][] = (string) $k;
-                //$sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
+                // $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
                 $pieData[$key][] = (int) $codeInfo;
                 $key ++;
             }
@@ -2421,7 +2426,7 @@ class Data extends Controller {
         $objPHPExcel = new \PHPExcel();
         // 设置单元格区中
         $objPHPExcel->setActiveSheetIndex(0)
-            ->getStyle('A:HF')
+            ->getStyle('A:H')
             ->getAlignment()
             ->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
         // 设置单元格宽度高度
@@ -2564,6 +2569,94 @@ class Data extends Controller {
         $objPHPExcel->getActiveSheet(0)->setTitle('分析详情-自定义需求');
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $dataInfo['file_name'] . '.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
+    }
+    // 导出URL
+    public function exportUrl()
+    {
+        $dataId = input('data_id');
+        $ip = input('ip');
+        $time = input('time');
+        $type = input('type');
+        if ($time == '最近七天')
+        {
+            $dateArr = Db::name('baidu_spider')->field('date')
+                ->where('data_id = ' . $dataId)
+                ->group('date')
+                ->order('date desc')
+                ->limit(7)
+                ->select();
+            $timeStr = '';
+            foreach ($dateArr as $time)
+            {
+                $timeStr .= "'" . $time['date'] . "',";
+            }
+            $timeStr = rtrim($timeStr, ",");
+            $where = " ip = '{$ip}' and data_id = $dataId and date in ({$timeStr}) ";
+            $baiDuData = Db::table('baidu_url')->field("SUM(num) as num,url")
+                ->where($where)
+                ->group('url')
+                ->order('num desc,id desc ')
+                ->select();
+        }
+        else
+        {
+            $where = " ip = '{$ip}' and data_id = $dataId and date = '{$time}' ";
+            $baiDuData = Db::table('baidu_url')->where($where)
+                ->field("num,url")
+                ->order('num desc,id desc ')
+                ->select();
+        }
+        $objPHPExcel = new \PHPExcel();
+        // 设置单元格区中
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getStyle('A:B')
+            ->getAlignment()
+            ->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        // 设置单元格宽度高度
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getColumnDimension('A')
+            ->setWidth(20);
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getColumnDimension('B')
+            ->setWidth(20);
+        // 自动调整行高
+        $objPHPExcel->getActiveSheet(0)
+            ->getDefaultRowDimension()
+            ->setRowHeight(- 1);
+        // 设置单元格格式 为时间格式
+        // 设置A1-F1样式
+        $styleArray = array(
+            'font' => array(
+                'bold' => true,
+                'size' => 12
+            )
+        );
+        $objPHPExcel->getActiveSheet(0)
+            ->getStyle('A1:B1')
+            ->applyFromArray($styleArray);
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', 'URL')
+            ->setCellValue('B1', '抓取次数');
+        $num = 2;
+        foreach ($baiDuData as $info)
+        {
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $num, $info['url']);
+            if ($type == 2)
+            {
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B' . $num, 1);
+            }
+            else
+            {
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B' . $num, $info['num']);
+            }           
+            $num ++;
+        }
+        $objPHPExcel->getActiveSheet(0)->setTitle("$ip--URL信息");
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $ip . '--URL信息.xls"');
         header('Cache-Control: max-age=0');
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
