@@ -278,7 +278,7 @@ class Baidu extends Controller {
             {
                 return json([
                     'status' => 201,
-                    'msg' => "改时间段没有数据"
+                    'msg' => "该时间段没有数据"
                 ]);
             }
             $total = array(

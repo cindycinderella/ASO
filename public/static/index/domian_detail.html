@@ -411,7 +411,8 @@
 				success:function(data)
 				{					
 					if (data.status==201)
-					{						
+					{		
+						$('.old tbody').html('');				
 						$('.alert-success').find('strong').html(data.msg);
 						$('.alert-success').css('display','block')
 						$('.alert-success').fadeOut(3000)
