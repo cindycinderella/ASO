@@ -10,6 +10,9 @@ class Api extends Controller {
 
     public function getSiteList()
     {
+        $m=date("i",time());
+        debug_log("定时执行成功-----".$m,'siteList');
+        exit;
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/all/a');
         // debug_log(json_encode($siteList),'siteList');
