@@ -15,10 +15,8 @@ class Api extends Controller {
         if ($keys!==$kei)
         {
             debug_log("定时执行任务-----Key不正确",'siteList');
+            exit;
         }
-        $m=date("i",time());
-        debug_log("定时执行成功-----".$m,'siteList');
-        exit;
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/all/a');
         // debug_log(json_encode($siteList),'siteList');
@@ -87,6 +85,13 @@ class Api extends Controller {
     // 获取外链详情
     public function getlink()
     {
+        $keys = input('key');
+        $kei = 'EBEB07EECE1234SF6776GHDQ11ASD56D72B81FD6E4FCE';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getlink');
+            exit;
+        }
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/link/a');
         $insert = array();
@@ -136,6 +141,13 @@ class Api extends Controller {
     // 获取搜索引擎详情
     public function getSeach()
     {
+        $keys = input('key');
+        $kei = 'EBEB07E13EFW567GHF8JMHO92D72B81FD6E4FCE';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getSeach');
+            exit;
+        }
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/engine/a');
         $insert = array();
@@ -188,6 +200,13 @@ class Api extends Controller {
     // 获取百度关键字排名
     public function getRanking()
     {
+        $keys = input('key');
+        $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getSeach');
+            exit;
+        }
         $date = date("Y-m-d", strtotime("-1 day"));
         $word = Db::name('Keyword_ranking')->field('date')
             ->where("date = '{$date}' and stype = 1 ")
@@ -386,6 +405,13 @@ class Api extends Controller {
     // 获取360关键字排名
     public function getRings()
     {
+        $keys = input('key');
+        $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getSeach');
+            exit;
+        }
         $date = date("Y-m-d", strtotime("-1 day"));
         $word = Db::name('Keyword_ranking')->field('date')
             ->where("date = '{$date}' and stype = 2")
@@ -571,6 +597,13 @@ class Api extends Controller {
     // 获取360权重
     public function getHaosou()
     {
+        $keys = input('key');
+        $kei = 'ADACAAW213234G78875FAD231GFHGXCXVAHHF76873SZCZC222';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getSeach');
+            exit;
+        }
         $domain = Db::name('domain')->field('domain,site_id')->select();
         foreach ($domain as $info)
         {
@@ -595,6 +628,13 @@ class Api extends Controller {
     // 360 百度收录量
     public function getRecord()
     {
+        $keys = input('key');
+        $kei = 'ADACAAWGFHGXCXVAHHF76873SZCZC222';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'getSeach');
+            exit;
+        }
         $domain = Db::name('domain')->field('domain,site_id')->select();
         $key = 0;
         $siteProfile = Db::name('recruit')->field('id')
