@@ -2290,10 +2290,10 @@ class Data extends Controller {
         if (Request::instance()->isAjax())
         {
             $dataId = input('post.data_id');
-            $time = input('post.time');
+            $time = input('post.time');           
             $type = input('post.type');
             $seach = input('post.search');
-            $where = " data_id ={$dataId} and status = 1 AND  DATE_FORMAT(details_time, '%Y-%m-%d')  = '{$time}'";
+            $where = " data_id ={$dataId} and status = 1 ";
             if (! empty($type))
             {
                 switch ($type)
