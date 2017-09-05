@@ -213,6 +213,7 @@
 															<div class="input-append" style="margin-left: 70px;margin-top: 4px;">
 																<input class ="search" size="16" type="text"><button class="btn btn-primary" type="button">搜索</button>
 															</div>
+															<a href="javascript:void(0);" class="exportCustomize" style="float: right;text-decoration: underline; margin-right: 15px;">导出</a>
 														</div>
 														<img src="__INDEX__img/loading.gif" style="margin-left: 34%; display: none;" class="loading">
 														<table class="table table-striped customize" style="display: none;">
@@ -225,7 +226,7 @@
 																	<th style="text-align: center;">蜘蛛抓取总次数</th>	
 																	<th style="text-align: center;">蜘蛛有效抓取次数</th>
 																	<th style="text-align: center;">停留时间(/h)</th>		
-																	<th style="text-align: center;">上一级页面</th>								  									  
+																	<th style="text-align: center;">上一级页面</th>							  									  
 																</tr>
 															</thead>   
 														</thead>   
@@ -634,6 +635,13 @@
 		});
 	}
 	$(function(){
+		//导出自定义需求
+		$('.exportCustomize').click(function(){
+			$(this).unbind('click');
+			var type = $('#selectErrors').val();
+			var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/exportCustomize/data_id/{:$data_id}/type/"+type+".html"
+			window.open(url);
+		})
 		//切换日志详情
 		$('#select').change(function(){
 			if($(this).val()==0)

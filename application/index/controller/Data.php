@@ -2549,7 +2549,6 @@ class Data extends Controller {
             ->where('id = ' . $dataId)
             ->find();
         $objPHPExcel->getActiveSheet(0)->setTitle('分析详情-自定义需求');
-        $objPHPExcel->setActiveSheetIndex($key);
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="' . $dataInfo['file_name'] . '.xls"');
         header('Cache-Control: max-age=0');
