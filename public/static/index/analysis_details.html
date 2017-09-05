@@ -253,6 +253,7 @@
 									<h3></h3>
 								</div>
 								<div class="modal-body" style="max-height: 530px;">
+									<img src="__INDEX__img/loading.gif" style="margin-left: 34%;" id="modal-body">
 									<input type="hidden" id="ip" value="">	
 									<input type="hidden" id="type" value="">
 									<input type="hidden" id="analysis_type" value="1">
@@ -748,9 +749,15 @@
 					"data_id":data_id,
 					"ip":ip,
 					"time":time
+				},
+				beforeSend: function() { //开始上传 
+					$('#modal-body').show();
+					$('.modal-body table').hide();
 				}, 
 				success:function(data)
 				{
+					$('#modal-body').hide();
+					$('.modal-body table').show();
 					if (data.status !=200 )
 					{
 						$('.alert-error').find('strong').html(data.msg);
@@ -791,10 +798,10 @@
 
 		//查看详情翻页
 		$(document).on('click','.settings-pagination .pagination li a',function(e){
+			e.preventDefault();
 			var _this = $(this);
 			var subHref = _this.attr('href');
-			var ip = $('#ip').val();
-			e.preventDefault();    
+			var ip = $('#ip').val();			    
 			var data_id ="{:$data_id}";    
 			var type = $('#type').val();
 			var time = $('#time').val();  
@@ -807,7 +814,13 @@
 					"time":time
 				},   
 				dataType: 'json',
+				beforeSend: function() { //开始上传 
+					$('#modal-body').show();
+					$('.modal-body table').hide();
+				},
 				success: function(data) {
+					$('#modal-body').hide();
+					$('.modal-body table').show();	
 					if (data.status !=200 )
 					{
 						$('.alert-error').find('strong').html(data.msg);
@@ -831,7 +844,7 @@
 						}
 					}
 					$('#myModal .modal-body .pagination').remove();
-					var page = '<div class="pagination pagination-centered" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
+					var page = '<div class="pagination pagination-centered settings-pagination" style="float:right;margin-top:0px;">'+data.page+'</div>'; 
 					$('#myModal .modal-body .table tbody').html(html);
 					$('#myModal .modal-body .table').after(page);
 					$('#myModal').modal({backdrop: 'static', keyboard: false});
@@ -847,8 +860,8 @@
 
 		//自定义翻页
 		$(document).on('click','#customize .pagination li a',function(e){
-			var subHref = $(this).attr('href');
 			e.preventDefault();
+			var subHref = $(this).attr('href');			
 			var data_id = {:$data_id};
 			var time = $('#time').val();
 			var type = $('#selectErrors').val();
