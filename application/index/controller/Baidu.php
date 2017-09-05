@@ -191,7 +191,13 @@ class Baidu extends Controller {
             $total['avg_visit_time'] += $siteInfo['avg_visit_time'];
             $siteProfile[$k]['child'] = $child;
         }
-        $total['bounce_ratio'] = sprintf("%.2f", ($bounce_ratio / $total['pv_count']) * 100);
+        if ($total['pv_count']==0)
+        {
+            $total['bounce_ratio'] =0;
+        }else
+        {
+            $total['bounce_ratio'] = sprintf("%.2f", ($bounce_ratio / $total['pv_count']) * 100);
+        }        
         $total['visit_time'] = secToTime($total['avg_visit_time']);
         $siteProfile[] = $total;
         // 百度收录量

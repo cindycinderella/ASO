@@ -2290,7 +2290,7 @@ class Data extends Controller {
         if (Request::instance()->isAjax())
         {
             $dataId = input('post.data_id');
-            $time = input('post.time');           
+            $time = input('post.time');
             $type = input('post.type');
             $seach = input('post.search');
             $where = " data_id ={$dataId} and status = 1 ";
@@ -2399,5 +2399,161 @@ class Data extends Controller {
             $data['status'] = 200;
             return json($data);
         }
+    }
+    // 导出自定义需求
+    public function exportCustomize()
+    {
+        $dataId = input('data_id');
+        $type = input('type');
+        $objPHPExcel = new \PHPExcel();
+        // 设置单元格区中
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getStyle('A:HF')
+            ->getAlignment()
+            ->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        // 设置单元格宽度高度
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getColumnDimension('A')
+            ->setWidth(20);
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->getColumnDimension('B')
+            ->setWidth(20);
+        // 自动调整行高
+        $objPHPExcel->getActiveSheet(0)
+            ->getDefaultRowDimension()
+            ->setRowHeight(- 1);
+        // 设置单元格格式 为时间格式
+        // 设置A1-F1样式
+        $styleArray = array(
+            'font' => array(
+                'bold' => true,
+                'size' => 12
+            )
+        );
+        $objPHPExcel->getActiveSheet(0)
+            ->getStyle('A1:H1')
+            ->applyFromArray($styleArray);
+        $objPHPExcel->setActiveSheetIndex(0)
+            ->setCellValue('A1', '搜索引擎类型')
+            ->setCellValue('B1', 'URL')
+            ->setCellValue('C1', '状态码')
+            ->setCellValue('D1', 'IP')
+            ->setCellValue('E1', '蜘蛛抓取总次数')
+            ->setCellValue('F1', '蜘蛛有效抓取次数')
+            ->setCellValue('G1', '停留时间(/h)')
+            ->setCellValue('H1', '上一级页面');
+        $num = 2;
+        $where = " data_id ={$dataId} and status = 1 ";
+        if (! empty($type))
+        {
+            switch ($type)
+            {
+                case 1:
+                    $where .= " and ua like '%Baiduspider%' ";
+                break;
+                case 2:
+                    $where .= " and (ua like '%haosouspider%' OR ua like '%360Spider%')";
+                break;
+                case 3:
+                    $where .= " and ua like '%Sogou%' ";
+                break;
+                case 4:
+                    $where .= " and ua like '%bingbot%' ";
+                break;
+                case 5:
+                    $where .= " and ua like '%googlebot%' ";
+                break;
+            }
+        }
+        // 自定义需求
+        $logInfo = Db::name('log_info')->field('ip,path,ua,http_code,referer')
+            ->where($where)
+            ->order("path DESC")
+            ->select();
+        foreach ($logInfo as $k => $info)
+        {
+            $uaName = '';
+            $dataList = Db::name('log_info')->field('details_time,path')
+                ->where($where . " and ip ='{$info['ip']}' ")
+                ->order("details_time asc ")
+                ->select();
+            $temp = '';
+            $totalStayTime = 0;
+            $path = array();
+            foreach ($dataList as $key => $log_info)
+            {
+                $path[] = $log_info['path'];
+                if ($temp == '')
+                {
+                    $temp = $log_info['details_time'];
+                }
+                // 总抓取时间
+                if ($key + 1 >= count($dataList))
+                {
+                    $totalStayTime += strtotime($log_info['details_time']) - strtotime($temp);
+                    $totalStayTime += 30 * 60;
+                    $temp = '';
+                }
+                else
+                {
+                    if ($dataList[$key + 1]['details_time'] - $log_info['details_time'] > 30 * 60)
+                    {
+                        $totalStayTime += strtotime($log_info['details_time']) - strtotime($temp);
+                        $totalStayTime += 30 * 60;
+                        $temp = '';
+                    }
+                }
+            }
+            // 百度
+            $baiduSpider = stripos($info['ua'], "Baiduspider");
+            if ($baiduSpider !== false)
+            {
+                $uaName = '百度';
+            }
+            // 360
+            $haoSou = stripos($info['ua'], "haosouspider");
+            $haoSpider = stripos($info['ua'], "360Spider");
+            if ($haoSou !== false || $haoSpider !== false)
+            {
+                $uaName = '360';
+            }
+            // 微软 bing
+            $bingSpider = stripos($info['ua'], "bingbot");
+            if ($bingSpider !== false)
+            {
+                $uaName = '必应';
+            }
+            // Sogou
+            $sogouSpider = stripos($info['ua'], "Sogou");
+            if ($sogouSpider !== false)
+            {
+                $uaName = '搜狗';
+            }
+            // google
+            $googleSpider = stripos($info['ua'], "googlebot");
+            if ($googleSpider !== false)
+            {
+                $uaName = 'Google';
+            }
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $num, $uaName);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B' . $num, $info['path']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C' . $num, $info['http_code']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D' . $num, $info['ip']);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E' . $num, count($path));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F' . $num, count(array_count_values($path)));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G' . $num, sprintf("%.2f", $totalStayTime / 3600));
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H' . $num, $info['referer']);
+            $num ++;
+        }
+        $dataInfo = Db::name('data_list')->field('file_name')
+            ->where('id = ' . $dataId)
+            ->find();
+        $objPHPExcel->getActiveSheet(0)->setTitle('分析详情-自定义需求');
+        $objPHPExcel->setActiveSheetIndex($key);
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="' . $dataInfo['file_name'] . '.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+        $objWriter->save('php://output');
     }
 }
