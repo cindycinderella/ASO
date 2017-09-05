@@ -1661,6 +1661,10 @@ class Data extends Controller {
                 $sql = " SELECT DATE_FORMAT(date, '%Y-%m-%d') AS `date` FROM engine_share WHERE 
                 data_id = {$dataId}  GROUP BY  DATE_FORMAT(date, '%Y-%m-%d') ORDER BY `date` desc limit 7";
                 $dateArr = Db::query($sql);
+                if (empty($dateArr))
+                {
+                    return json(['status'=>201,'msg'=>'改时间段没有数据']);
+                }
                 $engineDate = array();
                 foreach ($dateArr as $dateinfo)
                 {
@@ -1738,7 +1742,13 @@ class Data extends Controller {
             $key = 0;
             foreach ($sum as $k => $info)
             {
-                $sprintf = sprintf("%.2f", ($info / $allSum) * 100);
+                if ($allSum==0)
+                {
+                    $sprintf = 0;
+                }else
+                {
+                    $sprintf = sprintf("%.2f", ($info / $allSum) * 100);
+                }               
                 switch ($k)
                 {
                     case 'baidu':
@@ -2069,6 +2079,7 @@ class Data extends Controller {
                 $categoriesData['colorByPoint'] = true;
                 $categories = array();
                 $key = 0;
+                $dataArr =array();
                 foreach ($cata as $cataKey => $cataInfo)
                 {
                     $categories[$key]['name'] = (string) $cataKey;
@@ -2245,6 +2256,7 @@ class Data extends Controller {
                 $categoriesData['name'] = '目录份额';
                 $categoriesData['colorByPoint'] = true;
                 $categories = array();
+                $dataArr =array();
                 $key = 0;
                 foreach ($cata as $cataKey => $cataInfo)
                 {
