@@ -289,5 +289,24 @@ class Material extends Controller {
         }
         return view('index/add', $data);
     }
-
+    //删除内容素材
+    public function delete() 
+    {
+        if (Request::instance()->isAjax())
+        {
+            $materialId=input('material_id');
+            if (!is_numeric($materialId))
+            {
+                return json(['status'=>201,'msg'=>'参数错误，请刷新当前页面']);
+            }
+            $affect = Db::name('material')->where('id',$materialId)->delete();
+            if ($affect)
+            {
+                return json(['status'=>200,'msg'=>'删除成功']);
+            }else
+            {
+                return json(['status'=>202,'msg'=>'删除失败']);
+            }
+        }
+    }
 }

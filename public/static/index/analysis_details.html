@@ -42,16 +42,16 @@
 					</div>
 					<div class="controls" style="height: 40px; line-height: 40px; width: 100%; float: right;">
 						<div style="margin-left: 10px; float: right;margin-top: 4px;margin-left:20px">
-								<select id="select" name="type" data-rel="chosen">
-									<option value="0">日志文件名</option>
+							<select id="select" name="type" data-rel="chosen">
+								<option value="0">日志文件名</option>
 
 								{foreach name="data_list" item="list"}
 								<option {if condition=" $list.id == $data_id"} selected="selected" {/if} value="{:$list.id}">{:$list.file_name}</option>
 								{/foreach}
 
-								</select>
-							</div>					 
-						</div>														
+							</select>
+						</div>					 
+					</div>														
 					<table class="table table-striped">
 						<thead>
 							<tr>
@@ -638,9 +638,9 @@
 			if($(this).val()==0)
 			{
 				$('.alert-error').find('strong').html("请选择日志文件名");
-        	 	$('.alert-error').css('display','block')
-        	 	$('.alert-error').fadeOut(3000)
-        	 	return false;
+				$('.alert-error').css('display','block')
+				$('.alert-error').fadeOut(3000)
+				return false;
 			}	
 			var data_id = $(this).val();
 			var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/analysisdetails/id/{:$title_id}/data_id/"+data_id+".html"
@@ -877,8 +877,8 @@
 				}
 			},
 			tooltip: {				                    
-           	shared: true,
-        	},
+				shared: true,
+			},
 			plotOptions: {
 				line: {
 					dataLabels: {
@@ -914,8 +914,8 @@
 				}
 			},
 			tooltip: {				                    
-           	shared: true,
-        	},
+				shared: true,
+			},
 			plotOptions: {
 				line: {
 					dataLabels: {
@@ -944,8 +944,8 @@ function containerFunction(categories,categories_data)
 			text: '数据来源: BMTASO'
 		},
 		tooltip: {				                    
-           	shared: true,
-        	},
+			shared: true,
+		},
 		xAxis: {
 			title: {
 				text: 'IP'
@@ -985,8 +985,8 @@ function containersFunction(categories,categories_data)
 			text: '数据来源: BMTASO'
 		},
 		tooltip: {				                    
-           	shared: true,
-        	},
+			shared: true,
+		},
 		xAxis: {
 			title: {
 				text: 'IP'
@@ -1025,8 +1025,8 @@ function containersFunctionS(categories,time,unit,title,text)
 			x: -20
 		},
 		tooltip: {				                    
-           	shared: true,
-        	},
+			shared: true,
+		},
 		xAxis: {
 			title: {
 				text: unit

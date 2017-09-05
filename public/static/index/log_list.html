@@ -257,16 +257,7 @@
 	<script src="__INDEX__js/custom.js"></script>
 	<script src="__INDEX__js/jquery.form.js"></script>
 	<script>
-	function sleep(numberMillis) { 
-		var now = new Date(); 
-		var exitTime = now.getTime() + numberMillis; 
-		while (true) { 
-		now = new Date(); 
-		if (now.getTime() > exitTime) 
-		return; 
-		} 
-		} 
-		$(function(){
+		$(function(){						
 			$('.list .action').html('选择目录');
 			$('.file .action').html('选择文件');
 			$('#selectError_chzn').css('width','140px');
@@ -352,7 +343,9 @@
 			        	 	$('.alert-success').css('display','block')
 			        	 	$('.alert-success').fadeOut(3000);
 			        	 	//sleep(3000);
-			  				location.reload(); 
+			        	 	setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
+							window.location.reload();//页面刷新
+							},3000); 
 			  			}
 
 			  		},
@@ -412,8 +405,9 @@
 			  				$('.alert-success').find('strong').html(data.message);
 			        	 	$('.alert-success').css('display','block')
 			        	 	$('.alert-success').fadeOut(3000)
-			        	 	sleep(3000);
-			  				location.reload(); 
+			        	 	setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
+							window.location.reload();//页面刷新
+							},3000); 
 			  			}
 			  		},
 			        error:function(xhr){ //上传失败 

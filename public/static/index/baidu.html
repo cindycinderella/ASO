@@ -335,15 +335,6 @@
 <script src="__INDEX__js/custom.js"></script>
 <script src="__INDEX__js/jquery.form.js"></script>
 <script>
-	function sleep(numberMillis) { 
-		var now = new Date(); 
-		var exitTime = now.getTime() + numberMillis; 
-		while (true) { 
-			now = new Date(); 
-			if (now.getTime() > exitTime) 
-				return; 
-		} 
-	} 
 	$(function(){
 		var progress = $(".progress"); 
 		var progress_bar = $(".progress-bar");
@@ -377,8 +368,9 @@
 		  				$('.alert-success').find('strong').html(data.message);
 		  				$('.alert-success').css('display','block')
 		  				$('.alert-success').fadeOut(3000);
-		  				sleep(3000);
-		  				location.reload(); 
+		  				setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
+						window.location.reload();//页面刷新
+						},3000);
 		  			}
 
 		  		},
