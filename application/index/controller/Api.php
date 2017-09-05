@@ -10,6 +10,12 @@ class Api extends Controller {
 
     public function getSiteList()
     {
+        $keys = input('key');
+        $kei = 'EBEB07EECE36953382D72B81FD6E4FCE';
+        if ($keys!==$kei)
+        {
+            debug_log("定时执行任务-----Key不正确",'siteList');
+        }
         $m=date("i",time());
         debug_log("定时执行成功-----".$m,'siteList');
         exit;
