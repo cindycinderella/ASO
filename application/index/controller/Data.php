@@ -170,6 +170,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
+                    unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -227,7 +228,7 @@ class Data extends Controller {
                 $dataListId = $file_name;
                 $time = date("Y-m-d H:i:s", time());
                 foreach ($path as $pathInfo)
-                {
+                {                   
                     $id ++;
                     $interviewTime[] = $this->getDate($type, $pathInfo);
                     $insertDataPath[] = array(
