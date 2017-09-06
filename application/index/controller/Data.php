@@ -238,6 +238,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
+                    unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -312,6 +313,8 @@ class Data extends Controller {
         $insertDataAll = array();
         $info = file_get_contents($path);
         $data = explode("\n", $info);
+        $data = array_filter($data);
+        $data = array_values($data);
         switch ($type)
         {
             case 1:
@@ -346,6 +349,16 @@ class Data extends Controller {
                         $uaArr = explode('"', $matches[0]);
                         $ua = $uaArr[0];
                     }
+                    $referer = '';
+                    preg_match('/((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/', $dataArr[10], $urles);
+                    if (empty($urles))
+                    {
+                        preg_match('/((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/', $dataArr[11], $urles);
+                    }
+                    if (! empty($urles))
+                    {
+                        $referer = str_replace('"', '', $urles[0]);
+                    }
                     $id ++;
                     $logInfo['id'] = $id;
                     $logInfo['http_code'] = $httpCode;
@@ -353,6 +366,7 @@ class Data extends Controller {
                     $logInfo['details_time'] = $time;
                     $logInfo['ip'] = $ip;
                     $logInfo['path'] = $urlPath;
+                    $logInfo['referer'] = $referer;
                     $logInfo['ua'] = htmlentities($ua);
                     $insertData[] = $logInfo;
                     if (count($insertData) == 5000)
@@ -386,6 +400,16 @@ class Data extends Controller {
                     {
                         $dataArr[8] = $dataArr[9];
                     }
+                    $referer = '';
+                    preg_match('/((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/', $dataArr[10], $urles);
+                    if (empty($urles))
+                    {
+                        preg_match('/((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/', $dataArr[11], $urles);
+                    }
+                    if (! empty($urles))
+                    {
+                        $referer = str_replace('"', '', $urles[0]);
+                    }
                     $httpCode = $dataArr[8];
                     $urlPath = $dataArr[6];
                     preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
@@ -406,6 +430,7 @@ class Data extends Controller {
                     $logInfo['id'] = $id;
                     $logInfo['http_code'] = $httpCode;
                     $logInfo['data_id'] = $dataListId;
+                    $logInfo['referer'] = $referer;
                     $logInfo['details_time'] = $time;
                     $logInfo['ip'] = $ip;
                     $logInfo['path'] = $urlPath;
@@ -418,6 +443,7 @@ class Data extends Controller {
                     }
                     elseif ($k == count($data) - 1)
                     {
+                        
                         Db::name('log_info')->insertAll($insertData);
                     }
                 }
@@ -2651,7 +2677,7 @@ class Data extends Controller {
             else
             {
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B' . $num, $info['num']);
-            }           
+            }
             $num ++;
         }
         $objPHPExcel->getActiveSheet(0)->setTitle("$ip--URL信息");

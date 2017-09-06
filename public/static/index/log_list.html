@@ -330,12 +330,12 @@
 			  		success:function(data)
 			  		{
 			  			_this.bind('click');
+			  			progress.hide();
 			  			if (data.status!=200)
 			  			{
 				  			$('.alert-error').find('strong').html(data.message);
 			        	 	$('.alert-error').css('display','block')
-			        	 	$('.alert-error').fadeOut(3000)
-			  				progress.hide();
+			        	 	$('.alert-error').fadeOut(3000)			  				
 			  				return false;
 			  			}else
 			  			{
