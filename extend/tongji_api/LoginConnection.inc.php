@@ -47,7 +47,8 @@ class LoginConnection{
      * @param array $data
      */
     public function genPostData($data) {
-        $gzData = gzencode(json_encode($data), 9);
+        //$gzData = gzencode(json_encode($data), 9);
+        $gzData = gzinflate(substr($data,10,-8));
         $rsa = new RsaPublicEncrypt('./');
         for ($index = 0, $enData = ''; $index < strlen($gzData); $index += 117) {
             $gzPackData = substr($gzData, $index, 117);
