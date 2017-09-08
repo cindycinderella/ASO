@@ -5,6 +5,7 @@ use think\Db;
 use think\Controller;
 use think\Request;
 use think\Loader;
+use QL\QueryList;
 set_time_limit(0);
 
 class Baidu extends Controller {
@@ -66,12 +67,12 @@ class Baidu extends Controller {
                 ->limit(40)
                 ->select();
             $keyWords = array();
-            $change =array();
-            foreach ($keywordRanking as $kis=>$rank)
+            $change = array();
+            foreach ($keywordRanking as $kis => $rank)
             {
-                if (count($change)<4)
+                if (count($change) < 4)
                 {
-                    $change[] = $keywordRanking[$kis]['num']-$keywordRanking[$kis+4]['num'];
+                    $change[] = $keywordRanking[$kis]['num'] - $keywordRanking[$kis + 4]['num'];
                 }
                 if (! isset($keyWords[$rank['date']]))
                 {
@@ -99,10 +100,10 @@ class Baidu extends Controller {
                             $rankArr['two'] .= (int) $info . ',';
                         break;
                         case 3:
-                            $rankArr['three'] .= (int) $info. ',';
+                            $rankArr['three'] .= (int) $info . ',';
                         break;
                         case 4:
-                            $rankArr['four'] .= (int) $info. ',';
+                            $rankArr['four'] .= (int) $info . ',';
                         break;
                     }
                 }
@@ -111,7 +112,7 @@ class Baidu extends Controller {
             $rankArr['one'] = trim($rankArr['one'], ',') . ']';
             $rankArr['two'] = trim($rankArr['two'], ',') . ']';
             $rankArr['three'] = trim($rankArr['three'], ',') . ']';
-            $rankArr['four'] = trim($rankArr['four'], ',') . ']';            
+            $rankArr['four'] = trim($rankArr['four'], ',') . ']';
             $main[$k]['rank'] = $rankArr;
             $main[$k]['change'] = $change;
             $ip_count = Db::name('site_profile')->field('sum(ip_count) as ip_count ')
@@ -191,13 +192,14 @@ class Baidu extends Controller {
             $total['avg_visit_time'] += $siteInfo['avg_visit_time'];
             $siteProfile[$k]['child'] = $child;
         }
-        if ($total['pv_count']==0)
+        if ($total['pv_count'] == 0)
         {
-            $total['bounce_ratio'] =0;
-        }else
+            $total['bounce_ratio'] = 0;
+        }
+        else
         {
             $total['bounce_ratio'] = sprintf("%.2f", ($bounce_ratio / $total['pv_count']) * 100);
-        }        
+        }
         $total['visit_time'] = secToTime($total['avg_visit_time']);
         $siteProfile[] = $total;
         // 百度收录量
@@ -522,12 +524,19 @@ class Baidu extends Controller {
                 $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&17928";
                 $domain[$kis]['haosou_weights'] = getPage($url);
                 // 获取收录
-                $url = "http://www.baidu.com/s?wd=site%3A" . $doInfo['domain'];
-                $record = getPage($url);
-                preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $record, $recordMatches);
+                $url = "https://www.baidu.com/s?wd=site%3A" . $doInfo['domain'];
+                $rules = array(
+                    'content' => array(
+                        '#content_left',
+                        'html'
+                    )
+                );
+                $body = QueryList::Query($url, $rules)->data;
+                $body = $body[0]['content'];
+                preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $body, $recordMatches);
                 if (empty($recordMatches))
                 {
-                    preg_match('/<b>找到相关结果数约(.*?)个<\/b>/ism', $record, $recordMatches);
+                    preg_match('/<b>找到相关结果数约(.*?)个<\/b>/ism', $body, $recordMatches);
                     if (empty($recordMatches))
                     {
                         $domain[$kis]['baidu_record'] = 0;
@@ -541,15 +550,20 @@ class Baidu extends Controller {
                 {
                     $domain[$kis]['baidu_record'] = str_replace(',', '', $recordMatches[1]);
                 }
-                $recordHaoSou = file_get_contents("https://www.so.com/s?q=site%3A" . $doInfo['domain']);
-                preg_match('/<p class="ws-total">找到相关结果约(.*?)个<\/p>/ism', $recordHaoSou, $recordMatches);
-                if (empty($recordMatches))
+                $postData = array(
+                    "haosoupr" => "haosousl",
+                    "websites" => $doInfo['domain']
+                );
+                $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
+                $haosou_record = getPage($url);
+                $haosou_record = explode(":", $haosou_record);
+                if (empty($haosou_record))
                 {
                     $domain[$kis]['haosou_record'] = 0;
                 }
                 else
                 {
-                    $domain[$kis]['haosou_record'] = str_replace(',', '', $recordMatches[1]);
+                    $domain[$kis]['haosou_record'] = $haosou_record[0];
                 }
             }
             $keywords = Db::name('keywords')->field('id')
