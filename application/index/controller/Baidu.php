@@ -226,7 +226,7 @@ class Baidu extends Controller {
                 $diff = $recruitVal['baidu_record'] - $recruit[$recruitKey + 1]['baidu_record'];
             }
             $temp[$recruitKey]['status'] = $diff >= 0 ? 1 : - 1;
-            $temp[$recruitKey]['diff'] = (int) $diff;
+            $temp[$recruitKey]['diff'] = abs($diff);
         }
         $recruitPage = $recruit->render();
         // 关键词排名---已百度升序

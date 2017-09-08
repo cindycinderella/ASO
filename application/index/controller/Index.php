@@ -49,48 +49,7 @@ class Index extends Controller {
             }
             return view('login');
         }
-    }
-    
-    /**
-     * 後台首頁---配置
-     * **
-     */
-    public function home()
-    {
-        if (session('?admin_user'))
-        {
-            $title_id = 53;
-            $class = explode("\\", __CLASS__);
-            $class = lcfirst($class[3]);
-            $user = session('admin_user');
-            $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-            //读取config            
-            $config = Db::table('config')->select();
-            $data['username'] = $username;
-            $data['nav'] = nav();
-            $data['class'] = $class;
-            $data['title'] = '';
-            $data['title_id'] = $title_id;
-            $data['config'] = $config;
-            return view('home', $data);
-        }
-        else
-        {
-            return view('login');
-        }
-    }
-    public function eidtConfig()
-    {
-        if(Request::instance()->isPost())
-        {
-            $postData = input('post.');
-            foreach ($postData as $k=>$val)
-            {
-                db('config')->where('name',$k)->update(['value' => $val]);               
-            }
-            $this->success('操作成功', url('index/home'));
-        }
-    }
+    }  
     public function loginOut()
     {
         if (session('?admin_user'))
