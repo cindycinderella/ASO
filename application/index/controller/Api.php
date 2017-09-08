@@ -651,12 +651,19 @@ class Api extends Controller {
         foreach ($domain as $info)
         {
             // 获取收录
-            $url = "http://www.baidu.com/s?wd=site%3A" . $info['domain'];
-            $record = getPage($url);
-            preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $record, $recordMatches);
+            $url = "https://www.baidu.com/s?wd=site%3A" . $info['domain'];
+            $rules = array(
+                'content' => array(
+                    '#content_left',
+                    'html'
+                )
+            );
+            $body = QueryList::Query($url, $rules)->data;
+            $body = $body[0]['content'];
+            preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $body, $recordMatches);
             if (empty($recordMatches))
             {
-                preg_match('/<b>找到相关结果数约(.*?)个<\/b>/ism', $record, $recordMatches);
+                preg_match('/<b>找到相关结果数约(.*?)个<\/b>/ism', $body, $recordMatches);
                 if (empty($recordMatches))
                 {
                     $baidu_record = 0;
@@ -670,39 +677,22 @@ class Api extends Controller {
             {
                 $baidu_record = str_replace(',', '', $recordMatches[1]);
             }
-            $recordHaoSou = file_get_contents("https://www.so.com/s?q=site%3A" . $info['domain']);
-            preg_match('/<p class="ws-total">找到相关结果约(.*?)个<\/p>/ism', $recordHaoSou, $recordMatches);
-            if (empty($recordMatches))
-            {
-                $haosou_record = 0;
-            }
-            else
-            {
-                $haosou_record = str_replace(',', '', $recordMatches[1]);
-            }
-            // $postData = array(
-            // "haosoupr" => "baidu",
-            // "websites" => $info['domain']
-            // );
-            // $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&8471";
-            // $baidu_record = getPage($url);
-            // $baidu_record = explode(":", $baidu_record);
-            // $postData = array(
-            // "haosoupr" => "haosousl",
-            // "websites" => $info['domain']
-            // );
-            // $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
-            // $haosou_record = getPage($url);
-            // $haosou_record = explode(":", $haosou_record);
+            $postData = array(
+                "haosoupr" => "haosousl",
+                "websites" => $info['domain']
+            );
+            $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
+            $haosou_record = getPage($url);
+            $haosou_record = explode(":", $haosou_record);
             Db::name("domain")->where("site_id = {$info['site_id']}")->update([
                 'baidu_record' => $baidu_record,
-                'haosou_record' => $haosou_record
+                'haosou_record' => $haosou_record[0]
             ]);
             $id ++;
             $insert[$key]['id'] = $id;
             $insert[$key]['site_id'] = $info['site_id'];
             $insert[$key]['baidu_record'] = $baidu_record;
-            $insert[$key]['haosou_record'] = $haosou_record;
+            $insert[$key]['haosou_record'] = $haosou_record[0];
             $insert[$key]['date'] = date("Y-m-d", strtotime("-1 day"));
             $key ++;
         }
