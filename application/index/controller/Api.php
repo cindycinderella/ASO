@@ -12,10 +12,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'EBEB07EECE36953382D72B81FD6E4FCE';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'siteList');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'siteList');
+            exit();
         }
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/all/a');
@@ -87,10 +87,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'EBEB07EECE1234SF6776GHDQ11ASD56D72B81FD6E4FCE';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getlink');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getlink');
+            exit();
         }
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/link/a');
@@ -143,10 +143,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'EBEB07E13EFW567GHF8JMHO92D72B81FD6E4FCE';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getSeach');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
         }
         $baiDu = new \tongji_api\Api();
         $siteList = $baiDu->getSiteList('source/engine/a');
@@ -202,10 +202,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getSeach');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
         }
         $date = date("Y-m-d", strtotime("-1 day"));
         $word = Db::name('Keyword_ranking')->field('date')
@@ -407,10 +407,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getSeach');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
         }
         $date = date("Y-m-d", strtotime("-1 day"));
         $word = Db::name('Keyword_ranking')->field('date')
@@ -463,7 +463,7 @@ class Api extends Controller {
             {
                 $url = "https://www.so.com/s?ie=utf-8&q={$keyword}&pn=" . $i;
                 $data = QueryList::Query($url, $rules)->data;
-                preg_match_all('/(?<title><h3[^>]*>(.*?)<\/h3>)|(?<url><cite[^>]*>(.*?)<\/cite>)/si', $data[0]['content'], $titleArr);               
+                preg_match_all('/(?<title><h3[^>]*>(.*?)<\/h3>)|(?<url><cite[^>]*>(.*?)<\/cite>)/si', $data[0]['content'], $titleArr);
                 $titles = array_values(array_filter($titleArr['title']));
                 $showurl = array_values(array_filter($titleArr['url']));
                 foreach ($titles as $order => $titleInfo)
@@ -599,10 +599,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'ADACAAW213234G78875FAD231GFHGXCXVAHHF76873SZCZC222';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getSeach');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
         }
         $domain = Db::name('domain')->field('domain,site_id')->select();
         foreach ($domain as $info)
@@ -630,10 +630,10 @@ class Api extends Controller {
     {
         $keys = input('key');
         $kei = 'ADACAAWGFHGXCXVAHHF76873SZCZC222';
-        if ($keys!==$kei)
+        if ($keys !== $kei)
         {
-            debug_log("定时执行任务-----Key不正确",'getSeach');
-            exit;
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
         }
         $domain = Db::name('domain')->field('domain,site_id')->select();
         $key = 0;
@@ -650,29 +650,59 @@ class Api extends Controller {
         }
         foreach ($domain as $info)
         {
-            $postData = array(
-                "haosoupr" => "baidu",
-                "websites" => $info['domain']
-            );
-            $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&8471";
-            $baidu_record = getPage($url);
-            $baidu_record = explode(":", $baidu_record);
-            $postData = array(
-                "haosoupr" => "haosousl",
-                "websites" => $info['domain']
-            );
-            $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
-            $haosou_record = getPage($url);
-            $haosou_record = explode(":", $haosou_record);
+            // 获取收录
+            $url = "http://www.baidu.com/s?wd=site%3A" . $info['domain'];
+            $record = getPage($url);
+            preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $record, $recordMatches);
+            if (empty($recordMatches))
+            {
+                preg_match('/<b>找到相关结果数约(.*?)个<\/b>/ism', $record, $recordMatches);
+                if (empty($recordMatches))
+                {
+                    $baidu_record = 0;
+                }
+                else
+                {
+                    $baidu_record = str_replace(',', '', $recordMatches[1]);
+                }
+            }
+            else
+            {
+                $baidu_record = str_replace(',', '', $recordMatches[1]);
+            }
+            $recordHaoSou = file_get_contents("https://www.so.com/s?q=site%3A" . $info['domain']);
+            preg_match('/<p class="ws-total">找到相关结果约(.*?)个<\/p>/ism', $recordHaoSou, $recordMatches);
+            if (empty($recordMatches))
+            {
+                $haosou_record = 0;
+            }
+            else
+            {
+                $haosou_record = str_replace(',', '', $recordMatches[1]);
+            }
+            // $postData = array(
+            // "haosoupr" => "baidu",
+            // "websites" => $info['domain']
+            // );
+            // $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&8471";
+            // $baidu_record = getPage($url);
+            // $baidu_record = explode(":", $baidu_record);
+            // $postData = array(
+            // "haosoupr" => "haosousl",
+            // "websites" => $info['domain']
+            // );
+            // $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
+            // $haosou_record = getPage($url);
+            // $haosou_record = explode(":", $haosou_record);
             Db::name("domain")->where("site_id = {$info['site_id']}")->update([
-                'baidu_record' => $baidu_record[0],
-                'haosou_record' => $haosou_record[0]
+                'baidu_record' => $baidu_record,
+                'haosou_record' => $haosou_record
             ]);
             $id ++;
             $insert[$key]['id'] = $id;
             $insert[$key]['site_id'] = $info['site_id'];
-            $insert[$key]['baidu_record'] = $baidu_record[0];
-            $insert[$key]['haosou_record'] = $haosou_record[0];
+            $insert[$key]['baidu_record'] = $baidu_record;
+            $insert[$key]['haosou_record'] = $haosou_record;
             $insert[$key]['date'] = date("Y-m-d", strtotime("-1 day"));
             $key ++;
         }
