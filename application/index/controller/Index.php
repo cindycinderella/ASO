@@ -14,11 +14,13 @@ class Index extends Controller {
             $username = input('post.username');
             $password = input('post.password');
             $where = array(
-                'username' => $username,
-                'password' => md5($password),
-                'status' => 1
+                'a.username' => $username,
+                'a.password' => md5($password),
+                'a.status' => 1
             );
-            $user = Db::table('admin')->field("id,username,nick_name,mobile,login_num,group_id")
+            $user = Db::table('admin')->alias('a')
+                ->join('group g', 'a.group_id = g.id')
+                ->field("a.id,a.username,a.nick_name,a.mobile,a.login_num,a.group_id,g.group_list")
                 ->where($where)
                 ->find();
             if (empty($user) || ! $user)
@@ -49,7 +51,8 @@ class Index extends Controller {
             }
             return view('login');
         }
-    }  
+    }
+
     public function loginOut()
     {
         if (session('?admin_user'))

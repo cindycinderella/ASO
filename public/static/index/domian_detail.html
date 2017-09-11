@@ -319,7 +319,7 @@
 				},   
 				dataType: 'json',
 				success: function(data) {
-					if (data.status !=200 )
+					 if (data.status !=200 )
 					{
 						$('.alert-error').find('strong').html(data.msg);
 						$('.alert-error').css('display','block')
@@ -416,6 +416,12 @@
 						$('.alert-success').find('strong').html(data.msg);
 						$('.alert-success').css('display','block')
 						$('.alert-success').fadeOut(3000)
+					}else if (data.status==404)
+					{
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
 					}else if (data.status==200)
 					{	
 						$('.old tbody').html('');

@@ -1,221 +1,194 @@
 {extend name="index/base" /}
 {block name="content"}		
-			<!-- start: Content -->
-			<div id="content" class="span10">
-			
-			
-			<ul class="breadcrumb">
-				<li>
-					<i class="icon-home"></i>
-					<a href="{:url('index/index/home')}">首页</a> 
-					<i class="icon-angle-right"></i>
-				</li>
-				<li><a href="javascript:void(0);" class="title" >{:$title}</a>
-                <i class="icon-angle-right"></i>
-                </li>
-                <li><a href="javascript:void(0);">{:$add}</a></li>
-			</ul>
+<!-- start: Content -->
+<div id="content" class="span10">
 
-			<div class="row-fluid sortable">		
-				<div class="box span12">
-					<div class="box-header" data-original-title>
-						<h2><i class="halflings-icon white th-list"></i><span class="break"></span><span class="title">{:$title}</span></h2>						
-					</div>
-					<div class="box-content">					                 	                       
-                        <form class="form-horizontal"  action="" method="POST" enctype="multipart/form-data">
-							<input type="hidden" name="id" value="{:$material_id}" />
-							<input type="hidden" name="type" value="{:$title_id}" />
-						  <fieldset>
-                          <div class="control-group">
-								<label class="control-label"><font><font>页端</font></font></label>
-								<div class="controls">
-									{foreach name="material_type" item="vo"}
-                                  <label class="checkbox inline">
+
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i>
+			<a href="{:url('index/index/home')}">首页</a> 
+			<i class="icon-angle-right"></i>
+		</li>
+		<li><a href="javascript:void(0);" class="title" >{:$title}</a>
+			<i class="icon-angle-right"></i>
+		</li>
+		<li><a href="javascript:void(0);">{:$add}</a></li>
+	</ul>
+
+	<div class="row-fluid sortable">		
+		<div class="box span12">
+			<div class="box-header" data-original-title>
+				<h2><i class="halflings-icon white th-list"></i><span class="break"></span><span class="title">{:$title}</span></h2>						
+			</div>
+			<div class="box-content">					                 	                       
+				<form class="form-horizontal"  action="" method="POST" enctype="multipart/form-data">
+					<input type="hidden" name="id" value="{:$material_id}" />
+					<input type="hidden" name="type" value="{:$title_id}" />
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label"><font><font>页端</font></font></label>
+							<div class="controls">
+								{foreach name="material_type" item="vo"}
+								<label class="checkbox inline">
 									<div class="checker {if $material_id} disabled {/if}" id="uniform-inlineCheckbox1"><span 
-                                    {if $title_id==$vo.id}class="checked" {/if} >
-                                    <input type="checkbox"  {if $material_id} disabled {/if} {if $title_id==$vo.id} checked="checked" {/if} class="inlineCheckbox1" value="{:$vo.id}"></span></div><font><font><span class="title_name{:$vo.id}">{:$vo.name}</span>
-								  </font></font></label>
+										{if $title_id==$vo.id}class="checked" {/if} >
+										<input type="checkbox"  {if $material_id} disabled {/if} {if $title_id==$vo.id} checked="checked" {/if} class="inlineCheckbox1" value="{:$vo.id}"></span></div><font><font><span class="title_name{:$vo.id}">{:$vo.name}</span>
+									</font></font></label>
 									{/foreach}
 								</div>
-							  </div>
-                            
+							</div>
+
 							<div class="control-group">
 								<label class="control-label" for="inputSuccess"><font><font>模板名称</font></font></label>
 								<div class="controls">
-								  <input type="text" name="name" value="{$material.name}" >
+									<input type="text" name="name" value="{$material.name}" >
 								</div>
 							</div>
-						
+
 							<div class="control-group">
 								<label class="control-label" for="inputSuccess"><font><font>模板文件名称</font></font></label>
 								<div class="controls">
-								  <input type="text" name="filename" value="{$material.filename}" >
+									<input type="text" name="filename" value="{$material.filename}" >
 								</div>
 							</div>	
-                              <div class="control-group">
+							<div class="control-group">
 								<label class="control-label" for="inputSuccess"><font><font>标签</font></font></label>
 								<div class="controls">
-								  <input type="text" name="tag" value="{$material.tag}" >
+									<input type="text" name="tag" value="{$material.tag}" >
 								</div>
-							  </div>
-							  
-                            <div class="control-group">
+							</div>
+
+							<div class="control-group">
 								<label class="control-label" for="selectError3">模板类型</label>
 								<div class="controls">
-								  <select id="selectError3" name="web_type">
-									<option value="0">模板类型</option>
-									<option  {if $material['type'] ==1}selected{/if}  value="1">爬虫模板</option>
-									<option  {if $material['type'] ==2}selected{/if}  value="2">前端模板</option>
-								  </select>
+									<select id="selectError3" name="web_type">
+										<option value="0">模板类型</option>
+										<option  {if $material['type'] ==1}selected{/if}  value="1">爬虫模板</option>
+										<option  {if $material['type'] ==2}selected{/if}  value="2">前端模板</option>
+									</select>
 								</div>
 							</div>
 							
 							<div class="control-group">
 								<label class="control-label" for="selectError3">模板种类</label>
 								<div class="controls">
-								  <select id="selectError3" name="pertain_type">
-									<option value="0">模板种类</option>
-									<option {if $material['pertain_type'] ==1}selected{/if} value="1">详情页模板</option>
-									<option {if $material['pertain_type'] ==2}selected{/if} value="2">首页模板</option>
-									<option {if $material['pertain_type'] ==3}selected{/if} value="3">聚合页模板</option>
-									<option {if $material['pertain_type'] ==4}selected{/if} value="4">客户官网模板</option>
-									<option {if $material['pertain_type'] ==5}selected{/if} value="5">流量优化页面</option>
-								  </select>
+									<select id="selectError3" name="pertain_type">
+										<option value="0">模板种类</option>
+										<option {if $material['pertain_type'] ==1}selected{/if} value="1">详情页模板</option>
+										<option {if $material['pertain_type'] ==2}selected{/if} value="2">首页模板</option>
+										<option {if $material['pertain_type'] ==3}selected{/if} value="3">聚合页模板</option>
+										<option {if $material['pertain_type'] ==4}selected{/if} value="4">客户官网模板</option>
+										<option {if $material['pertain_type'] ==5}selected{/if} value="5">流量优化页面</option>
+									</select>
 								</div>
 							</div>
 
 
 							
-                           	<div class="control-group fileInput">
-							  <label class="control-label" for="fileInput">上传文件</label>
-							  <div class="controls">
-								<div class="uploader" id="uniform-fileInput">
-                                <input class="input-file uniform_on" name="file" id="fileInput" type="file">
-                                <span class="filename" style="user-select: none;">No file selected</span>
-                                <span class="action" style="user-select: none;">Choose File</span>
-                                </div>
-								<span style="color:red;">请先把css、js、htmL文件压缩成ZIP格式的压缩包,大小限制为8M</span>
-							  </div>
+							<div class="control-group fileInput">
+								<label class="control-label" for="fileInput">上传文件</label>
+								<div class="controls">
+									<div class="uploader" id="uniform-fileInput">
+										<input class="input-file uniform_on" name="file" id="fileInput" type="file">
+										<span class="filename" style="user-select: none;">No file selected</span>
+										<span class="action" style="user-select: none;">Choose File</span>
+									</div>
+									<span style="color:red;">请先把css、js、htmL文件压缩成ZIP格式的压缩包,大小限制为8M</span>
+								</div>
 							</div>							
 							<div class="form-actions">
-							  <button type="submit" class="btn btn-primary">保存</button>
-							  <button type="reset" class="btn">取消</button>
+								<button type="submit" class="btn btn-primary">保存</button>
+								<button type="reset" class="btn">取消</button>
 							</div>
-						  </fieldset>
-						</form>   
-                        
-                        
-                        
-					</div>
-				</div><!--/span-->
+						</fieldset>
+					</form>   
+
+
+
+				</div>
+			</div><!--/span-->
 			
-			</div><!--/row-->
+		</div><!--/row-->
 
 	</div><!--/.fluid-container-->
 	
-			<!-- end: Content -->
-		</div><!--/#content.span10-->
-		</div><!--/fluid-row-->
-		
-	
-	
-	<div class="clearfix"></div>
-	
-	<!-- start: JavaScript-->
-	<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
-	<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
-	
-		<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
-	
-		<script src="__INDEX__js/modernizr.js"></script>
-	
-		<script src="__INDEX__js/bootstrap.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.cookie.js"></script>
-	
-		<script src='__INDEX__js/fullcalendar.min.js'></script>
-	
-		<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+	<!-- end: Content -->
+</div><!--/#content.span10-->
+</div><!--/fluid-row-->
 
-		<script src="__INDEX__js/excanvas.js"></script>
-	<script src="__INDEX__js/jquery.flot.js"></script>
-	<script src="__INDEX__js/jquery.flot.pie.js"></script>
-	<script src="__INDEX__js/jquery.flot.stack.js"></script>
-	<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.chosen.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.uniform.min.js"></script>
-		
-		<script src="__INDEX__js/jquery.cleditor.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.noty.js"></script>
-	
-		<script src="__INDEX__js/jquery.elfinder.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.raty.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
-	
-		<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.gritter.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.imagesloaded.js"></script>
-	
-		<script src="__INDEX__js/jquery.masonry.min.js"></script>
-	
-		<script src="__INDEX__js/jquery.knob.modified.js"></script>
-	
-		<script src="__INDEX__js/jquery.sparkline.min.js"></script>
-	
-		<script src="__INDEX__js/counter.js"></script>
-	
-		<script src="__INDEX__js/retina.js"></script>
 
-		<script src="__INDEX__js/custom.js"></script>
-        <script>
-		$(document).on('click','.label',function(){
-				var title_id = $(this).attr('alt');
-				var _this = $(this);
-				$.ajax({    
-                  	type: 'POST',    
-                  	url: "{:url('index/template/status')}",
-                  	dataType:"json",    
-                	data:{
-						"title_id":title_id
-						},
-					success:function(data)
-					{
-			        	if(data.status==0)
-			        	{
-			        		_this.parent('td').html('<span style="cursor:pointer;" class="label label-success" alt="'+title_id+'"><font><font>启用</font></font></span>');
-			        	}else if(data.status==200)
-			        	{
-			        		_this.parent('td').html('<span style="cursor:pointer;" class="label label-important" alt="'+title_id+'"><font><font>禁用</font></font></span>');	
-			        	}else
-						{
-							alert(data.message);
-						}    
-			        }	
 
-				});
-				
-		})
-		$(function(){
+<div class="clearfix"></div>
+
+<!-- start: JavaScript-->
+<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+<script src="__INDEX__js/modernizr.js"></script>
+
+<script src="__INDEX__js/bootstrap.min.js"></script>
+
+<script src="__INDEX__js/jquery.cookie.js"></script>
+
+<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+<script src="__INDEX__js/excanvas.js"></script>
+<script src="__INDEX__js/jquery.flot.js"></script>
+<script src="__INDEX__js/jquery.flot.pie.js"></script>
+<script src="__INDEX__js/jquery.flot.stack.js"></script>
+<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+<script src="__INDEX__js/jquery.noty.js"></script>
+
+<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+<script src="__INDEX__js/counter.js"></script>
+
+<script src="__INDEX__js/retina.js"></script>
+
+<script src="__INDEX__js/custom.js"></script>
+<script>
+	$(function(){
 			//实现复选框变单选
 			$('.inlineCheckbox1').change(function(){
-					$('.inlineCheckbox1').parent('span').each(function(index, element) {
-						$(this).removeClass("checked");
-					});	
-					$(this).parent('span').addClass("checked");
-					var cal = $(this).val()
-					$("input[name='type']").val(cal);
-					var title = $('.title_name'+cal).html();
-					$('.title').html(title);					
-				})
+				$('.inlineCheckbox1').parent('span').each(function(index, element) {
+					$(this).removeClass("checked");
+				});	
+				$(this).parent('span').addClass("checked");
+				var cal = $(this).val()
+				$("input[name='type']").val(cal);
+				var title = $('.title_name'+cal).html();
+				$('.title').html(title);					
+			})
 			//实现去除具体模板功能
 			$("select[name='web_type']").change(function(){
 				
@@ -247,11 +220,11 @@
 						}
 					});	
 				}
-			
+
 			})
 			
 			
-			})
-        </script>
+		})
+	</script>
 	<!-- end: JavaScript-->
-{/block}
+	{/block}

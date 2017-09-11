@@ -1,0 +1,408 @@
+	{extend name="index/base" /}
+	{block name="content"}		
+	<!-- start: Content -->
+	<div id="content" class="span10">
+
+
+		<ul class="breadcrumb">
+			<li>
+				<i class="icon-home"></i>
+				<a href="{:url('index/index/home')}">首页</a> 
+				<i class="icon-angle-right"></i>
+			</li>
+			<li><a href="javascript:void(0);">{:$title}</a></li>
+		</ul>
+
+		<div class="row-fluid sortable">		
+			<div class="box span12">
+				<div class="box-header" data-original-title>
+					<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>
+					<div class="box-icon">
+						<a href="javascript:void(0);"><i class="halflings-icon white plus"></i></a>							
+					</div>						
+				</div>
+				<div class="box-content">
+					<div class="alert alert-success" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>
+					<div class="alert alert-error" style="display: none;">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong></strong>
+					</div>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th style="text-align: center;">id</th>
+								<th style="text-align: center;">帐号</th>
+								<th style="text-align: center;">昵称</th>
+								<th style="text-align: center;">联系方式</th>
+								<th style="text-align: center;">权限组</th>
+								<th style="text-align: center;">登录次数</th>
+								<th style="text-align: center;">登录IP</th>
+								<th style="text-align: center;">时间</th>
+								<th style="text-align: center;">状态</th>
+								<th style="text-align: center;">操作</th>   									  
+							</tr>
+						</thead>   
+						<tbody>
+							{foreach name="data" item="vo"}
+							<tr>
+								<td style="text-align: center;">{:$vo.id}</td>
+								<td style="text-align: center;">{:$vo.username}</td>
+								<td style="text-align: center;">{:$vo.nick_name}</td>
+								<td style="text-align: center;">{:$vo.mobile}</td>
+								<td style="text-align: center;" alt="{:$vo.group_id}">{:$vo.group_name}</td>
+								<td style="text-align: center;">{:$vo.login_num}</td>
+								<td style="text-align: center;">{:$vo.login_ip}</td>
+								<td style="text-align: center;">{:date("Y-m-d H:i:s",$vo['login_time']);}</td>
+								<td style="text-align: center;">
+									{if condition="$vo.status == 1"} 
+									<span style="cursor:pointer;" class="label label-success" alt="{:$vo.id}">启用</span>
+									{else /}
+									<span style="cursor:pointer;" class="label label-important" alt="{:$vo.id}">禁用</span>
+									{/if}</td>
+									<td style="text-align: center;"><a class="btn btn-info" alt="{:$vo.id}" href="JavaScript:void(0);">
+										<i class="halflings-icon white edit"></i>  
+									</a></td>
+								</tr>
+								{/foreach}		
+							</tbody>
+						</table>  
+						<div class="pagination pagination-centered" style="float:right">
+							{:$page}
+						</div>        
+					</div>
+				</div><!--/span-->
+
+			</div><!--/row-->
+
+		</div><!--/.fluid-container-->
+
+		<!-- end: Content -->
+	</div><!--/#content.span10-->
+</div><!--/fluid-row-->
+
+<div class="modal hide fade" id="myModal" style="left: 39%;width: 50%">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">×</button>
+		<h3></h3>
+	</div>
+	<div class="modal-body" style="max-height: 530px;">
+		<form class="form-horizontal" method="POST" action="{:url('index/System/addAdmin')}">
+			<input type="hidden" name="id" value="">
+			<div class="control-group error">
+				<label class="control-label" ><font color="red">* </font>帐号</label>
+				<div class="controls">
+					<input type="text"  name="username">
+					<span class="help-inline">请输入帐号</span>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label"><font color="red">* </font>帐号权限组</label>
+				<div class="controls">
+					<select id="selectError3" name="group_id">
+						<option value="0">选择权限组</option>
+						{foreach name="group" item="groupInfo"}
+						<option value="{:$groupInfo.id}">{:$groupInfo.group_name}</option>
+						{/foreach}
+					</select>
+					<span class="help-inline" style="display: none;"></span>
+				</div>
+			</div>
+			<div class="control-group ">
+				<label class="control-label">密码</label>
+				<div class="controls">
+					<input type="text" name="password">
+					<span class="help-inline" style="color: #b94a48;">若修改密码，请输入密码</span>
+				</div>
+			</div>
+			<div class="control-group ">
+				<label class="control-label">确认密码</label>
+				<div class="controls">
+					<input type="text" name="repassword">
+					<span class="help-inline" style="display: none;">俩次密码输入不一致</span>
+				</div>
+			</div>
+			<div class="control-group ">
+				<label class="control-label" >昵称</label>
+				<div class="controls">
+					<input type="text"  name="nick_name">
+				</div>
+			</div>
+			<div class="control-group ">
+				<label class="control-label">联系方式</label>
+				<div class="controls">
+					<input type="text"  name="mobile">
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">状态</label>
+				<div class="controls">
+					<select id="selectError" name="status">
+						<option value="1">启用</option>
+						<option value="-1">禁用</option>
+					</select>
+				</div>
+			</div>
+			<fieldset>				
+			</fieldset>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<a href="JavaScript:void(0);" class="btn" data-dismiss="modal">Close</a>
+		<a href="JavaScript:void(0);" class="btn btn-primary">Save</a>
+	</div>
+</div>
+
+<div class="clearfix"></div>
+
+<!-- start: JavaScript-->
+<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+<script src="__INDEX__js/modernizr.js"></script>
+
+<script src="__INDEX__js/bootstrap.min.js"></script>
+
+<script src="__INDEX__js/jquery.cookie.js"></script>
+
+<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+<script src="__INDEX__js/excanvas.js"></script>
+<script src="__INDEX__js/jquery.flot.js"></script>
+<script src="__INDEX__js/jquery.flot.pie.js"></script>
+<script src="__INDEX__js/jquery.flot.stack.js"></script>
+<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+<script src="__INDEX__js/jquery.noty.js"></script>
+
+<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+<script src="__INDEX__js/counter.js"></script>
+
+<script src="__INDEX__js/retina.js"></script>
+
+<script src="__INDEX__js/custom.js"></script>
+<script src="__INDEX__js/jquery.form.js"></script>
+<script>	
+	$(function(){
+		$(document).on('click','.label',function(){
+			var title_id = $(this).attr('alt');
+			var _this = $(this);
+			$.ajax({    
+				type: 'POST',    
+				url: "{:url('index/system/status')}",
+				dataType:"json",    
+				data:{
+					"id":title_id
+				},
+				success:function(data)
+				{
+					if (data.status==404)
+					{
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}else if(data.status==0)
+					{
+						_this.parent('td').html('<span style="cursor:pointer;" class="label label-success" alt="'+title_id+'"><font><font>启用</font></font></span>');
+					}else if(data.status==200)
+					{
+						_this.parent('td').html('<span style="cursor:pointer;" class="label label-important" alt="'+title_id+'"><font><font>禁用</font></font></span>');	
+					}else
+					{
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}    
+				}	
+
+			});
+
+		})
+		//修改权限组权限
+		$('.btn-info').click(function(){
+			var id = $(this).attr('alt');
+			$("input[name='id']").val(id);
+			$('#myModal .modal-header h3').html('修改管理员信息');
+			var tr = $(this).parents('tr');
+			tr.find('td').each(function(index,evlen){
+				if (index==1)
+				{
+					$('input[name="username"]').val($(this).html());
+					$('input[name="username"]').next('.help-inline').hide();
+					$('input[name="username"]').parents('.control-group').removeClass('error');
+				}else if (index==2)
+				{
+					$('input[name="nick_name"]').val($(this).html());
+				}else if (index==3)
+				{
+					$('input[name="mobile"]').val($(this).html());
+				}else if (index==4)
+				{
+					var group_id = $(this).attr('alt');
+					$("#selectError3").val(group_id);
+				}else if (index==8)
+				{
+					var status = $(this).find('.label').html();
+					$("#selectError option").each(function(index,e){
+						$(this).attr("selected",false);					
+						if (status=='启用')
+						{
+							if ($(this).html()=='启用')
+							{
+								$(this).attr("selected",true);
+							}							
+						}else
+						{
+							if ($(this).html()=='禁用')
+							{
+								$(this).attr("selected",true);
+							}
+						}
+
+					})
+				}
+			})
+			$('#myModal').modal({backdrop: 'static', keyboard: false});
+
+		})	
+		//增加或修改管理员
+		$(document).on('click','.btn-primary',function(){
+			var _this = $(this);   
+			//添加或者修改权限		
+			$(".form-horizontal").ajaxSubmit({  		
+				dataType:"json",    
+				beforeSend: function() { 
+					_this.removeClass('btn-primary');
+				},    	
+				success:function(data)
+				{
+					_this.addClass('btn-primary');
+					if (data.status==404)
+					{
+						$('#myModal').modal('hide')
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}else if (data.status!=200)
+					{
+						if (data.status==102)
+						{
+							$("#selectError3").next().show();
+							$("#selectError3").next().html(data.message);	
+							$("#selectError3").parents('.control-group').addClass('error')	
+						}else
+						{
+							$("input[name='"+data.name+"']").next().show();
+							$("input[name='"+data.name+"']").next().html(data.message);	
+							$("input[name='"+data.name+"']").parents('.control-group').addClass('error')	
+						}							  				
+						return false;
+					}else
+					{
+						$('#myModal').modal('hide')
+						$('.alert-success').find('strong').html(data.message);
+						$('.alert-success').css('display','block')
+						$('.alert-success').fadeOut(3000);
+		        	 	//sleep(3000);
+		        	 	setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
+						window.location.reload();//页面刷新
+					},3000); 
+		        	 }
+
+		        	},
+		        error:function(xhr){ //上传失败 
+		        	$('.alert-error').find('strong').html('操作失败');
+		        	$('.alert-error').css('display','block')
+		        	$('.alert-error').fadeOut(3000)
+		        } 	
+
+		    });
+		})
+		$('.box-icon').click(function(){
+			$("input[name='id']").val('');
+			$('#myModal .modal-header h3').html('添加管理员');
+			$('input[name="password"]').next().html('请输入密码');
+			$('input[name="password"]').parent('.controls').prev().html('<font color="red">* </font>密码');
+			$('#myModal').modal({backdrop: 'static', keyboard: false});
+		})
+		$('input[name="username"]').blur(function(){
+			if ($(this).val()!='')
+			{
+				$("input[name='username").next().hide();	
+				$("input[name='username']").parents('.control-group').removeClass('error')
+			}
+		})
+		$('input[name="repassword"]').blur(function(){
+			var rep = $(this).val();
+			var pass = $('input[name="password"]').val();
+			if (rep!=''&&pass!='')
+			{
+				if (pass!=rep)
+				{
+					$("input[name='repassword").next().show();
+					$("input[name='repassword']").parents('.control-group').addClass('error');
+				}else
+				{
+					$("input[name='repassword").next().hide();	
+					$("input[name='repassword']").parents('.control-group').removeClass('error')
+				}
+			}
+		})
+		$('input[name="password"]').blur(function(){
+			var pass = $(this).val();
+			if (pass!='')
+			{
+				$(this).next().hide();	
+				$(this).parents('.control-group').removeClass('error')
+			}
+		})
+		$('#selectError3').change(function(){
+			var group = $(this).val();
+			if (group==0)
+			{
+				$(this).next().show();
+				$(this).parents('.control-group').addClass('error')
+			}else
+			{
+				$(this).next().hide();	
+				$(this).parents('.control-group').removeClass('error')
+			}
+		})
+	})
+</script>
+<!-- end: JavaScript-->
+{/block}

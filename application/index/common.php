@@ -10,28 +10,68 @@ use think\Db;
  */
 function nav()
 {
-    $where = array(
-        'pid' => 0,
-        'status' => 1
-    );
-    $nav = Db::table('nav')->field("id,pid,name,url,css_img")
-        ->where($where)
-        ->order('`asc` desc,id')
-        ->select();
-    foreach ($nav as $k => $val)
+    $user = session('admin_user');
+    if ($user['group_list'] == '*')
     {
         $where = array(
-            'pid' => $val['id'],
+            'pid' => 0,
             'status' => 1
         );
+        $nav = Db::table('nav')->field("id,pid,name,url,css_img")
+            ->where($where)
+            ->order('`asc` desc,id')
+            ->select();
+        foreach ($nav as $k => $val)
+        {
+            $where = array(
+                'pid' => $val['id'],
+                'status' => 1
+            );
+            $childNav = Db::table('nav')->field("id,pid,name,url,css_img")
+                ->where($where)
+                ->order('`asc` desc,id')
+                ->select();
+            // echo Db::table('nav')->getLastsql();
+            $nav[$k]['child_nav'] = $childNav;
+        }
+        return $nav;
+    }
+    $nav = Db::table('nav')->field("pid,asc")
+        ->where(" id in ({$user['group_list']})")
+        ->group('pid')
+        ->order('`asc` desc')
+        ->select();
+    $parent = array();
+    foreach ($nav as $k => $val)
+    {
+        
+        if ($val['pid'] == 100000)
+        {
+            $parent[$k] = Db::table('nav')->field("id,pid,name,url,css_img")
+                ->where('id = 1')
+                ->find();
+            $where = array(
+                'pid' => 1,
+                'status' => 1
+            );
+        }
+        else
+        {
+            $parent[$k] = Db::table('nav')->field("id,pid,name,url,css_img")
+                ->where('id = ' . $val['pid'])
+                ->find();
+            $where = array(
+                'pid' => $val['pid'],
+                'status' => 1
+            );
+        }
         $childNav = Db::table('nav')->field("id,pid,name,url,css_img")
             ->where($where)
             ->order('`asc` desc,id')
             ->select();
-        // echo Db::table('nav')->getLastsql();
-        $nav[$k]['child_nav'] = $childNav;
+        $parent[$k]['child_nav'] = $childNav;
     }
-    return $nav;
+    return $parent;
 }
 
 /**
@@ -366,7 +406,7 @@ function array_unique_fb($array2D, $true = TRUE)
 
 /**
  * 把秒数转换为时分秒的格式
- * 
+ *
  * @param Int $times
  *            时间，单位 秒
  * @return String
@@ -377,19 +417,19 @@ function secToTime($times)
     if ($times > 0)
     {
         $hour = floor($times / 3600);
-        $minute = floor(($times - 3600 * $hour) / 60);       
+        $minute = floor(($times - 3600 * $hour) / 60);
         $second = floor((($times - 3600 * $hour) - 60 * $minute) % 60);
-        if ($hour<10)
+        if ($hour < 10)
         {
-            $hour='0'.$hour;
+            $hour = '0' . $hour;
         }
-        if ($minute<10)
+        if ($minute < 10)
         {
-            $minute='0'.$minute;
+            $minute = '0' . $minute;
         }
-        if ($second<10)
+        if ($second < 10)
         {
-            $second='0'.$second;
+            $second = '0' . $second;
         }
         $result = $hour . ':' . $minute . ':' . $second;
     }

@@ -18,8 +18,8 @@
 		<li><a href="javascript:void(0);">{:$title}</a></li>
 	</ul>
 	<div style="margin-bottom: 10px;">
-	<a class="btn btn-large {if condition=" ($status==1 && $data_id==0) OR $data_id != 0"} btn-primary {/if}" {if condition="$status==1 OR $data_id != 0"} href="{:url('index/data/analysisLog',['id'=>$title_id])}"{else /} href="javascript:void(0);" {/if}   style="padding: 4px 50px;">全部</a>
-	<a class="btn btn-large {if condition="($status==0 && $data_id==0) OR $data_id != 0"} btn-primary{/if} " {if condition="$status==0 OR $data_id != 0 "} href="{:url('index/data/analysisLog',['id'=>$title_id,'status'=>1])}"{else /}href="javascript:void(0);"{/if}  style="padding: 4px 50px;">特别关心</a>
+		<a class="btn btn-large {if condition=" ($status==1 && $data_id==0) OR $data_id != 0"} btn-primary {/if}" {if condition="$status==1 OR $data_id != 0"} href="{:url('index/data/analysisLog',['id'=>$title_id])}"{else /} href="javascript:void(0);" {/if}   style="padding: 4px 50px;">全部</a>
+		<a class="btn btn-large {if condition="($status==0 && $data_id==0) OR $data_id != 0"} btn-primary{/if} " {if condition="$status==0 OR $data_id != 0 "} href="{:url('index/data/analysisLog',['id'=>$title_id,'status'=>1])}"{else /}href="javascript:void(0);"{/if}  style="padding: 4px 50px;">特别关心</a>
 		<div class="controls" style="float: right;width: 140px;margin-right: 140px;">
 			<select id="selectError" name="file_name" data-rel="chosen">
 				<option value="0">日志文件名</option>
@@ -36,14 +36,14 @@
 				<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>														
 			</div>
 			<div class="box-content alerts">
-					<div class="alert alert-success" style="display: none;">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong></strong>
-					</div>
-					<div class="alert alert-error" style="display: none;">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong></strong>
-					</div>														
+				<div class="alert alert-success" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong></strong>
+				</div>
+				<div class="alert alert-error" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong></strong>
+				</div>														
 				<table class="table table-striped">
 					<thead>
 						<tr>
@@ -194,55 +194,61 @@
 		<script src="__INDEX__js/custom.js"></script>
 		<script src="__INDEX__js/jquery.form.js"></script>
 		<script>		
-		$(function(){
-						
+			$(function(){
+
 		 //设置特别关心
-			 $('.setLove').click(function(){			 	
-			 	var analysis_id = $(this).attr('alt');
-			 	var _this = $(this);
-			 	$.ajax({    
-                  	type: 'POST',    
-                  	url: "{:url('index/data/setLove')}",
-                  	dataType:"json",    
-                	data:{
-						"analysis_id":analysis_id
-						},
-					success:function(data)
-					{
-			        	if (data.status==0)
-			        	{
-			        		if (data.type==0)
-			        		{
-			        			_this.find('i').addClass('heart_empty');
-			        			_this.find('i').removeClass('heart')
-			        		}else
-			        		{
-			        			_this.find('i').removeClass('heart_empty');
-			        			_this.find('i').addClass('heart')
-			        		}
-			        		$('.alert-success').find('strong').html(data.msg);
-			        	 	$('.alert-success').css('display','block')
-			        	 	$('.alert-success').fadeOut(3000);		
-			        	}else
-			        	{
-			        		$('.alert-error').find('strong').html(data.msg);
-			        	 	$('.alert-error').css('display','block')
-			        	 	$('.alert-error').fadeOut(3000)
-			        	}	
-			        }	
+		 $('.setLove').click(function(){			 	
+		 	var analysis_id = $(this).attr('alt');
+		 	var _this = $(this);
+		 	$.ajax({    
+		 		type: 'POST',    
+		 		url: "{:url('index/data/setLove')}",
+		 		dataType:"json",    
+		 		data:{
+		 			"analysis_id":analysis_id
+		 		},
+		 		success:function(data)
+		 		{
+		 			if (data.status==0)
+		 			{
+		 				if (data.type==0)
+		 				{
+		 					_this.find('i').addClass('heart_empty');
+		 					_this.find('i').removeClass('heart')
+		 				}else
+		 				{
+		 					_this.find('i').removeClass('heart_empty');
+		 					_this.find('i').addClass('heart')
+		 				}
+		 				$('.alert-success').find('strong').html(data.msg);
+		 				$('.alert-success').css('display','block')
+		 				$('.alert-success').fadeOut(3000);		
+		 			}else if (data.status==404)
+		 			{
+		 				$('.alert-error').find('strong').html(data.message);
+		 				$('.alert-error').css('display','block')
+		 				$('.alert-error').fadeOut(3000)
+		 				return false;
+		 			}else
+		 			{
+		 				$('.alert-error').find('strong').html(data.msg);
+		 				$('.alert-error').css('display','block')
+		 				$('.alert-error').fadeOut(3000)
+		 			}	
+		 		}	
 
-				});
+		 	});
 
-			 })
+		 })
 			//搜索文件名
 			$('#selectError').change(function(){
 
 				if($(this).val()==0)
 				{
 					$('.alert-error').find('strong').html("请选择日志文件名");
-	        	 	$('.alert-error').css('display','block')
-	        	 	$('.alert-error').fadeOut(3000)
-	        	 	return false;
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+					return false;
 				}	
 				var data_id = $(this).val();
 				var url = "http://{:$_SERVER['HTTP_HOST']}/index/data/analysislog/id/{:$title_id}/data_id/"+data_id+".html"

@@ -115,8 +115,8 @@
 											if (files.length>20)
 											{
 												$('.alert-error').find('strong').html("目录内的文件夹不能超过20个文件");
-								        	 	$('.alert-error').css('display','block')
-								        	 	$('.alert-error').fadeOut(3000)
+												$('.alert-error').css('display','block')
+												$('.alert-error').fadeOut(3000)
 												return false;
 											}
 											var f = files[0];
@@ -308,8 +308,8 @@
 				if (type==0)
 				{
 					$('.alert-error').find('strong').html("请选择日志类型");
-	        	 	$('.alert-error').css('display','block')
-	        	 	$('.alert-error').fadeOut(3000)
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
 					return false;
 				}
 				var _this = $(this);
@@ -333,26 +333,26 @@
 			  			progress.hide();
 			  			if (data.status!=200)
 			  			{
-				  			$('.alert-error').find('strong').html(data.message);
-			        	 	$('.alert-error').css('display','block')
-			        	 	$('.alert-error').fadeOut(3000)			  				
+			  				$('.alert-error').find('strong').html(data.message);
+			  				$('.alert-error').css('display','block')
+			  				$('.alert-error').fadeOut(3000)			  				
 			  				return false;
 			  			}else
 			  			{
 			  				$('.alert-success').find('strong').html(data.message);
-			        	 	$('.alert-success').css('display','block')
-			        	 	$('.alert-success').fadeOut(3000);
+			  				$('.alert-success').css('display','block')
+			  				$('.alert-success').fadeOut(3000);
 			        	 	//sleep(3000);
 			        	 	setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
 							window.location.reload();//页面刷新
-							},3000); 
-			  			}
+						},3000); 
+			        	 }
 
-			  		},
+			        	},
 			        error:function(xhr){ //上传失败 
 			        	$('.alert-error').find('strong').html('上传失败');
-		        	 	$('.alert-error').css('display','block')
-		        	 	$('.alert-error').fadeOut(3000)
+			        	$('.alert-error').css('display','block')
+			        	$('.alert-error').fadeOut(3000)
 			        	progress.hide(); 
 			        } 	
 
@@ -366,8 +366,8 @@
 				if (type=='')
 				{
 					$('.alert-error').find('strong').html("请选择需要分析的日志");
-	        	 	$('.alert-error').css('display','block')
-	        	 	$('.alert-error').fadeOut(3000)
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
 					return false;
 				}
 				var _this =$(this);		
@@ -391,29 +391,29 @@
 			  		success:function(data)
 			  		{
 			  			_this.html('分析日志');
-                		_this.addClass('btn-primary');
-                		_this.bind('click');
+			  			_this.addClass('btn-primary');
+			  			_this.bind('click');
 			  			if (data.status!=200)
 			  			{
 			  				$('.alert-error').find('strong').html(data.message);
-			        	 	$('.alert-error').css('display','block')
-			        	 	$('.alert-error').fadeOut(3000)
+			  				$('.alert-error').css('display','block')
+			  				$('.alert-error').fadeOut(3000)
 			  				progress.hide();
 			  				return false;
 			  			}else
 			  			{
 			  				$('.alert-success').find('strong').html(data.message);
-			        	 	$('.alert-success').css('display','block')
-			        	 	$('.alert-success').fadeOut(3000)
+			  				$('.alert-success').css('display','block')
+			  				$('.alert-success').fadeOut(3000)
 			        	 	setTimeout(function(){  //使用  setTimeout（）方法设定定时2000毫秒
 							window.location.reload();//页面刷新
-							},3000); 
-			  			}
-			  		},
+						},3000); 
+			        	 }
+			        	},
 			        error:function(xhr){ //上传失败 
 			        	$('.alert-error').find('strong').html("分析失败,请联系技术人员");
-		        	 	$('.alert-error').css('display','block')
-		        	 	$('.alert-error').fadeOut(3000)
+			        	$('.alert-error').css('display','block')
+			        	$('.alert-error').fadeOut(3000)
 			        	progress.hide(); 
 			        } 	
 

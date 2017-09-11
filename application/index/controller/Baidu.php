@@ -10,22 +10,52 @@ set_time_limit(0);
 
 class Baidu extends Controller {
 
+    private $nav;
+
+    private $username;
+
+    private $class;
+
     public function __construct()
     {
         if (! session('?admin_user'))
         {
             $this->error("请先登录!", 'index/index');
         }
+        $user = session('admin_user');
+        $this->username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+        $group_list = explode(',', $user['group_list']);
+        $pathInfo = $_SERVER['PATH_INFO'];
+        $infoArr = explode("/", $pathInfo);
+        $infoArr = array_filter($infoArr);
+        $infoArr = array_values($infoArr);
+        $auth = $infoArr[0] . '/' . $infoArr[1] . '/' . $infoArr[2];
+        $auth = strtolower($auth);
+        $auth = str_replace('.html', '', $auth);
+        $nav = Db::name('nav')->field('id,name')
+            ->where("url = '$auth' ")
+            ->order('id desc')
+            ->find();
+        $this->class = $infoArr[1];
+        if (! in_array($nav['id'], $group_list) && $group_list[0] != '*')
+        {
+            if (Request::instance()->isAjax())
+            {
+                $json = array(
+                    'status' => 404,
+                    'message' => '您没有权限操作该项！'
+                );
+                echo json_encode($json);
+                exit();
+            }
+            $this->error("您没有权限操作该项！");
+            exit();
+        }
+        $this->nav = $nav;
     }
 
     public function domainList()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $where = ' 1 = 1';
         $domain = Db::name('domain')->where($where)
             ->order('id desc')
@@ -129,13 +159,11 @@ class Baidu extends Controller {
         }
         // print_r($main);
         $page = $domain->render();
-        $user = session('?admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         $data['domain'] = $main;
         $data['page'] = $page;
         return view('index/baidu', $data);
@@ -146,13 +174,7 @@ class Baidu extends Controller {
      */
     public function domain()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
         $site_id = input('site_id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $yestoday = date("Y-m-d", strtotime("-1 day"));
         $domain = Db::name('domain')->where("site_id = '{$site_id}' ")->find();
         $recruit = Db::name('recruit')->where("date = '{$yestoday}' and site_id = '{$site_id}' ")->find();
@@ -237,13 +259,11 @@ class Baidu extends Controller {
             ->order('baidu_rank asc,haosou_rank asc,id desc')
             ->paginate(10);
         $keywordsPage = $keywords->render();
-        $user = session('?admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         $data['site_profile'] = $siteProfile;
         $data['site_id'] = $site_id;
         $data['domain'] = $domain;

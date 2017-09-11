@@ -9,24 +9,52 @@ class Template extends Controller {
 
     private $nav;
 
+    private $username;
+
+    private $class;
+
     public function __construct()
     {
         if (! session('?admin_user'))
         {
             $this->error("请先登录!", 'index/index');
         }
+        $user = session('admin_user');
+        $this->username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+        $group_list = explode(',', $user['group_list']);
+        $pathInfo = $_SERVER['PATH_INFO'];
+        $infoArr = explode("/", $pathInfo);
+        $infoArr = array_filter($infoArr);
+        $infoArr = array_values($infoArr);
+        $auth = $infoArr[0] . '/' . $infoArr[1] . '/' . $infoArr[2];
+        $auth = strtolower($auth);
+        $auth = str_replace('.html', '', $auth);
+        $nav = Db::name('nav')->field('id,name')
+            ->where("url = '$auth' ")
+            ->order('id desc')
+            ->find();
+        $this->class = $infoArr[1];
+        if (! in_array($nav['id'], $group_list) && $group_list[0] != '*')
+        {
+            if (Request::instance()->isAjax())
+            {
+                $json = array(
+                    'status' => 404,
+                    'message' => '您没有权限操作该项！'
+                );
+                echo json_encode($json);
+                exit();
+            }
+            $this->error("您没有权限操作该项！");
+            exit();
+        }
+        $this->nav = $nav;
     }
 
     public function webSide()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $where = array(
-            'tem.type' => $title_id
+            'tem.type' => $this->nav['id']
         );
         $webList = Db::table('template')->alias('tem')
             ->field("tem.type as web_type,tem.id,tem.name,tem.path,tem.tag,tem.addtime,tem.status,w.type,w.pertain_type")
@@ -35,14 +63,13 @@ class Template extends Controller {
             ->paginate(15);
         $page = $webList->render();
         $user = session('admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
         $data['webList'] = $webList;
         $data['page'] = $page;
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         return view('index/web_side', $data);
     }
 
@@ -128,21 +155,23 @@ class Template extends Controller {
                     if ($zip->open($path) !== FALSE)
                     {
                         if (empty($template_id))
-                        {                          
+                        {
                             if (is_dir('template/' . $date . '/' . $file_name))
                             {
-                                $is_path = $date . '/' . $file_name.rand(1111,9999);
-                            }else
-                            {
-                                $is_path =  $date . '/' . $file_name;
+                                $is_path = $date . '/' . $file_name . rand(1111, 9999);
                             }
-                        }else 
-                        {
-                            $is_path =  $date . '/' . $file_name;
+                            else
+                            {
+                                $is_path = $date . '/' . $file_name;
+                            }
                         }
-                        $zip->extractTo('template/'.$is_path); // 假设解压缩到在当前路径下images文件夹的子文件夹php
+                        else
+                        {
+                            $is_path = $date . '/' . $file_name;
+                        }
+                        $zip->extractTo('template/' . $is_path); // 假设解压缩到在当前路径下images文件夹的子文件夹php
                         $zip->close(); // 关闭处理的zip文件
-                        $file_path =  $is_path . '/' . $filename;
+                        $file_path = $is_path . '/' . $filename;
                     }
                 }
                 else
@@ -152,9 +181,10 @@ class Template extends Controller {
                     $this->error($file_error);
                     exit();
                 }
-            }else 
+            }
+            else
             {
-                $file_path ='';
+                $file_path = '';
             }
             if ($template_id)
             {
@@ -164,14 +194,15 @@ class Template extends Controller {
                         'tag' => $tag,
                         'name' => $name
                     );
-                }else
+                }
+                else
                 {
                     $update = array(
                         'tag' => $tag,
                         'path' => $file_path,
                         'name' => $name
                     );
-                }                
+                }
                 // 修改
                 Db::table('template')->where('id', $template_id)->update($update);
                 Db::table('web_side')->where('template_id', $template_id)->update([
@@ -208,15 +239,8 @@ class Template extends Controller {
                 $this->error('操作失败');
             }
         }
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
         $material_id = input('material_id');
-        $title_id = input('title_id');
-        $user = session('admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
-        $data['nav'] = nav();
-        $data['class'] = $class;
+        $title_id = $this->nav['id'];
         $thisNav = Db::table('nav')->field('name,pid')
             ->where('id=' . $title_id)
             ->find();
@@ -234,13 +258,11 @@ class Template extends Controller {
             $filename = explode("/", $material['path']);
             $filename = end($filename);
             $material['filename'] = $filename;
-            $user = session('admin_user');
-            $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-            $data['username'] = $username;
+            $data['username'] = $this->username;
+            $data['class'] = $this->class;
             $data['nav'] = nav();
-            $data['class'] = $class;
             $data['add'] = $add;
-            $data['title'] = ucfirst($thisNav['name']);
+            $data['title'] = $this->nav['name'];
             $data['material_type'] = $material_type;
             $data['title_id'] = $title_id;
             $data['material_id'] = $material_id;
@@ -251,14 +273,17 @@ class Template extends Controller {
             $material = array(
                 'filename' => '',
                 'name' => '',
-                'type'=>0,
-                'pertain_type'=>0,
+                'type' => 0,
+                'pertain_type' => 0,
                 'tag' => ''
             );
             $data['material'] = $material;
             $data['title_id'] = $title_id;
             $data['material_type'] = $material_type;
-            $data['title'] = ucfirst($thisNav['name']);
+            $data['username'] = $this->username;
+            $data['class'] = $this->class;
+            $data['title'] = $this->nav['name'];
+            $data['nav'] = nav();
             $data['material_id'] = 0;
             $add = "添加模板";
             $data['add'] = $add;

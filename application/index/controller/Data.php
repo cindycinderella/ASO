@@ -8,22 +8,52 @@ set_time_limit(0);
 
 class Data extends Controller {
 
+    private $nav;
+
+    private $username;
+
+    private $class;
+
     public function __construct()
     {
         if (! session('?admin_user'))
         {
             $this->error("请先登录!", 'index/index');
         }
+        $user = session('admin_user');
+        $this->username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+        $group_list = explode(',', $user['group_list']);
+        $pathInfo = $_SERVER['PATH_INFO'];
+        $infoArr = explode("/", $pathInfo);
+        $infoArr = array_filter($infoArr);
+        $infoArr = array_values($infoArr);
+        $auth = $infoArr[0] . '/' . $infoArr[1] . '/' . $infoArr[2];
+        $auth = strtolower($auth);
+        $auth = str_replace('.html', '', $auth);
+        $nav = Db::name('nav')->field('id,name')
+        ->where("url = '$auth' ")
+        ->order('id desc')
+        ->find();
+        $this->class = $infoArr[1];
+        if (! in_array($nav['id'], $group_list) && $group_list[0] != '*')
+        {
+            if (Request::instance()->isAjax())
+            {
+                $json = array(
+                    'status' => 404,
+                    'message' => '您没有权限操作该项！'
+                );
+                echo json_encode($json);
+                exit();
+            }
+            $this->error("您没有权限操作该项！");
+            exit();
+        }
+        $this->nav = $nav;
     }
 
     public function loglist()
-    {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
+    {      
         $where = '1 = 1 ';
         $logData = Db::table('data_list')->where($where)
             ->order('id desc')
@@ -33,15 +63,14 @@ class Data extends Controller {
         $pathList = Db::table('data_list')->field('id,file_name')
             ->where($where)
             ->select();
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
         $data['log_list'] = $logData;
         $data['path_list'] = $pathList;
         $data['page'] = $page;
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         return view('index/log_list', $data);
     }
 
@@ -228,7 +257,7 @@ class Data extends Controller {
                 $dataListId = $file_name;
                 $time = date("Y-m-d H:i:s", time());
                 foreach ($path as $pathInfo)
-                {                   
+                {
                     $id ++;
                     $interviewTime[] = $this->getDate($type, $pathInfo);
                     $insertDataPath[] = array(
@@ -717,12 +746,6 @@ class Data extends Controller {
      */
     public function analysisLog()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $status = empty(input('status')) ? 0 : 1;
         $data_id = empty(input('data_id')) ? 0 : input('data_id');
         if ($status)
@@ -803,12 +826,11 @@ class Data extends Controller {
             ->where('status = 1')
             ->select();
         $user = session('admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         $data['page'] = $page;
         $data['analysis'] = $dataArr;
         $data['status'] = $status;
@@ -861,18 +883,12 @@ class Data extends Controller {
      */
     public function analysisDetails()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
         $data_id = input('data_id');
         if (empty($data_id))
         {
             $this->error("数据错误请刷新页面");
             exit();
         }
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $analysisList = Db::name('analysis_log')->where('type = 2 and data_id = ' . $data_id)
             ->order('date DESC')
             ->limit(2)
@@ -946,13 +962,11 @@ class Data extends Controller {
         $dataList = Db::name('data_list')->field('id,file_name')
             ->where('status = 1')
             ->select();
-        $user = session('admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         $data['data_id'] = $data_id;
         $data['data_list'] = $dataList;
         $data['spider_date'] = $spiderDate;
@@ -2151,7 +2165,7 @@ class Data extends Controller {
             ]);
         }
     }
-    // 获取目录页占比
+    // 获取Referer
     public function getReferer()
     {
         if (Request::instance()->isAjax())

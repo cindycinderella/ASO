@@ -173,7 +173,13 @@
 			},
 			success:function(data)
 			{
-				if(data.status==0)
+				if (data.status==404)
+				{
+					$('.alert-error').find('strong').html(data.message);
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+					return false;
+				}else if(data.status==0)
 				{
 					_this.parent('td').html('<span style="cursor:pointer;" class="label label-success" alt="'+title_id+'"><font><font>启用</font></font></span>');
 				}else if(data.status==200)
@@ -181,7 +187,10 @@
 					_this.parent('td').html('<span style="cursor:pointer;" class="label label-important" alt="'+title_id+'"><font><font>禁用</font></font></span>');	
 				}else
 				{
-					alert(data.message);
+					$('.alert-error').find('strong').html(data.message);
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+					return false;
 				}    
 			}	
 
@@ -225,15 +234,15 @@
 					}else
 					{
 						$('.alert-error').find('strong').html(data.msg);
-			  			$('.alert-error').css('display','block')
-			  			$('.alert-error').fadeOut(3000)
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
 					}    
 				},
-		  		error:function(xhr){ 
-		  			$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
-		  			$('.alert-error').css('display','block')
-		  			$('.alert-error').fadeOut(3000)
-		  		} 	
+				error:function(xhr){ 
+					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+				} 	
 
 			});
 

@@ -9,39 +9,64 @@ class Material extends Controller {
 
     private $nav;
 
+    private $username;
+
+    private $class;
+
     public function __construct()
     {
-        $this->nav = nav();
         if (! session('?admin_user'))
         {
             $this->error("请先登录!", 'index/index');
         }
+        $user = session('admin_user');
+        $this->username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
+        $group_list = explode(',', $user['group_list']);
+        $pathInfo = $_SERVER['PATH_INFO'];
+        $infoArr = explode("/", $pathInfo);
+        $infoArr = array_filter($infoArr);
+        $infoArr = array_values($infoArr);
+        $auth = $infoArr[0] . '/' . $infoArr[1] . '/' . $infoArr[2];
+        $auth = strtolower($auth);
+        $auth = str_replace('.html', '', $auth);
+        $nav = Db::name('nav')->field('id,name')
+        ->where("url = '$auth' ")
+        ->order('id desc')
+        ->find();
+        $this->class = $infoArr[1];
+        if (! in_array($nav['id'], $group_list) && $group_list[0] != '*')
+        {
+            if (Request::instance()->isAjax())
+            {
+                $json = array(
+                    'status' => 404,
+                    'message' => '您没有权限操作该项！'
+                );
+                echo json_encode($json);
+                exit();
+            }
+            $this->error("您没有权限操作该项！");
+            exit();
+        }
+        $this->nav = $nav;
     }
 
     public function title()
     {
-        $class = explode("\\", __CLASS__);
-        $class = lcfirst($class[3]);
-        $title_id = input('id');
-        $thisNav = Db::table('nav')->field('name')
-            ->where('id=' . $title_id)
-            ->find();
         $where = array(
-            'type' => $title_id
+            'type' => $this->nav['id']
         );
         $titleList = Db::table('material')->field("id,content,tag,addtime,status")
             ->where($where)->order('id desc')
             ->paginate(15);
         $page = $titleList->render();
-        $user = session('admin_user');
-        $username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $data['username'] = $username;
+        $data['username'] = $this->username;
         $data['nav'] = nav();
         $data['title_list'] = $titleList;
         $data['page'] = $page;
-        $data['title'] = ucfirst($thisNav['name']);
-        $data['class'] = $class;
-        $data['title_id'] = $title_id;
+        $data['title'] = $this->nav['name'];
+        $data['class'] = $this->class;
+        $data['title_id'] = $this->nav['id'];
         return view('index/title', $data);
     }
 
