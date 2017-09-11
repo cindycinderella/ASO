@@ -20,7 +20,7 @@ class Index extends Controller {
             );
             $user = Db::table('admin')->alias('a')
                 ->join('group g', 'a.group_id = g.id')
-                ->field("a.id,a.username,a.nick_name,a.mobile,a.login_num,a.group_id,g.group_list")
+                ->field("a.id,a.username,a.nick_name,a.mobile,a.login_num,a.group_id,g.group_list,g.group_name")
                 ->where($where)
                 ->find();
             if (empty($user) || ! $user)
