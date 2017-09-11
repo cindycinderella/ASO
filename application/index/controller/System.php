@@ -22,7 +22,7 @@ class System extends Controller {
         }
         $user = session('admin_user');
         $this->username = empty($user['nick_name']) ? $user['username'] : $user['nick_name'];
-        $group_list = explode(',', $user['group_list']);
+        //$group_list = explode(',', $user['group_list']);
         $pathInfo = $_SERVER['PATH_INFO'];
         $infoArr = explode("/", $pathInfo);
         $infoArr = array_filter($infoArr);
