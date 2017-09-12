@@ -51,6 +51,7 @@ class Insert extends Controller {
                 continue;
             }
         }
+        unlink($insetPath);
     }
     // 批量修改
     public function update()
