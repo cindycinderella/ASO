@@ -366,6 +366,11 @@ class Data extends Controller {
                     }
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
+                    $isSpider = is_crawler(strtolower($ua));
+                    if (!$isSpider)
+                    {
+                        continue;
+                    }
                     // 获取时间
                     $pattern = '/\[(.*?)\]/is';
                     preg_match($pattern, $datainfo, $time);
@@ -426,6 +431,11 @@ class Data extends Controller {
                     }
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
+                    $isSpider = is_crawler(strtolower($ua));
+                    if (!$isSpider)
+                    {
+                        continue;
+                    }
                     // 获取时间
                     $pattern = '/\[(.*?)\]/is';
                     preg_match($pattern, $datainfo, $time);
@@ -491,6 +501,11 @@ class Data extends Controller {
                     }
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
+                    $isSpider = is_crawler(strtolower($ua));
+                    if (!$isSpider)
+                    {
+                        continue;
+                    }
                     // 获取时间
                     $pattern = '/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}/';
                     preg_match($pattern, $datainfo, $result);
@@ -2358,6 +2373,25 @@ class Data extends Controller {
             $type = input('post.type');
             $seach = input('post.search');
             $where = " data_id ={$dataId} and status = 1 ";
+            if ($time == '最近七天')
+            {
+                $dateArr = Db::name('log_info')->field("DATE_FORMAT(details_time, '%Y-%m-%d') AS `date`")
+                ->where('status = 1 and data_id = ' . $dataId)
+                ->order('date asc')->group('date')
+                ->limit(7)
+                ->select();
+                $cataDate = array();
+                foreach ($dateArr as $dateinfo)
+                {
+                    $cataDate[] = $dateinfo['date'];
+                }
+                $maxDate = max($cataDate);
+                $minDate = min($cataDate);
+                $where.=" and details_time>='{$minDate} 00:00:00' and details_time <= '{$maxDate} 23:59:59' ";
+            }else
+            {
+                $where.=" and details_time>='{$time} 00:00:00' and details_time <= '{$time} 23:59:59' ";
+            }
             if (! empty($type))
             {
                 switch ($type)

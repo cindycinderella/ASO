@@ -109,17 +109,16 @@ function deep_in_array($value, $array)
  * *********判断是否是爬虫或者用户浏览器访问
  * **********
  */
-function is_crawler()
+function is_crawler($userAgent)
 {
-    $userAgent = strtolower($_SERVER['HTTP_USER_AGENT']);
     $spiders = array(
-        'Googlebot', // Google 爬虫
-        'Baiduspider', // 百度爬虫
-        'Yahoo! Slurp', // 雅虎爬虫
-        'YodaoBot', // 有道爬虫
-        'msnbot'
-    ); // Bing爬虫
-    
+        'Googlebot',
+        'Baiduspider', 
+        'bingbot',
+        'Sogou',
+        '360Spider',
+        'haosouspider'
+    );   
     foreach ($spiders as $spider)
     {
         $spider = strtolower($spider);
