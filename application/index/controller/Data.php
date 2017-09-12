@@ -31,9 +31,9 @@ class Data extends Controller {
         $auth = strtolower($auth);
         $auth = str_replace('.html', '', $auth);
         $nav = Db::name('nav')->field('id,name')
-        ->where("url = '$auth' ")
-        ->order('id desc')
-        ->find();
+            ->where("url = '$auth' ")
+            ->order('id desc')
+            ->find();
         $this->class = $infoArr[1];
         if (! in_array($nav['id'], $group_list) && $group_list[0] != '*')
         {
@@ -53,7 +53,7 @@ class Data extends Controller {
     }
 
     public function loglist()
-    {      
+    {
         $where = '1 = 1 ';
         $logData = Db::table('data_list')->where($where)
             ->order('id desc')
@@ -199,6 +199,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
+                    chmod($pathInfo,0777);  //修改权限
                     unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
@@ -354,6 +355,17 @@ class Data extends Controller {
                     {
                         continue;
                     }
+                    preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
+                    if (empty($matches))
+                    {
+                        preg_match('/Sogou([\s\S]*)/', $datainfo, $matches);
+                    }
+                    if (empty($matches))
+                    {
+                        continue;
+                    }
+                    $uaArr = explode('"', $matches[0]);
+                    $ua = $uaArr[0];
                     // 获取时间
                     $pattern = '/\[(.*?)\]/is';
                     preg_match($pattern, $datainfo, $time);
@@ -365,20 +377,6 @@ class Data extends Controller {
                     $dataArr = explode(" ", $datainfo);
                     $httpCode = $dataArr[8];
                     $urlPath = $dataArr[6];
-                    preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
-                    if (empty($matches))
-                    {
-                        preg_match('/Sogou([\s\S]*)/', $datainfo, $matches);
-                    }
-                    if (empty($matches))
-                    {
-                        $ua = '';
-                    }
-                    else
-                    {
-                        $uaArr = explode('"', $matches[0]);
-                        $ua = $uaArr[0];
-                    }
                     $referer = '';
                     preg_match('/((https|http|ftp|rtsp|mms)?:\/\/)[^\s]+/', $dataArr[10], $urles);
                     if (empty($urles))
@@ -417,6 +415,17 @@ class Data extends Controller {
                     {
                         continue;
                     }
+                    preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
+                    if (empty($matches))
+                    {
+                        preg_match('/Sogou([\s\S]*)/', $datainfo, $matches);
+                    }
+                    if (empty($matches))
+                    {
+                        continue;
+                    }
+                    $uaArr = explode('"', $matches[0]);
+                    $ua = $uaArr[0];
                     // 获取时间
                     $pattern = '/\[(.*?)\]/is';
                     preg_match($pattern, $datainfo, $time);
@@ -442,20 +451,6 @@ class Data extends Controller {
                     }
                     $httpCode = $dataArr[8];
                     $urlPath = $dataArr[6];
-                    preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
-                    if (empty($matches))
-                    {
-                        preg_match('/Sogou([\s\S]*)/', $datainfo, $matches);
-                    }
-                    if (empty($matches))
-                    {
-                        $ua = '';
-                    }
-                    else
-                    {
-                        $uaArr = explode('"', $matches[0]);
-                        $ua = $uaArr[0];
-                    }
                     $id ++;
                     $logInfo['id'] = $id;
                     $logInfo['http_code'] = $httpCode;
@@ -485,6 +480,17 @@ class Data extends Controller {
                     {
                         continue;
                     }
+                    preg_match('/Mozilla([\s\S]*)\"/', $datainfo, $matches);
+                    if (empty($matches))
+                    {
+                        preg_match('/Sogou([\s\S]*)/', $datainfo, $matches);
+                    }
+                    if (empty($matches))
+                    {
+                        continue;
+                    }
+                    $uaArr = explode('"', $matches[0]);
+                    $ua = $uaArr[0];
                     // 获取时间
                     $pattern = '/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}/';
                     preg_match($pattern, $datainfo, $result);
@@ -500,7 +506,6 @@ class Data extends Controller {
                     $httpCode = $dataArr[11];
                     $urlPath = $dataArr[4];
                     $referer = $dataArr[10];
-                    $ua = $dataArr[9];
                     // 获取IP
                     $ipPattern = '/(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)\.(25[0-5]|2[0-4]\d|[0-1]\d{2}|[1-9]?\d)/';
                     preg_match($ipPattern, $datainfo, $ipArr);
