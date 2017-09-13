@@ -8,7 +8,13 @@ $baseDir = dirname($vendorDir);
 return array(
     'think\\composer\\' => array($vendorDir . '/topthink/think-installer/src'),
     'think\\' => array($baseDir . '/thinkphp/library/think'),
+    'phpDocumentor\\Reflection\\' => array($vendorDir . '/phpdocumentor/reflection-common/src', $vendorDir . '/phpdocumentor/type-resolver/src', $vendorDir . '/phpdocumentor/reflection-docblock/src'),
+    'Webmozart\\Assert\\' => array($vendorDir . '/webmozart/assert/src'),
+    'Symfony\\Component\\Process\\' => array($vendorDir . '/symfony/process'),
     'QL\\Ext\\Lib\\' => array($vendorDir . '/jaeger/curlmulti', $vendorDir . '/jaeger/http'),
     'QL\\Ext\\' => array($vendorDir . '/jaeger/querylist-ext-aquery', $vendorDir . '/jaeger/querylist-ext-multi', $vendorDir . '/jaeger/querylist-ext-request', $vendorDir . '/jaeger/querylist-ext-login', $vendorDir . '/jaeger/querylist-ext-dimage'),
     'QL\\' => array($vendorDir . '/jaeger/querylist'),
+    'Facebook\\WebDriver\\' => array($vendorDir . '/facebook/webdriver/lib'),
+    'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
+    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
 );

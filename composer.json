@@ -23,7 +23,9 @@
 		"jaeger/querylist-ext-multi":"^1.0",
 		"jaeger/querylist-ext-login":"^1.0",
 		"jaeger/querylist-ext-dimage": "^1.1",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "facebook/webdriver": "^1.4",
+        "phpunit/phpunit": "^6.3"
     },
     "extra": {
         "think-path": "thinkphp"

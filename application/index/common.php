@@ -113,12 +113,12 @@ function is_crawler($userAgent)
 {
     $spiders = array(
         'Googlebot',
-        'Baiduspider', 
+        'Baiduspider',
         'bingbot',
         'Sogou',
         '360Spider',
         'haosouspider'
-    );   
+    );
     foreach ($spiders as $spider)
     {
         $spider = strtolower($spider);
@@ -433,4 +433,26 @@ function secToTime($times)
         $result = $hour . ':' . $minute . ':' . $second;
     }
     return $result;
+}
+
+/**
+ * 生成验证码图片
+ * 
+ * @param $location 验证码x,y轴坐标            
+ * @param $size 验证码的长宽            
+ */
+function generateVcodeIMG($location, $size, $src_img)
+{
+    $width = $size->getWidth();
+    $height = $size->getHeight();
+    $x = $location->getX();
+    $y = $location->getY();
+    
+    $src = imagecreatefrompng($src_img);
+    $dst = imagecreatetruecolor($width, $height);
+    imagecopyresampled($dst, $src, 0, 0, $x, $y, $width, $height, $width, $height);
+    imagejpeg($dst, $src_img);
+    chmod($src_img, 0777);
+    imagedestroy($src);
+    imagedestroy($dst);
 }
