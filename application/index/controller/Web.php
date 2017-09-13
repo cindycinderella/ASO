@@ -15,7 +15,7 @@ class Web extends Controller {
     {
         Loader::import('code_api.AipOcr');
         $host = 'http://localhost:4444/wd/hub';
-        $desired_capabilities = DesiredCapabilities::chrome();      
+        $desired_capabilities = DesiredCapabilities::Firefox();      
         $driver = RemoteWebDriver::create($host, $desired_capabilities);
         $driver->get('https://account.aliyun.com/login/login.htm');        
         $driver->switchTo()->frame("alibaba-login-box");     
