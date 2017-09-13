@@ -71,15 +71,14 @@ class Baidu extends Controller {
                 ->order('date desc ')
                 ->limit(10)
                 ->select();
-            // print_r($recruit);
+            $baiDu = '[';
+            $haoSou = '[';
+            $date = '[';
             if (! empty($recruit))
             {
                 $main[$k]['baidu_record'] = $recruit[0]['baidu_record'];
                 $main[$k]['haosou_record'] = $recruit[0]['haosou_record'];
                 // 组装百度收录分析
-                $baiDu = '[';
-                $haoSou = '[';
-                $date = '[';
                 foreach ($recruit as $key => $record)
                 {
                     $baiDu .= (int) $record['baidu_record'] . ',';
@@ -97,12 +96,12 @@ class Baidu extends Controller {
                 ->limit(40)
                 ->select();
             $keyWords = array();
-            $change = array();
+            $change = array(0,0,0,0);
             foreach ($keywordRanking as $kis => $rank)
             {
-                if (count($change) < 4)
+                if ($kis < 4)
                 {
-                    $change[] = $keywordRanking[$kis]['num'] - $keywordRanking[$kis + 4]['num'];
+                    $change[$kis] = $keywordRanking[$kis]['num'] - $keywordRanking[$kis + 4]['num'];
                 }
                 if (! isset($keyWords[$rank['date']]))
                 {

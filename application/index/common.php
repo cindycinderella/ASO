@@ -437,7 +437,7 @@ function secToTime($times)
 
 /**
  * 生成验证码图片
- * 
+ *
  * @param $location 验证码x,y轴坐标            
  * @param $size 验证码的长宽            
  */
@@ -455,4 +455,16 @@ function generateVcodeIMG($location, $size, $src_img)
     chmod($src_img, 0777);
     imagedestroy($src);
     imagedestroy($dst);
+}
+// 切换至最后一个window
+function switchToEndWindow($driver)
+{
+    $arr = $driver->getWindowHandles();
+    foreach ($arr as $k => $v)
+    {
+        if ($k == (count($arr) - 1))
+        {
+            $driver->switchTo()->window($v);
+        }
+    }
 }
