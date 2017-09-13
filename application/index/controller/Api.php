@@ -3,9 +3,6 @@ namespace app\index\controller;
 
 use think\Db;
 use think\Controller;
-use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\WebDriverBy;
 use QL\QueryList;
 set_time_limit(0);
 
@@ -203,13 +200,13 @@ class Api extends Controller {
     // 获取百度关键字排名
     public function getRanking()
     {
-        // $keys = input('key');
-        // $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
-        // if ($keys !== $kei)
-        // {
-        // debug_log("定时执行任务-----Key不正确", 'getSeach');
-        // exit();
-        // }
+        $keys = input('key');
+        $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
+        if ($keys !== $kei)
+        {
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
+        }
         $date = date("Y-m-d", strtotime("-1 day"));
         $word = Db::name('Keyword_ranking')->field('date')
             ->where("date = '{$date}' and stype = 1 ")
@@ -252,17 +249,17 @@ class Api extends Controller {
             $keyword = $wordsInfo['words'];
             $title = array();
             $showurl = array();
-            $host = 'http://localhost:4444/wd/hub';
-            $desired_capabilities = DesiredCapabilities::phantomjs();//静默
-            $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
-            $url = "https://www.baidu.com/";
-            $driver->get($url);
-            $driver->findElement(WebDriverBy::id('kw'))->sendKeys($keyword);
-            $driver->findElement(WebDriverBy::id('su'))->click();
-            sleep(2);
             for ($i = 0; $i < 5; $i ++)
             {
-                $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');
+                $url = "https://www.baidu.com/s?ie=utf-8&wd=" . $keyword . "&pn=" . (10 * $i);
+                $rules = array(
+                    'content' => array(
+                        '#content_left',
+                        'html'
+                    )
+                );
+                $body = QueryList::Query($url, $rules)->data;
+                $body = $body[0]['content'];
                 preg_match_all('/(?<title><div[^>]*\s+id="(?<id>[1-4][0-9]|5[0]?|[1-9])"[^>]*>([\s\S]*?)<\/h3>)|(?<url>(<span class=\"c-showurl\">(.*?)<\/span>)|(<div class=\"f13\">(.*?)<\/div>))/si', $body, $titleArr);
                 $titles = array_values(array_filter($titleArr['title']));
                 $orders = array_values(array_filter($titleArr['id']));
@@ -289,24 +286,7 @@ class Api extends Controller {
                     );
                     $title[] = $arr;
                 }
-                if ($i>0)
-                {
-                    $next = $driver->findElements(WebDriverBy::className('n'));
-                    foreach ($next as $nextKey=>$nextInfo)
-                    {
-                        if ($nextKey==1&&$i>0)
-                        {
-                            $nextInfo->click();
-                        }
-                    }
-                }else
-                {
-                    $driver->findElement(WebDriverBy::className('n'))->click();
-                }               
-                sleep(2);
             }
-            print_r($title);
-            exit();
             // 打印结果
             foreach ($title as $info)
             {
@@ -347,7 +327,6 @@ class Api extends Controller {
                 'order' => $order
             );
             $insert[$wordsInfo['site_id']][] = $arr;
-            $driver->quit();//关闭浏览器
         }
         $kiss = 0;
         $ranking = Db::name('Keyword_ranking')->field('id')
