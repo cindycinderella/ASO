@@ -203,21 +203,21 @@ class Api extends Controller {
     // 获取百度关键字排名
     public function getRanking()
     {
-//         $keys = input('key');
-//         $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
-//         if ($keys !== $kei)
-//         {
-//             debug_log("定时执行任务-----Key不正确", 'getSeach');
-//             exit();
-//         }
+        $keys = input('key');
+        $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
+        if ($keys !== $kei)
+        {
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
+        }
         $date = date("Y-m-d", strtotime("-1 day"));
-//         $word = Db::name('Keyword_ranking')->field('date')
-//             ->where("date = '{$date}' and stype = 1 ")
-//             ->find();
-//         if (! empty($word))
-//         {
-//             exit();
-//         }
+        $word = Db::name('Keyword_ranking')->field('date')
+            ->where("date = '{$date}' and stype = 1 ")
+            ->find();
+        if (! empty($word))
+        {
+            exit();
+        }
         // 比配品牌词
         $pinKeyWords = Db::name('material')->field('content')
             ->where('type = 88 ')
@@ -418,8 +418,6 @@ class Api extends Controller {
                 $kiss ++;
             }
         }
-        print_r($rankingInsert);
-        exit;
         if (! empty($rankingInsert))
         {
             Db::name('Keyword_ranking')->insertAll($rankingInsert);
