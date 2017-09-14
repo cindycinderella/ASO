@@ -660,30 +660,34 @@ class Data extends Controller {
                         $google[$time][] = $logInfo['path'];
                         continue;
                     }
-                }
-                $dataArr[$time]['data_id'] = $dataInfo['id'];
+                }                
                 foreach ($baiduPath as $k => $val)
                 {
+                    $dataArr[$k]['data_id'] = $dataInfo['id'];
                     $dataArr[$k]['baidu_total'] = count($val);
                     $dataArr[$k]['baidu_num'] = count(array_unique($val));
                 }
                 foreach ($haoSoupath as $key => $path)
                 {
+                    $dataArr[$key]['data_id'] = $dataInfo['id'];
                     $dataArr[$key]['hao_sou_total'] = count($path);
                     $dataArr[$key]['hao_sou_num'] = count(array_unique($path));
                 }
                 foreach ($bing as $keys => $bingPath)
                 {
+                    $dataArr[$keys]['data_id'] = $dataInfo['id'];
                     $dataArr[$keys]['bing_total'] = count($bingPath);
                     $dataArr[$keys]['bing_num'] = count(array_unique($bingPath));
                 }
                 foreach ($soGou as $kiss => $soPath)
                 {
+                    $dataArr[$kiss]['data_id'] = $dataInfo['id'];
                     $dataArr[$kiss]['so_gou_total'] = count($soPath);
                     $dataArr[$kiss]['so_gou_num'] = count(array_unique($soPath));
                 }
                 foreach ($google as $kis => $googlePath)
                 {
+                    $dataArr[$kis]['data_id'] = $dataInfo['id'];
                     $dataArr[$kis]['google_total'] = count($googlePath);
                     $dataArr[$kis]['google_num'] = count(array_unique($googlePath));
                 }
