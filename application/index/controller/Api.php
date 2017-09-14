@@ -307,8 +307,6 @@ class Api extends Controller {
                 }
                 sleep(2);
             }
-            print_r($title);
-            exit();
             // 打印结果
             foreach ($title as $info)
             {
