@@ -53,8 +53,9 @@ class Material extends Controller {
 
     public function title()
     {
+        $title_id = input('id');
         $where = array(
-            'type' => $this->nav['id']
+            'type' =>$title_id
         );
         $titleList = Db::table('material')->field("id,content,tag,addtime,status")
             ->where($where)->order('id desc')
@@ -66,7 +67,7 @@ class Material extends Controller {
         $data['page'] = $page;
         $data['title'] = $this->nav['name'];
         $data['class'] = $this->class;
-        $data['title_id'] = $this->nav['id'];
+        $data['title_id'] = $title_id;
         return view('index/title', $data);
     }
 
