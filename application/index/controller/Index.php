@@ -48,9 +48,13 @@ class Index extends Controller {
             if (session('?admin_user'))
             {
                 $user  = session('admin_user');
+                if ($user['group_list']=='*')
+                {
+                    $this->redirect('system/config');
+                }
                 $sel = Db::name('nav')->field('id,url')
                 ->where("id in ({$user['group_list']}) and pid !=0 ")
-                ->find();
+                ->find();        
                 $this->redirect($sel['url']);
             }
             return view('login');
