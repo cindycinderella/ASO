@@ -950,6 +950,7 @@ class Data extends Controller {
             if ($k > 1)
             {
                 unset($spiderDate[$k]);
+                continue;
             }
             $total_data = Db::name('baidu_spider')->where('data_id = ' . $data_id . ' and date = "' . $spider['date'] . '"')
                 ->order('num desc')
