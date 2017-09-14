@@ -167,7 +167,7 @@ class Data extends Controller {
                 {
                     // 插入日志记录表
                     $updateDataList = array(
-                        'num' => count($path) + $dataInfo['num'],
+                        'num' => count($path),
                         'new_date' => $time, // 暂时性的设置
                         'upload_date' => $time,
                         'status' => 0
@@ -200,7 +200,7 @@ class Data extends Controller {
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
                     chmod($pathInfo, 0777); // 修改权限
-                    unlink($pathInfo);
+                                                // unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -269,7 +269,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
-                    unlink($pathInfo);
+                    // unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -618,6 +618,7 @@ class Data extends Controller {
                 $bing = array();
                 $soGou = array();
                 $google = array();
+                $dataArr = array();
                 $updateIds = '';
                 foreach ($logData as $logInfo)
                 {
@@ -660,33 +661,29 @@ class Data extends Controller {
                         continue;
                     }
                 }
+                $dataArr[$time]['data_id'] = $dataInfo['id'];
                 foreach ($baiduPath as $k => $val)
                 {
-                    $dataArr[$k]['data_id'] = $dataInfo['id'];
                     $dataArr[$k]['baidu_total'] = count($val);
                     $dataArr[$k]['baidu_num'] = count(array_unique($val));
                 }
                 foreach ($haoSoupath as $key => $path)
                 {
-                    $dataArr[$key]['data_id'] = $dataInfo['id'];
                     $dataArr[$key]['hao_sou_total'] = count($path);
                     $dataArr[$key]['hao_sou_num'] = count(array_unique($path));
                 }
                 foreach ($bing as $keys => $bingPath)
                 {
-                    $dataArr[$keys]['data_id'] = $dataInfo['id'];
                     $dataArr[$keys]['bing_total'] = count($bingPath);
                     $dataArr[$keys]['bing_num'] = count(array_unique($bingPath));
                 }
                 foreach ($soGou as $kiss => $soPath)
                 {
-                    $dataArr[$kiss]['data_id'] = $dataInfo['id'];
                     $dataArr[$kiss]['so_gou_total'] = count($soPath);
                     $dataArr[$kiss]['so_gou_num'] = count(array_unique($soPath));
                 }
                 foreach ($google as $kis => $googlePath)
                 {
-                    $dataArr[$kis]['data_id'] = $dataInfo['id'];
                     $dataArr[$kis]['google_total'] = count($googlePath);
                     $dataArr[$kis]['google_num'] = count(array_unique($googlePath));
                 }
@@ -701,7 +698,7 @@ class Data extends Controller {
                 {
                     $id = $analysisLog['id'];
                 }
-                $analysisLogData =array();
+                $analysisLogData = array();
                 foreach ($dataArr as $date => $analysisLogInfo)
                 {
                     $id ++;
@@ -731,8 +728,8 @@ class Data extends Controller {
                         "status" => 0
                     );
                 }
-                $affect = Db::name('analysis_log')->insertAll($analysisLogData);               
-            }            
+                $affect = Db::name('analysis_log')->insertAll($analysisLogData);
+            }
             if ($affect)
             {
                 $updateIds = rtrim($updateIds, ",");
