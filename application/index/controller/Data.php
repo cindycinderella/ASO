@@ -200,7 +200,7 @@ class Data extends Controller {
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
                     chmod($pathInfo, 0777); // 修改权限
-                                                // unlink($pathInfo);
+                    unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -269,7 +269,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
-                    // unlink($pathInfo);
+                    unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
