@@ -35,10 +35,22 @@ class Index extends Controller {
                 $update['login_ip'] = Request::instance()->ip();
                 $update['login_time'] = time();
                 $update['login_num'] = $user['login_num'] + 1;
+                if ($user['group_list'] == '*')
+                {
+                    $url = 'index/system/config';
+                }
+                else
+                {
+                    $sel = Db::name('nav')->field('id,url')
+                        ->where("id in ({$user['group_list']}) and pid !=0 ")
+                        ->find();
+                    $url = $sel['url'];
+                }
                 Db::table('admin')->where("id = {$user['id']}")->update($update);
                 session('admin_user', $user);
                 return json([
                     'status' => 0,
+                    'url' => $url,
                     'message' => '登录成功'
                 ]);
             }
@@ -47,14 +59,14 @@ class Index extends Controller {
         {
             if (session('?admin_user'))
             {
-                $user  = session('admin_user');
-                if ($user['group_list']=='*')
+                $user = session('admin_user');
+                if ($user['group_list'] == '*')
                 {
                     $this->redirect('system/config');
                 }
                 $sel = Db::name('nav')->field('id,url')
-                ->where("id in ({$user['group_list']}) and pid !=0 ")
-                ->find();        
+                    ->where("id in ({$user['group_list']}) and pid !=0 ")
+                    ->find();
                 $this->redirect($sel['url']);
             }
             return view('login');
