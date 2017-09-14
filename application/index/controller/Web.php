@@ -34,7 +34,7 @@ class Web extends Controller {
             $driver->findElement(WebDriverBy::className('n'))->click();
             sleep(2);
         }
-        print_r($html)
+        print_r($html);
         $driver->quit();
     }
 }
