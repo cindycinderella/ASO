@@ -12,7 +12,7 @@ return [
     '__pattern__' => [
         'name' => '\w+'
     ],
-    'admin' => 'index/index/index',
+    'admin' => 'index/index',
     '[hello]' => [
         ':id' => [
             'index/hello',
