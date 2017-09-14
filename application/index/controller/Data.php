@@ -199,7 +199,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
-                    chmod($pathInfo,0777);  //修改权限
+                    chmod($pathInfo, 0777); // 修改权限
                     unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
@@ -367,7 +367,7 @@ class Data extends Controller {
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
                     $isSpider = is_crawler(strtolower($ua));
-                    if (!$isSpider)
+                    if (! $isSpider)
                     {
                         continue;
                     }
@@ -432,7 +432,7 @@ class Data extends Controller {
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
                     $isSpider = is_crawler(strtolower($ua));
-                    if (!$isSpider)
+                    if (! $isSpider)
                     {
                         continue;
                     }
@@ -502,7 +502,7 @@ class Data extends Controller {
                     $uaArr = explode('"', $matches[0]);
                     $ua = $uaArr[0];
                     $isSpider = is_crawler(strtolower($ua));
-                    if (!$isSpider)
+                    if (! $isSpider)
                     {
                         continue;
                     }
@@ -621,7 +621,6 @@ class Data extends Controller {
                 $updateIds = '';
                 foreach ($logData as $logInfo)
                 {
-                    
                     $time = date("Y-m-d", strtotime($logInfo['details_time']));
                     $updateIds .= $logInfo['id'] . ',';
                     // 百度
@@ -691,48 +690,49 @@ class Data extends Controller {
                     $dataArr[$kis]['google_total'] = count($googlePath);
                     $dataArr[$kis]['google_num'] = count(array_unique($googlePath));
                 }
-            }
-            $analysisLog = Db::name('analysis_log')->field("id")
-                ->order('id desc')
-                ->find();
-            if (empty($analysisLog))
-            {
-                $id = 0;
-            }
-            else
-            {
-                $id = $analysisLog['id'];
-            }
-            foreach ($dataArr as $date => $analysisLogInfo)
-            {
-                $id ++;
-                $analysisLogData[] = array(
-                    'id' => $id,
-                    'data_id' => $analysisLogInfo['data_id'],
-                    'date' => $date,
-                    'baidu' => isset($analysisLogInfo['baidu_total']) ? $analysisLogInfo['baidu_total'] : 0,
-                    'hao_sou' => isset($analysisLogInfo['hao_sou_total']) ? $analysisLogInfo['hao_sou_total'] : 0,
-                    'sogou' => isset($analysisLogInfo['so_gou_total']) ? $analysisLogInfo['so_gou_total'] : 0,
-                    'google' => isset($analysisLogInfo['google_total']) ? $analysisLogInfo['google_total'] : 0,
-                    'bing' => isset($analysisLogInfo['bing_total']) ? $analysisLogInfo['bing_total'] : 0,
-                    'type' => 1,
-                    "status" => 0
-                );
-                $id ++;
-                $analysisLogData[] = array(
-                    'id' => $id,
-                    'data_id' => $analysisLogInfo['data_id'],
-                    'date' => $date,
-                    'baidu' => isset($analysisLogInfo['baidu_num']) ? $analysisLogInfo['baidu_num'] : 0,
-                    'hao_sou' => isset($analysisLogInfo['hao_sou_num']) ? $analysisLogInfo['hao_sou_num'] : 0,
-                    'sogou' => isset($analysisLogInfo['so_gou_num']) ? $analysisLogInfo['so_gou_num'] : 0,
-                    'google' => isset($analysisLogInfo['google_num']) ? $analysisLogInfo['google_num'] : 0,
-                    'bing' => isset($analysisLogInfo['bing_num']) ? $analysisLogInfo['bing_num'] : 0,
-                    'type' => 2,
-                    "status" => 0
-                );
-            }
-            $affect = Db::name('analysis_log')->insertAll($analysisLogData);
+                $analysisLog = Db::name('analysis_log')->field("id")
+                    ->order('id desc')
+                    ->find();
+                if (empty($analysisLog))
+                {
+                    $id = 0;
+                }
+                else
+                {
+                    $id = $analysisLog['id'];
+                }
+                $analysisLogData =array();
+                foreach ($dataArr as $date => $analysisLogInfo)
+                {
+                    $id ++;
+                    $analysisLogData[] = array(
+                        'id' => $id,
+                        'data_id' => $analysisLogInfo['data_id'],
+                        'date' => $date,
+                        'baidu' => isset($analysisLogInfo['baidu_total']) ? $analysisLogInfo['baidu_total'] : 0,
+                        'hao_sou' => isset($analysisLogInfo['hao_sou_total']) ? $analysisLogInfo['hao_sou_total'] : 0,
+                        'sogou' => isset($analysisLogInfo['so_gou_total']) ? $analysisLogInfo['so_gou_total'] : 0,
+                        'google' => isset($analysisLogInfo['google_total']) ? $analysisLogInfo['google_total'] : 0,
+                        'bing' => isset($analysisLogInfo['bing_total']) ? $analysisLogInfo['bing_total'] : 0,
+                        'type' => 1,
+                        "status" => 0
+                    );
+                    $id ++;
+                    $analysisLogData[] = array(
+                        'id' => $id,
+                        'data_id' => $analysisLogInfo['data_id'],
+                        'date' => $date,
+                        'baidu' => isset($analysisLogInfo['baidu_num']) ? $analysisLogInfo['baidu_num'] : 0,
+                        'hao_sou' => isset($analysisLogInfo['hao_sou_num']) ? $analysisLogInfo['hao_sou_num'] : 0,
+                        'sogou' => isset($analysisLogInfo['so_gou_num']) ? $analysisLogInfo['so_gou_num'] : 0,
+                        'google' => isset($analysisLogInfo['google_num']) ? $analysisLogInfo['google_num'] : 0,
+                        'bing' => isset($analysisLogInfo['bing_num']) ? $analysisLogInfo['bing_num'] : 0,
+                        'type' => 2,
+                        "status" => 0
+                    );
+                }
+                $affect = Db::name('analysis_log')->insertAll($analysisLogData);               
+            }            
             if ($affect)
             {
                 $updateIds = rtrim($updateIds, ",");
@@ -2376,10 +2376,11 @@ class Data extends Controller {
             if ($time == '最近七天')
             {
                 $dateArr = Db::name('log_info')->field("DATE_FORMAT(details_time, '%Y-%m-%d') AS `date`")
-                ->where('status = 1 and data_id = ' . $dataId)
-                ->order('date asc')->group('date')
-                ->limit(7)
-                ->select();
+                    ->where('status = 1 and data_id = ' . $dataId)
+                    ->order('date asc')
+                    ->group('date')
+                    ->limit(7)
+                    ->select();
                 $cataDate = array();
                 foreach ($dateArr as $dateinfo)
                 {
@@ -2387,10 +2388,11 @@ class Data extends Controller {
                 }
                 $maxDate = max($cataDate);
                 $minDate = min($cataDate);
-                $where.=" and details_time>='{$minDate} 00:00:00' and details_time <= '{$maxDate} 23:59:59' ";
-            }else
+                $where .= " and details_time>='{$minDate} 00:00:00' and details_time <= '{$maxDate} 23:59:59' ";
+            }
+            else
             {
-                $where.=" and details_time>='{$time} 00:00:00' and details_time <= '{$time} 23:59:59' ";
+                $where .= " and details_time>='{$time} 00:00:00' and details_time <= '{$time} 23:59:59' ";
             }
             if (! empty($type))
             {
