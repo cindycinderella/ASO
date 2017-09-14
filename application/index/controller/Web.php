@@ -16,7 +16,7 @@ class Web extends Controller {
     {
         Loader::import('code_api.AipOcr');
         $host = 'http://localhost:4444/wd/hub';
-        $desired_capabilities = DesiredCapabilities::chrome();
+        $desired_capabilities = DesiredCapabilities::phantomjs();
         $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
         $url = "https://www.baidu.com/";
         $driver->get($url);
