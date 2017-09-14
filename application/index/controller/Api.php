@@ -257,6 +257,7 @@ class Api extends Controller {
             $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
             $url = "https://www.baidu.com/";
             $driver->get($url);
+            $driver->manage()->window()->maximize();//网页最大化
             $driver->findElement(WebDriverBy::id('kw'))->sendKeys($keyword);
             $driver->findElement(WebDriverBy::id('su'))->click();
             sleep(2);
