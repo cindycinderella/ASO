@@ -257,7 +257,9 @@ class Api extends Controller {
             $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
             $url = "https://www.baidu.com/";
             $driver->get($url);
-            $driver->manage()->window()->maximize();//网页最大化
+            $driver->manage()
+                ->window()
+                ->maximize(); // 网页最大化
             $driver->findElement(WebDriverBy::id('kw'))->sendKeys($keyword);
             $driver->findElement(WebDriverBy::id('su'))->click();
             sleep(2);
@@ -307,7 +309,7 @@ class Api extends Controller {
                 }
                 sleep(2);
             }
-            // 打印结果
+            $driver->quit(); // 关闭浏览器
             foreach ($title as $info)
             {
                 if (empty($info))
@@ -347,7 +349,6 @@ class Api extends Controller {
                 'order' => $order
             );
             $insert[$wordsInfo['site_id']][] = $arr;
-            $driver->quit(); // 关闭浏览器
         }
         $kiss = 0;
         $ranking = Db::name('Keyword_ranking')->field('id')
@@ -426,21 +427,21 @@ class Api extends Controller {
     // 获取360关键字排名
     public function getRings()
     {
-        $keys = input('key');
-        $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
-        if ($keys !== $kei)
-        {
-            debug_log("定时执行任务-----Key不正确", 'getSeach');
-            exit();
-        }
-        $date = date("Y-m-d", strtotime("-1 day"));
-        $word = Db::name('Keyword_ranking')->field('date')
-            ->where("date = '{$date}' and stype = 2")
-            ->find();
-        if (! empty($word))
-        {
-            exit();
-        }
+        // $keys = input('key');
+        // $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
+        // if ($keys !== $kei)
+        // {
+        // debug_log("定时执行任务-----Key不正确", 'getSeach');
+        // exit();
+        // }
+        // $date = date("Y-m-d", strtotime("-1 day"));
+        // $word = Db::name('Keyword_ranking')->field('date')
+        // ->where("date = '{$date}' and stype = 2")
+        // ->find();
+        // if (! empty($word))
+        // {
+        // exit();
+        // }
         // 比配品牌词
         $pinKeyWords = Db::name('material')->field('content')
             ->where('type = 88 ')
@@ -472,38 +473,47 @@ class Api extends Controller {
         $insert = array();
         foreach ($wordsArr as $wordsInfo)
         {
-            $rules = array(
-                'content' => array(
-                    '.result',
-                    'html'
-                )
-            );
             $keyword = $wordsInfo['words'];
+            $host = 'http://localhost:4444/wd/hub';
+            $desired_capabilities = DesiredCapabilities::chrome();
+            $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
+            $url = "https://www.so.com/";
+            $driver->get($url);
+            $driver->manage()
+                ->window()
+                ->maximize(); // 网页最大化
+            $driver->findElement(WebDriverBy::id('input'))->sendKeys($keyword);
+            $driver->findElement(WebDriverBy::id('search-button'))->click();
+            sleep(2);
             $title = array();
             for ($i = 1; $i < 6; $i ++)
             {
-                $url = "https://www.so.com/s?ie=utf-8&q={$keyword}&pn=" . $i;
-                $data = QueryList::Query($url, $rules)->data;
-                preg_match_all('/(?<title><h3[^>]*>(.*?)<\/h3>)|(?<url><cite[^>]*>(.*?)<\/cite>)/si', $data[0]['content'], $titleArr);
-                $titles = array_values(array_filter($titleArr['title']));
-                $showurl = array_values(array_filter($titleArr['url']));
-                foreach ($titles as $order => $titleInfo)
+                $arr = $driver->findElements(WebDriverBy::className('res-list'));
+                foreach ($arr as $k => $v)
                 {
-                    $titleInfo = preg_replace("/<style[^>]*>[^>]*<\/style>/i", '', $titleInfo);
-                    $show = strip_tags($titleInfo);
-                    $showUrl = strip_tags($showurl[$order]);
+                    $html = $v->getAttribute('innerHTML');
+                    preg_match_all('/(?<title><h3[^>]*>(.*?)<\/h3>)|(?<url><[^>]*>((\w+)*\.)*(\w+)\.(?:com|cn|xin|shop|ltd|club|top|wang|site|vip|net|cc|ren|biz|red|link|mobi|info|org|com\.cn|net\.cn|org\.cn|gov\.cn|name|ink|pro|tv|kim|group)[^>]*<\/[^>]*>)/si', $html, $titleArr);
+                    $titles = array_values(array_filter($titleArr['title']));                   
+                    $titles = empty($titles) ? '' : $titles[0];
+                    $showurl = array_values(array_filter($titleArr['url']));
+                    $showurl = empty($showurl) ? '' : $showurl[0];
+                    $titles = strip_tags($titles);
+                    $showUrl = strip_tags($showurl);
                     preg_match('/((\w+)*\.)*(\w+)\.(?:com|cn|xin|shop|ltd|club|top|wang|site|vip|net|cc|ren|biz|red|link|mobi|info|org|com\.cn|net\.cn|org\.cn|gov\.cn|name|ink|pro|tv|kim|group)/i', $showUrl, $main);
                     if (empty($main))
                     {
-                        $main[0] = $show;
+                        $main[0] = '';
                     }
                     $arr = array(
-                        'title' => trim($show),
+                        'title' => trim($titles),
                         "url" => $main[0]
                     );
                     $title[] = $arr;
                 }
+                $driver->findElement(WebDriverBy::id('snext'))->click();
+                sleep(2);
             }
+            $driver->quit();
             // 打印结果
             foreach ($title as $k => $info)
             {
@@ -541,6 +551,8 @@ class Api extends Controller {
             );
             $insert[$wordsInfo['site_id']][] = $arr;
         }
+        print_r($insert);
+        exit;
         $kiss = 0;
         $ranking = Db::name('Keyword_ranking')->field('id')
             ->order('id desc ')
