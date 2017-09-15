@@ -427,21 +427,21 @@ class Api extends Controller {
     // 获取360关键字排名
     public function getRings()
     {
-        // $keys = input('key');
-        // $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
-        // if ($keys !== $kei)
-        // {
-        // debug_log("定时执行任务-----Key不正确", 'getSeach');
-        // exit();
-        // }
-        // $date = date("Y-m-d", strtotime("-1 day"));
-        // $word = Db::name('Keyword_ranking')->field('date')
-        // ->where("date = '{$date}' and stype = 2")
-        // ->find();
-        // if (! empty($word))
-        // {
-        // exit();
-        // }
+        $keys = input('key');
+        $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
+        if ($keys !== $kei)
+        {
+            debug_log("定时执行任务-----Key不正确", 'getSeach');
+            exit();
+        }
+        $date = date("Y-m-d", strtotime("-1 day"));
+        $word = Db::name('Keyword_ranking')->field('date')
+            ->where("date = '{$date}' and stype = 2")
+            ->find();
+        if (! empty($word))
+        {
+            exit();
+        }
         // 比配品牌词
         $pinKeyWords = Db::name('material')->field('content')
             ->where('type = 88 ')
@@ -493,7 +493,7 @@ class Api extends Controller {
                 {
                     $html = $v->getAttribute('innerHTML');
                     preg_match_all('/(?<title><h3[^>]*>(.*?)<\/h3>)|(?<url><[^>]*>((\w+)*\.)*(\w+)\.(?:com|cn|xin|shop|ltd|club|top|wang|site|vip|net|cc|ren|biz|red|link|mobi|info|org|com\.cn|net\.cn|org\.cn|gov\.cn|name|ink|pro|tv|kim|group)[^>]*<\/[^>]*>)/si', $html, $titleArr);
-                    $titles = array_values(array_filter($titleArr['title']));                   
+                    $titles = array_values(array_filter($titleArr['title']));
                     $titles = empty($titles) ? '' : $titles[0];
                     $showurl = array_values(array_filter($titleArr['url']));
                     $showurl = empty($showurl) ? '' : $showurl[0];
@@ -551,8 +551,6 @@ class Api extends Controller {
             );
             $insert[$wordsInfo['site_id']][] = $arr;
         }
-        print_r($insert);
-        exit;
         $kiss = 0;
         $ranking = Db::name('Keyword_ranking')->field('id')
             ->order('id desc ')
