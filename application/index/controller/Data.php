@@ -1995,6 +1995,10 @@ class Data extends Controller {
             $key = 0;
             foreach ($code as $k => $codeInfo)
             {
+                if ($key>=10)
+                {
+                    break;
+                }
                 $pieData[$key][] = (string) $k;
                 // $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
                 $pieData[$key][] = (int) $codeInfo;
@@ -2173,6 +2177,10 @@ class Data extends Controller {
             $key = 0;
             foreach ($code as $k => $codeInfo)
             {
+                if ($key>=10)
+                {
+                    break;
+                }
                 $pieData[$key][] = (string) $k;
                 // $sprintf = sprintf("%.2f", ($codeInfo / $sum['num']) * 100);
                 $pieData[$key][] = (int) $codeInfo;
