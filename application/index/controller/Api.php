@@ -475,7 +475,7 @@ class Api extends Controller {
         {
             $keyword = $wordsInfo['words'];
             $host = 'http://localhost:4444/wd/hub';
-            $desired_capabilities = DesiredCapabilities::chrome();
+            $desired_capabilities = DesiredCapabilities::phantomjs();
             $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
             $url = "https://www.so.com/";
             $driver->get($url);
