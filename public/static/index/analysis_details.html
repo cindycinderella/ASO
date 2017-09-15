@@ -1131,10 +1131,8 @@ function pieEngine(time,pie,name)
 			text: time+name
 		},
 		legend: {
-			style: {
-                width: '320px'
-            }
-		},
+            itemWidth: 320
+        },
 		tooltip: {
 			headerFormat: '{series.name}<br>',
 			pointFormat: '{point.name}: <b>{point.percentage:.2f}%</b>',
