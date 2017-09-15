@@ -682,15 +682,18 @@ class Api extends Controller {
         foreach ($domain as $info)
         {
             // 获取收录
-            $url = "https://www.baidu.com/s?wd=site%3A" . $info['domain'];
-            $rules = array(
-                'content' => array(
-                    '#content_left',
-                    'html'
-                )
-            );
-            $body = QueryList::Query($url, $rules)->data;
-            $body = $body[0]['content'];
+            $host = 'http://localhost:4444/wd/hub';
+            $desired_capabilities = DesiredCapabilities::phantomjs(); // 静默
+            $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
+            $url = "https://www.baidu.com/";
+            $driver->get($url);
+            $driver->manage()
+            ->window()
+            ->maximize(); // 网页最大化
+            $driver->findElement(WebDriverBy::id('kw'))->sendKeys("site:".$info['domain']);
+            $driver->findElement(WebDriverBy::id('su'))->click();
+            sleep(2);
+            $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');           
             preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $body, $recordMatches);
             if (empty($recordMatches))
             {
