@@ -626,11 +626,9 @@ class Data extends Controller {
                 $soGou = array();
                 $google = array();
                 $dataArr = array();
-                $updateIds = '';
                 foreach ($logData as $logInfo)
                 {
                     $time = date("Y-m-d", strtotime($logInfo['details_time']));
-                    $updateIds .= $logInfo['id'] . ',';
                     // 百度
                     $baiduSpider = stripos($logInfo['ua'], "Baiduspider");
                     if ($baiduSpider !== false)
@@ -743,9 +741,8 @@ class Data extends Controller {
             }
             if ($affect)
             {
-                $updateIds = rtrim($updateIds, ",");
                 $dataId = rtrim($dataId, ",");
-                Db::name('log_info')->where("id in ({$updateIds})")->update([
+                Db::name('log_info')->where("data_id in ({$dataId})")->update([
                     'status' => 1
                 ]);
                 Db::name('data_list')->where("id in ({$dataId})")->update([
@@ -2432,7 +2429,7 @@ class Data extends Controller {
                         $where .= " and ua like '%bingbot%' ";
                     break;
                     case 5:
-                        $where .= " and ua like '%googlebot%' ";
+                        $where .= " and ua like '%Googlebot%' ";
                     break;
                 }
             }
