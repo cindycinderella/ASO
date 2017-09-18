@@ -756,8 +756,7 @@
 			}else if (type==5) 
 			{
 				getReferer(data_id,time)
-			}
-
+			}			
 		})
 		//时间切换
 		$(document).on('click','.left .btn-primary',function(e){	
@@ -784,6 +783,9 @@
 			{
 				getReferer(data_id,time)
 			}
+			var stype = $('#selectErrors').val();
+			var search = $('.search').val();
+			customize(data_id,time,stype,search,'{:url("index/data/customize")}');
 		})
 		//查看URL详情 
 		$(document).on('click','.btn-settings',function(e){			
