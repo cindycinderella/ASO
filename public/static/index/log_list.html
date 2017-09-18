@@ -1,283 +1,283 @@
 {extend name="index/base" /}
 {block name="content"}		
 <style type="text/css">
-	.table th, .table td {
-		vertical-align: middle;
+.table th, .table td {
+	vertical-align: middle;
+}
+/*上传进图条*/
+.progress{background-image: -webkit-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);
+	background-image: -o-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);
+	background-image: -webkit-gradient(linear,left top,left bottom,from(#ebebeb),to(#f5f5f5));
+	background-image: linear-gradient(to bottom,#ebebeb 0,#f5f5f5 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffebebeb', endColorstr='#fff5f5f5', GradientType=0);
+	background-repeat: repeat-x;height: 20px;
+	margin: 10px;
+	overflow: hidden;
+	background-color: #f5f5f5;border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+	box-shadow: inset 0 1px 2px rgba(0,0,0,.1); display:none; }
+	.progress-bar-striped {
+		background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
 	}
-	/*上传进图条*/
-	.progress{background-image: -webkit-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);
-		background-image: -o-linear-gradient(top,#ebebeb 0,#f5f5f5 100%);
-		background-image: -webkit-gradient(linear,left top,left bottom,from(#ebebeb),to(#f5f5f5));
-		background-image: linear-gradient(to bottom,#ebebeb 0,#f5f5f5 100%);
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffebebeb', endColorstr='#fff5f5f5', GradientType=0);
-		background-repeat: repeat-x;height: 20px;
-		margin: 10px;
-		overflow: hidden;
-		background-color: #f5f5f5;border-radius: 4px;
-		-webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
-		box-shadow: inset 0 1px 2px rgba(0,0,0,.1); display:none; }
-		.progress-bar-striped {
-			background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-			background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-			background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-		}
-		.progress-bar {
-			background-image: -webkit-linear-gradient(top,#337ab7 0,#286090 100%);
-			background-image: -o-linear-gradient(top,#337ab7 0,#286090 100%);
-			background-image: -webkit-gradient(linear,left top,left bottom,from(#337ab7),to(#286090));
-			background-image: linear-gradient(to bottom,#337ab7 0,#286090 100%);
-			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff286090', GradientType=0);
-			background-repeat: repeat-x;
-		}
-		.progress-bar-striped, .progress-striped .progress-bar {
-			background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-			background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-			background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
-			-webkit-background-size: 40px 40px;
-			background-size: 40px 40px;
-		}
-		.progress-bar {
-			float: left;
-			width: 0%;
-			height: 100%;
-			font-size: 12px;
-			line-height: 20px;
-			color: #fff;
-			text-align: center;
-			background-color: #337ab7;
-			-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-			box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
-			-webkit-transition: width .6s ease;
-			-o-transition: width .6s ease;
-			transition: width .6s ease;
-		}
-		.cursor:hover
-		{
-			color: #646464;
-		}
-	</style>
-	<!-- start: Content -->
-	<div id="content" class="span10">
+	.progress-bar {
+		background-image: -webkit-linear-gradient(top,#337ab7 0,#286090 100%);
+		background-image: -o-linear-gradient(top,#337ab7 0,#286090 100%);
+		background-image: -webkit-gradient(linear,left top,left bottom,from(#337ab7),to(#286090));
+		background-image: linear-gradient(to bottom,#337ab7 0,#286090 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff337ab7', endColorstr='#ff286090', GradientType=0);
+		background-repeat: repeat-x;
+	}
+	.progress-bar-striped, .progress-striped .progress-bar {
+		background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		background-image: -o-linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent);
+		-webkit-background-size: 40px 40px;
+		background-size: 40px 40px;
+	}
+	.progress-bar {
+		float: left;
+		width: 0%;
+		height: 100%;
+		font-size: 12px;
+		line-height: 20px;
+		color: #fff;
+		text-align: center;
+		background-color: #337ab7;
+		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
+		-webkit-transition: width .6s ease;
+		-o-transition: width .6s ease;
+		transition: width .6s ease;
+	}
+	.cursor:hover
+	{
+		color: #646464;
+	}
+</style>
+<!-- start: Content -->
+<div id="content" class="span10">
 
 
-		<ul class="breadcrumb">
-			<li>
-				<i class="icon-home"></i>
-				<a href="{:url('index/system/config')}">首页</a> 
-				<i class="icon-angle-right"></i>
-			</li>
-			<li><a href="javascript:void(0);">{:$title}</a></li>
-		</ul>
+	<ul class="breadcrumb">
+		<li>
+			<i class="icon-home"></i>
+			<a href="{:url('index/system/config')}">首页</a> 
+			<i class="icon-angle-right"></i>
+		</li>
+		<li><a href="javascript:void(0);">{:$title}</a></li>
+	</ul>
 
-		<div class="row-fluid sortable">		
-			<div class="box span12">
-				<div class="box-header" data-original-title>
-					<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>														
+	<div class="row-fluid sortable">		
+		<div class="box span12">
+			<div class="box-header" data-original-title>
+				<h2><i class="halflings-icon white th-list"></i><span class="break"></span>{:$title}</h2>														
+			</div>
+			<div class="box-content alerts">
+				<div class="alert alert-success" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong></strong>
 				</div>
-				<div class="box-content alerts">
-					<div class="alert alert-success" style="display: none;">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong></strong>
-					</div>
-					<div class="alert alert-error" style="display: none;">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong></strong>
-					</div>
-					<form class="form-horizontal" method="POST" action="{:url('index/data/upload')}" id="myupload"  enctype="multipart/form-data">
-						<fieldset>
-							<div class="control-group">
-								<label class="control-label" style="width: 76px;" for="selectError">日志目录</label>
-								<div class="controls" style="float: left;margin-left: 10px;margin-top: 2px;width: 140px;">
-									<select id="selectError" name="file_name" data-rel="chosen">
-										<option value="0">请选择文件夹</option>
-										{foreach name="path_list" item="path"}
-										<option value="{:$path.id}">{:$path.file_name}</option>
-										{/foreach}
-									</select>
-								</div>
-
-								<label class="control-label" style="width: 56px;margin-left: 10px;" for="selectError">日志类型</label>
-								<div class="controls" style="float: left;margin-left: 10px;margin-top: 2px;width: 140px;">
-									<select id="selectErrors" name="type" data-rel="chosen">
-										<option value="0">请选择日志类型</option>
-										<option value="1">Apache</option>
-										<option value="2">Ngnix</option>
-										<option value="3">IIS</option>
-									</select>
-								</div>
-
-								<div class="controls list" style="float: left;margin-left: 10px;">
-									<input type="file" id="dialog" name="file_list[]" multiple webkitdirectory />
-									<input type="hidden" name="list_name" value="" />
-									<script>
-										dialog.onchange = function(e) {
-											var files = this.files;
-											if (files.length>20)
-											{
-												$('.alert-error').find('strong').html("目录内的文件夹不能超过20个文件");
-												$('.alert-error').css('display','block')
-												$('.alert-error').fadeOut(3000)
-												return false;
-											}
-											var f = files[0];
-											$("input[name='list_name']").val(f.webkitRelativePath);
-										};
-									</script>								
-								</div>
-								<div class="controls file" style="float: left;margin-left: 10px; display: none;">
-									<input type="file" name="file[]" multiple="" >
-								</div>
-								<a class="btn btn-primary upload" style="padding: 3px 12px;margin-left: 6px;">上传</a>
-								<a class ="cursor" style="text-decoration:underline;cursor: pointer;margin-right: 200px;float: right; display: inline-block;height: 30px; line-height: 30px;">全选</a>
-								<a class="btn btn-primary analysis" style="padding: 3px 12px;margin-right: 10px;float: right;">分析日志</a>
-
-								<!-- 上传进图条 -->
-								<div class="progress">
-									<div class="progress-bar progress-bar-striped" ><span class="percent">0%</span></div>
-								</div>							
-							</div>
-							
-						</fieldset>
-					</form>
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th style="text-align: center;"><font><font>ID</font></font></th>	
-								<th style="text-align: center;"><font><font>文件夹</font></font></th>
-								<th style="text-align: center;"><font><font>个数</font></font></th>
-								<th style="text-align: center;"><font><font>记录最新的一天</font></font></th>
-								<th style="text-align: center;"><font><font>日志类型</font></font></th>
-								<th style="text-align: center;"><font><font>存储路径</font></font></th>
-								<th style="text-align: center;"><font><font>最后上传时间</font></font></th>
-								<th style="text-align: center;"><font><font>状态</font></font></th>  									  
-							</tr>
-						</thead>   
-						<tbody>
-							{foreach name="log_list" item="vo"}
-							<tr>
-								<td style="text-align: center;">{if condition="$vo.status == 0"}<label class="checkbox inline">
-									<input type="checkbox" class ="inlineCheckbox1" value="{:$vo.id}">{/if}{:$vo.id}
-								</label></td>
-								<td style="text-align: center;"><font><font>{:$vo.file_name}</font></font></td>
-								<td style="text-align: center;"><font><font>{:$vo.num}</font></font></td>
-								<td style="text-align: center;"><font><font>{:$vo.new_date}</font></font></td>
-								<td style="text-align: center;"><font><font>{switch name="vo.type"}
-									{case value="1"}Apache{/case}
-									{case value="2"}Ngnix{/case}
-									{case value="3"}IIS{/case}
-									{/switch}</font></font></td>
-									<td style="text-align: center;"><font><font>{:$vo.path}</font></font></td>
-									<td style="text-align: center;"><font><font>{:$vo.upload_date}</font></font></td>
-									<td style="text-align: center;">{if condition="$vo.status == 1"} 
-										<span style="cursor:pointer;" class="label label-success"><font><font>已分析</font></font></span>
-										{else /}
-										<span style="cursor:pointer;" class="label label-important"><font><font>未分析</font></font></span>
-										{/if}</td>										
-									</tr>		
+				<div class="alert alert-error" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong></strong>
+				</div>
+				<form class="form-horizontal" method="POST" action="{:url('index/data/upload')}" id="myupload"  enctype="multipart/form-data">
+					<fieldset>
+						<div class="control-group">
+							<label class="control-label" style="width: 76px;" for="selectError">日志目录</label>
+							<div class="controls" style="float: left;margin-left: 10px;margin-top: 2px;width: 140px;">
+								<select id="selectError" name="file_name" data-rel="chosen">
+									<option value="0">请选择文件夹</option>
+									{foreach name="path_list" item="path"}
+									<option value="{:$path.id}">{:$path.file_name}</option>
 									{/foreach}
+								</select>
+							</div>
 
+							<label class="control-label" style="width: 56px;margin-left: 10px;" for="selectError">日志类型</label>
+							<div class="controls" style="float: left;margin-left: 10px;margin-top: 2px;width: 140px;">
+								<select id="selectErrors" name="type" data-rel="chosen">
+									<option value="0">请选择日志类型</option>
+									<option value="1">Apache</option>
+									<option value="2">Ngnix</option>
+									<option value="3">IIS</option>
+								</select>
+							</div>
 
-								</tbody>
-							</table>  
-							<div class="pagination pagination-centered" style="float:right">
-								{:$page}
-							</div>        
+							<div class="controls list" style="float: left;margin-left: 10px;">
+								<input type="file" id="dialog" name="file_list[]" multiple webkitdirectory />
+								<input type="hidden" name="list_name" value="" />
+								<script>
+									dialog.onchange = function(e) {
+										var files = this.files;
+										if (files.length>20)
+										{
+											$('.alert-error').find('strong').html("目录内的文件夹不能超过20个文件");
+											$('.alert-error').css('display','block')
+											$('.alert-error').fadeOut(3000)
+											return false;
+										}
+										var f = files[0];
+										$("input[name='list_name']").val(f.webkitRelativePath);
+									};
+								</script>								
+							</div>
+							<div class="controls file" style="float: left;margin-left: 10px; display: none;">
+								<input type="file" name="file[]" multiple="" >
+							</div>
+							<a class="btn btn-primary upload" style="padding: 3px 12px;margin-left: 6px;">上传</a>
+							<a class ="cursor" style="text-decoration:underline;cursor: pointer;margin-right: 200px;float: right; display: inline-block;height: 30px; line-height: 30px;">全选</a>
+							<a class="btn btn-primary analysis" style="padding: 3px 12px;margin-right: 10px;float: right;">分析日志</a>
+
+							<!-- 上传进图条 -->
+							<div class="progress">
+								<div class="progress-bar progress-bar-striped" ><span class="percent">0%</span></div>
+							</div>							
 						</div>
-					</div><!--/span-->
 
-				</div><!--/row-->
-
-			</div><!--/.fluid-container-->
-
-			<!-- end: Content -->
-		</div><!--/#content.span10-->
-	</div><!--/fluid-row-->
-
-	
-	<form style="display: none;" method="POST" action="{:url('index/data/analysis')}" id="analysis">
-		<input type="hidden" class="analysis_id" name="analysis_id" value="">
-		<input type="file" name="file[]" multiple="" >
-	</form>
-	<div class="clearfix"></div>
-	
-	<!-- start: JavaScript-->
-	<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
-	<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
-	
-	<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
-	
-	<script src="__INDEX__js/modernizr.js"></script>
-	
-	<script src="__INDEX__js/bootstrap.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.cookie.js"></script>
-	
-	<script src='__INDEX__js/fullcalendar.min.js'></script>
-	
-	<script src='__INDEX__js/jquery.dataTables.min.js'></script>
-
-	<script src="__INDEX__js/excanvas.js"></script>
-	<script src="__INDEX__js/jquery.flot.js"></script>
-	<script src="__INDEX__js/jquery.flot.pie.js"></script>
-	<script src="__INDEX__js/jquery.flot.stack.js"></script>
-	<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.chosen.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.uniform.min.js"></script>
-
-	<script src="__INDEX__js/jquery.cleditor.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.noty.js"></script>
-	
-	<script src="__INDEX__js/jquery.elfinder.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.raty.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
-	
-	<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.gritter.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.imagesloaded.js"></script>
-	
-	<script src="__INDEX__js/jquery.masonry.min.js"></script>
-	
-	<script src="__INDEX__js/jquery.knob.modified.js"></script>
-	
-	<script src="__INDEX__js/jquery.sparkline.min.js"></script>
-	
-	<script src="__INDEX__js/counter.js"></script>
-	
-	<script src="__INDEX__js/retina.js"></script>
-
-	<script src="__INDEX__js/custom.js"></script>
-	<script src="__INDEX__js/jquery.form.js"></script>
-	<script>
-		$(function(){						
-			$('.list .action').html('选择目录');
-			$('.file .action').html('选择文件');
-			$('#selectError_chzn').css('width','140px');
-			$('#selectErrors_chzn').css('width','140px');
-			
-			$('#selectError').change(function(){
-
-				var val = $(this).val();
-				if (val==0)
-				{
-					$('.file').css('display','none');
-					$('.list').css('display','block');	
-				}else
-				{
-					$('.file').css('display','block');
-					$('.list').css('display','none');
-				}
+					</fieldset>
+				</form>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th style="text-align: center;"><font><font>ID</font></font></th>	
+							<th style="text-align: center;"><font><font>文件夹</font></font></th>
+							<th style="text-align: center;"><font><font>个数</font></font></th>
+							<th style="text-align: center;"><font><font>记录最新的一天</font></font></th>
+							<th style="text-align: center;"><font><font>日志类型</font></font></th>
+							<th style="text-align: center;"><font><font>存储路径</font></font></th>
+							<th style="text-align: center;"><font><font>最后上传时间</font></font></th>
+							<th style="text-align: center;"><font><font>状态</font></font></th>  									  
+						</tr>
+					</thead>   
+					<tbody>
+						{foreach name="log_list" item="vo"}
+						<tr>
+							<td style="text-align: center;">{if condition="$vo.status == 0"}<label class="checkbox inline">
+								<input type="checkbox" class ="inlineCheckbox1" value="{:$vo.id}">{/if}{:$vo.id}
+							</label></td>
+							<td style="text-align: center;"><font><font>{:$vo.file_name}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo.num}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo.new_date}</font></font></td>
+							<td style="text-align: center;"><font><font>{switch name="vo.type"}
+								{case value="1"}Apache{/case}
+								{case value="2"}Ngnix{/case}
+								{case value="3"}IIS{/case}
+							{/switch}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo.path}</font></font></td>
+							<td style="text-align: center;"><font><font>{:$vo.upload_date}</font></font></td>
+							<td style="text-align: center;">{if condition="$vo.status == 1"} 
+								<span style="cursor:pointer;" class="label label-success"><font><font>已分析</font></font></span>
+								{else /}
+								<span style="cursor:pointer;" class="label label-important"><font><font>未分析</font></font></span>
+							{/if}</td>										
+						</tr>		
+						{/foreach}
 
 
-			})
+					</tbody>
+				</table>  
+				<div class="pagination pagination-centered" style="float:right">
+					{:$page}
+				</div>        
+			</div>
+		</div><!--/span-->
+
+	</div><!--/row-->
+
+</div><!--/.fluid-container-->
+
+<!-- end: Content -->
+</div><!--/#content.span10-->
+</div><!--/fluid-row-->
+
+
+<form style="display: none;" method="POST" action="{:url('index/data/analysis')}" id="analysis">
+	<input type="hidden" class="analysis_id" name="analysis_id" value="">
+	<input type="file" name="file[]" multiple="" >
+</form>
+<div class="clearfix"></div>
+
+<!-- start: JavaScript-->
+<script src="__INDEX__js/jquery-1.9.1.min.js"></script>
+<script src="__INDEX__js/jquery-migrate-1.0.0.min.js"></script>
+
+<script src="__INDEX__js/jquery-ui-1.10.0.custom.min.js"></script>
+
+<script src="__INDEX__js/jquery.ui.touch-punch.js"></script>
+
+<script src="__INDEX__js/modernizr.js"></script>
+
+<script src="__INDEX__js/bootstrap.min.js"></script>
+
+<script src="__INDEX__js/jquery.cookie.js"></script>
+
+<script src='__INDEX__js/fullcalendar.min.js'></script>
+
+<script src='__INDEX__js/jquery.dataTables.min.js'></script>
+
+<script src="__INDEX__js/excanvas.js"></script>
+<script src="__INDEX__js/jquery.flot.js"></script>
+<script src="__INDEX__js/jquery.flot.pie.js"></script>
+<script src="__INDEX__js/jquery.flot.stack.js"></script>
+<script src="__INDEX__js/jquery.flot.resize.min.js"></script>
+
+<script src="__INDEX__js/jquery.chosen.min.js"></script>
+
+<script src="__INDEX__js/jquery.uniform.min.js"></script>
+
+<script src="__INDEX__js/jquery.cleditor.min.js"></script>
+
+<script src="__INDEX__js/jquery.noty.js"></script>
+
+<script src="__INDEX__js/jquery.elfinder.min.js"></script>
+
+<script src="__INDEX__js/jquery.raty.min.js"></script>
+
+<script src="__INDEX__js/jquery.iphone.toggle.js"></script>
+
+<script src="__INDEX__js/jquery.uploadify-3.1.min.js"></script>
+
+<script src="__INDEX__js/jquery.gritter.min.js"></script>
+
+<script src="__INDEX__js/jquery.imagesloaded.js"></script>
+
+<script src="__INDEX__js/jquery.masonry.min.js"></script>
+
+<script src="__INDEX__js/jquery.knob.modified.js"></script>
+
+<script src="__INDEX__js/jquery.sparkline.min.js"></script>
+
+<script src="__INDEX__js/counter.js"></script>
+
+<script src="__INDEX__js/retina.js"></script>
+
+<script src="__INDEX__js/custom.js"></script>
+<script src="__INDEX__js/jquery.form.js"></script>
+<script>
+	$(function(){						
+		$('.list .action').html('选择目录');
+		$('.file .action').html('选择文件');
+		$('#selectError_chzn').css('width','140px');
+		$('#selectErrors_chzn').css('width','140px');
+
+		$('#selectError').change(function(){
+
+			var val = $(this).val();
+			if (val==0)
+			{
+				$('.file').css('display','none');
+				$('.list').css('display','block');	
+			}else
+			{
+				$('.file').css('display','block');
+				$('.list').css('display','none');
+			}
+
+
+		})
 			//全选
 			$('.cursor').click(function(){
 
@@ -302,8 +302,7 @@
 			var progress_bar = $(".progress-bar");
 			var percent = $('.percent');
 
-
-			$('.upload').click(function(){
+			$(document).on('click','.upload',function(){
 				var type = $('#selectErrors').val();
 				if (type==0)
 				{
@@ -320,7 +319,7 @@
                 		var percentVal = '0%';
                 		progress_bar.width(percentVal);
                 		percent.html(percentVal);
-                		_this.unbind('click');
+                		_this.removeClass('upload');
                 	},
                 	uploadProgress: function(event, position, total, percentComplete) { 
 			  			var percentVal = percentComplete + '%'; //获得进度 
@@ -329,7 +328,7 @@
 			  		}, 
 			  		success:function(data)
 			  		{
-			  			_this.bind('click');
+			  			_this.addClass('upload');
 			  			progress.hide();
 			  			if (data.status!=200)
 			  			{

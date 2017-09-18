@@ -200,7 +200,7 @@ class Data extends Controller {
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
                     chmod($pathInfo, 0777); // 修改权限
-                    unlink($pathInfo);
+                                                // unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -269,7 +269,7 @@ class Data extends Controller {
                     );
                     // 插入详细信息
                     $this->getInfoData($type, $pathInfo, $dataListId);
-                    unlink($pathInfo);
+                    // unlink($pathInfo);
                 }
                 Db::name('data_path')->insertAll($insertDataPath);
                 $key = array_search(max($interviewTime), $interviewTime);
@@ -410,6 +410,7 @@ class Data extends Controller {
                     elseif ($k == count($data) - 1)
                     {
                         Db::name('log_info')->insertAll($insertData);
+                        $insertData = array();
                     }
                 }
             break;
@@ -480,6 +481,7 @@ class Data extends Controller {
                     {
                         
                         Db::name('log_info')->insertAll($insertData);
+                        $insertData = array();
                     }
                 }
             break;
@@ -543,9 +545,14 @@ class Data extends Controller {
                     elseif ($k == count($data) - 1)
                     {
                         Db::name('log_info')->insertAll($insertData);
+                        $insertData = array();
                     }
                 }
             break;
+        }
+        if (! empty($insertData))
+        {
+            Db::name('log_info')->insertAll($insertData);
         }
     }
 
@@ -660,7 +667,7 @@ class Data extends Controller {
                         $google[$time][] = $logInfo['path'];
                         continue;
                     }
-                }                
+                }
                 foreach ($baiduPath as $k => $val)
                 {
                     $dataArr[$k]['data_id'] = $dataInfo['id'];
@@ -1995,7 +2002,7 @@ class Data extends Controller {
             $key = 0;
             foreach ($code as $k => $codeInfo)
             {
-                if ($key>=10)
+                if ($key >= 10)
                 {
                     break;
                 }
@@ -2177,7 +2184,7 @@ class Data extends Controller {
             $key = 0;
             foreach ($code as $k => $codeInfo)
             {
-                if ($key>=10)
+                if ($key >= 10)
                 {
                     break;
                 }
@@ -2359,7 +2366,7 @@ class Data extends Controller {
             $key = 0;
             foreach ($code as $k => $codeInfo)
             {
-                if ($key>=10)
+                if ($key >= 10)
                 {
                     break;
                 }
