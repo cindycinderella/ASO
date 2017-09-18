@@ -231,9 +231,6 @@
 										<tbody>
 										</tbody>
 									</table>
-
-
-
 								</div>
 							</div><!--/span-->
 
@@ -650,10 +647,13 @@
 						html+='<td style="text-align: center;">'+dataList[i].stay_time+'</td>';
 						html+='<td style="text-align: center;">'+dataList[i].referer+'</td></tr>';
 					}
-					var page = '<div class="pagination pagination-centered" id="customize" style="float:right">'+data.page+'</div>';
+					if (data.page!=null)
+					{
+						var page = '<div class="pagination pagination-centered" id="customize" style="float:right">'+data.page+'</div>';
+						$('.customize').after(page);
+					}				
 					$('.customize tbody').html(html);
-					$('.customize').show();
-					$('.customize').after(page);
+					$('.customize').show();					
 				}else if (data.status==404)
 				{
 					$('.alert-error').find('strong').html(data.message);
@@ -1131,8 +1131,8 @@ function pieEngine(time,pie,name)
 			text: time+name
 		},
 		legend: {
-            itemWidth: 320
-        },
+			itemWidth: 320
+		},
 		tooltip: {
 			headerFormat: '{series.name}<br>',
 			pointFormat: '{point.name}: <b>{point.percentage:.2f}%</b>',
