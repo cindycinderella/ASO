@@ -341,7 +341,7 @@ class Access extends Controller {
             $rawParam = '{:' . $val . '}';
             if (count($arr) == 1)
             {
-                $ke = rand(0, 19);
+                $ke = rand(0, count($titleList));
                 $reParam = html_entity_decode($titleList[$ke]['content']);
                 $imgType = strtolower(strrchr($reParam, '.'));
                 if (in_array($imgType, array(
