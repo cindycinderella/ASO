@@ -1504,7 +1504,11 @@ class Data extends Controller {
                 }
             }
         }
-        
+        if (file_exists('../runtime/log/catalog-'.date("Ymd").'.log'))
+        {
+            //判断是否执行完，没有则睡眠三秒
+            sleep(3);
+        }
         $catalog = Db::name('catalog')->field('id')
             ->order('id desc ')
             ->find();
