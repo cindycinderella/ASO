@@ -694,7 +694,6 @@ class Api extends Controller {
             $driver->findElement(WebDriverBy::id('su'))->click();
             sleep(2);
             $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');
-            
             preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $body, $recordMatches);
             if (empty($recordMatches))
             {
@@ -736,13 +735,13 @@ class Api extends Controller {
             }
             Db::name("domain")->where("site_id = {$info['site_id']}")->update([
                 'baidu_record' => $baidu_record,
-                'haosou_record' => $haosou_record[0]
+                'haosou_record' => $haosou_record
             ]);
             $id ++;
             $insert[$key]['id'] = $id;
             $insert[$key]['site_id'] = $info['site_id'];
             $insert[$key]['baidu_record'] = $baidu_record;
-            $insert[$key]['haosou_record'] = $haosou_record[0];
+            $insert[$key]['haosou_record'] = $haosou_record;
             $insert[$key]['date'] = date("Y-m-d", strtotime("-1 day"));
             $key ++;
             $driver->quit();
