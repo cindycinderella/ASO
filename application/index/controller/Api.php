@@ -688,12 +688,13 @@ class Api extends Controller {
             $url = "https://www.baidu.com/";
             $driver->get($url);
             $driver->manage()
-            ->window()
-            ->maximize(); // 网页最大化
-            $driver->findElement(WebDriverBy::id('kw'))->sendKeys("site:".$info['domain']);
+                ->window()
+                ->maximize(); // 网页最大化
+            $driver->findElement(WebDriverBy::id('kw'))->sendKeys("site:" . $info['domain']);
             $driver->findElement(WebDriverBy::id('su'))->click();
             sleep(2);
-            $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');           
+            $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');
+            
             preg_match('/<b style="color:#333">(.*?)<\/b>/ism', $body, $recordMatches);
             if (empty($recordMatches))
             {
@@ -715,9 +716,24 @@ class Api extends Controller {
                 "haosoupr" => "haosousl",
                 "websites" => $info['domain']
             );
-            $url = "http://www.link114.cn/get.php?" . $postData['haosoupr'] . "&" . $postData['websites'] . "&61843";
-            $haosou_record = getPage($url);
-            $haosou_record = explode(":", $haosou_record);
+            $url = "https://www.so.com/";
+            $driver->get($url);
+            $driver->manage()
+                ->window()
+                ->maximize(); // 网页最大化
+            $driver->findElement(WebDriverBy::id('input'))->sendKeys("site:" . $info['domain']);
+            $driver->findElement(WebDriverBy::id('search-button'))->click();
+            sleep(2);
+            $body = $driver->findElement(WebDriverBy::id('main'))->getAttribute('innerHTML');
+            preg_match('/[^>]*该网站约(.*?)个网页被360搜索收录[^>]*/ism', $body, $recordMatches);
+            if (empty($recordMatches))
+            {
+                $haosou_record = 0;
+            }
+            else
+            {
+                $haosou_record = str_replace(',', '', $recordMatches[1]);
+            }
             Db::name("domain")->where("site_id = {$info['site_id']}")->update([
                 'baidu_record' => $baidu_record,
                 'haosou_record' => $haosou_record[0]
@@ -729,6 +745,7 @@ class Api extends Controller {
             $insert[$key]['haosou_record'] = $haosou_record[0];
             $insert[$key]['date'] = date("Y-m-d", strtotime("-1 day"));
             $key ++;
+            $driver->quit();
         }
         if (! empty($insert))
         {
