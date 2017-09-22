@@ -22,7 +22,7 @@ class Access extends Controller {
         $ip = _get_ip();
         //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
-        $server = Db::table('server')->field('id,server_host,request_num')
+        $server = Db::table('server')->field('id,server_host,request_num,baidu_tongji,baidu_publish,so_publish')
             ->where('server_ip', $ip)
             ->find();
         if (empty($server))
@@ -174,40 +174,24 @@ class Access extends Controller {
                 ->select();
             foreach ($config as $valConfig)
             {
-                if ($valConfig['name'] == 'config_baidu' && $valConfig['value'] == 1)
+                if ($valConfig['name'] == 'config_baidu' && $valConfig['value'] == 1&&$server['baidu_publish']!='')
                 {
                     $content = explode("<body>", $str);
-                    $baiDu = "<script>
-                                    (function(){
-                                        var bp = document.createElement('script');
-                                        var curProtocol = window.location.protocol.split(':')[0];
-                                        if (curProtocol === 'https') {
-                                            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
-                                        }
-                                        else {
-                                            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-                                        }
-                                        var s = document.getElementsByTagName('script')[0];
-                                        s.parentNode.insertBefore(bp, s);
-                                    })();
-                                    </script>";
+                    $baiDu =$server['baidu_publish'];
                     $str = $content[0] . '<body>' . $baiDu . $content[1];
                 }
-                elseif ($valConfig['name'] == 'config_360' && $valConfig['value'] == 1)
+                elseif ($valConfig['name'] == 'config_360' && $valConfig['value'] == 1&&$server['so_publish']!='')
                 {
                     $content = explode("</body>", $str);
-                    $seach = "<script>
-                                    (function(){
-                                       var src = (document.location.protocol == 'http:') ? 'http://js.passport.qihucdn.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c':'https://jspassport.ssl.qhimg.com/11.0.1.js?b68f2f91502c4d6ab8b4c8adfbee8c6c';
-                                       document.write('<script src=\"'+ src + '\" id=\"sozz\"><\/script>');
-                                    })();
-                                   </script>";
+                    $seach = $server['so_publish'];
                     $str = $content[0] . $seach . '</body>' . $content[1];
                 }
             }
             // 镶嵌统计代码
-            $str = $this->replaceCount('yldmedlink.cn', $server['server_host'], $str);
-            $str = $this->replaceCount('tchico.com.cn', $server['server_host'], $str);
+            if (!empty($server['baidu_tongji']))
+            {
+                $str = $this->replaceCount($server['baidu_tongji'], $str);
+            }            
             // 记录请求日志
             $insert = array(
                 'type' => $postData['type'],
@@ -391,44 +375,14 @@ class Access extends Controller {
 
     /**
      * *
-     *
-     * @param $host 要镶嵌冬季代码的域名            
-     * @param $server 本次请求的服务器信息            
+     *       
+     * @param $seach 镶嵌的统计代码            
      * @param @return $str
      *            替换的代码
      *            **************
      */
-    private function replaceCount($host, $serverHost, $str)
-    {
-        if (strpos($serverHost, $host)===false)
-        {
-            return $str;
-        }
-        if ($host == 'yldmedlink.cn')
-        {
-            
-            $seach = "<script>
-                            var _hmt = _hmt || [];
-                            (function() {
-                              var hm = document.createElement('script');
-                              hm.src = 'https://hm.baidu.com/hm.js?7d7ab280b842b76802de556f74fb57a6';
-                              var s = document.getElementsByTagName('script')[0]; 
-                              s.parentNode.insertBefore(hm, s);
-                            })();
-                            </script>";
-        }
-        elseif ($host == 'tchico.com.cn')
-        {
-            $seach = "<script>
-                            var _hmt = _hmt || [];
-                            (function() {
-                              var hm = document.createElement('script');
-                              hm.src = 'https://hm.baidu.com/hm.js?b3c39b03387852b8f2ca6a623b8b3b2f';
-                              var s = document.getElementsByTagName('script')[0]; 
-                              s.parentNode.insertBefore(hm, s);
-                            })();
-                            </script>";
-        }
+    private function replaceCount($seach, $str)
+    {        
         $content = explode("</body>", $str);
         return $str = $content[0] . $seach . '</body>' . $content[1];
     }
