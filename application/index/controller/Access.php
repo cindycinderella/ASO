@@ -400,7 +400,7 @@ class Access extends Controller {
      */
     private function replaceCount($host, $serverHost, $str)
     {
-        if (! strpos($serverHost, $host))
+        if (strpos($serverHost, $host)===false)
         {
             return $str;
         }
