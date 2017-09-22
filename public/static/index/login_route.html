@@ -39,16 +39,40 @@
 						<tr>
 							<th style="text-align: center;">ID</th>
 							<th style="text-align: center;">公司名称</th>
-							<th style="text-align: center;">联系人</th>
-							<th style="text-align: center;">联系方式</th>
-							<th style="text-align: center;">登录规则</th>
-							<th style="text-align: center;">发布规则</th>
+							<th style="text-align: center;">登录账户</th>
+							<th style="text-align: center;">密码</th>
+							<th style="text-align: center;">登录链接</th>
+							<th style="text-align: center;">发布链接</th>
+							<th style="text-align: center;">所属平台</th>
+							<th style="text-align: center;">状态</th>
 							<th style="text-align: center;">录入时间</th>
 							<th style="text-align: center;">操作</th>   									  
 						</tr>
 					</thead>   
 					<tbody>
-						
+						{foreach name="data" item="vo"}
+						<tr>
+							<td style="text-align: center;">{$vo.id}</td>
+							<td style="text-align: center;">{$company.company}</td>
+							<td style="text-align: center;">{$vo.username}</td>
+							<td style="text-align: center;">{$vo.password}</td>
+							<td style="text-align: center;">{$vo.login_url}</td>
+							<td style="text-align: center;">{$vo.outside_url}</td>
+							<td style="text-align: center;">{$vo.platform}</td>
+							<td style="text-align: center;">
+								{if condition="$vo.status == 1"} 
+								<span style="cursor:pointer;" class="label label-success" alt="{:$vo.id}">启用</span>
+								{else /}
+								<span style="cursor:pointer;" class="label label-important" alt="{:$vo.id}">禁用</span>
+							{/if}</td>
+							<td style="text-align: center;">{$vo.addtime}</td>
+							<td style="text-align: center;">
+								<a class="btn btn-info" alt="{$vo.id}" href="JavaScript:void(0);">
+									<i class="halflings-icon white edit"></i>  
+								</a>
+							</td>   									  
+						</tr>
+						{/foreach}
 					</tbody>
 				</table>  
 				<div class="pagination pagination-centered" style="float:right">
@@ -64,36 +88,99 @@
 <!-- end: Content -->
 </div><!--/#content.span10-->
 </div><!--/fluid-row-->
-<div class="modal hide fade" id="myModal" style="left: 48%;width: 32%">
+<div class="modal hide fade" id="myModal" style="left: 35%;width: 60%">
 	<div class="modal-header">
 		<button type="button" class="close" data-dismiss="modal">×</button>
 		<h3>添加公司</h3>
 	</div>
 	<div class="modal-body">
-		<form class="form-horizontal" method="POST" action="{:url('index/outside/add')}">
+		<form class="form-horizontal" method="POST" action="{:url('index/outside/addLogin')}">
 			<input type="hidden" name="id" value="">
+			<input type="hidden" name="company_id" value="{:$company.id}">
 			<fieldset>				
 				<div class="control-group error">
-					<label class="control-label"><font color="red">* </font>公司名称</label>
+					<label class="control-label"><font color="red">* </font>登录账户</label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" name="company"  value="">
-						<span class="help-inline">请输入公司名称</span>
+						<input type="text" class="input-xlarge" name="username"  value="">
+						<span class="help-inline">请输入登录账户</span>
 					</div>
 				</div>
 				<div class="control-group error">
-					<label class="control-label"><font color="red">* </font>联系人</label>
+					<label class="control-label"><font color="red">* </font>登录账户CSS选择器</label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" name="contact_person"  value="">
-						<span class="help-inline">请输入联系人</span>
+						<input type="text" class="input-xlarge" name="input_user"  value="">
+						<span class="help-inline">请输入登录账户CSS选择器</span><br/>
+						<font color="red">
+							例：id="username"->#username 如果有多个ID一样的则写它父级，父级为class="login",则写.login>#username<br/>
+							class="username"->.username 如果有多个class一样的则写它父级，父级为class="login",则写.login>.username<br/>
+							name="username"->input[name='username'] 如果有多个name="username"一样的则写它父级，父级为class="login",则写.login>input[name='username']<br/>
+							三选一
+						</font>
 					</div>
 				</div>
 				<div class="control-group error">
-					<label class="control-label"><font color="red">* </font>联系电话</label>
+					<label class="control-label"><font color="red">* </font>密码</label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" name="mobile"  value="">
-						<span class="help-inline">请输入联系电话</span>
+						<input type="text" class="input-xlarge" name="password"  value="">
+						<span class="help-inline">请输入密码</span>
 					</div>
-				</div>							
+				</div>	
+				<div class="control-group error">
+					<label class="control-label"><font color="red">* </font>密码CSS选择器</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="input_pass"  value="">
+						<span class="help-inline">请输入密码CSS选择器</span>
+					</div>
+				</div>	
+				<div class="control-group error">
+					<label class="control-label"><font color="red">* </font>登录按钮CSS选择器</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="input_submit"  value="">
+						<span class="help-inline">请输入登录按钮CSS选择器</span>
+					</div>
+				</div>
+				<div class="control-group error">
+					<label class="control-label"><font color="red">* </font>登录链接</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="login_url"  value="">
+						<span class="help-inline">请输入登录链接</span>
+					</div>
+				</div>	
+				<div class="control-group error">
+					<label class="control-label"><font color="red">* </font>发布文章链接</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="outside_url"  value="">
+						<span class="help-inline">请输入登录链接</span>
+					</div>
+				</div>
+				<div class="control-group error">
+					<label class="control-label"><font color="red">* </font>所属平台</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="platform"  value="">
+						<span class="help-inline">请输入所属平台</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">验证码图片CSS选择器</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="input_code"  value="">
+						<span class="help-inline">是否有验证码，有则填写</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">验证码CSS选择器</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="input_code_enter"  value="">
+						<span class="help-inline">是否有验证码，有则填写</span>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Iframe CSS选择器</label>
+					<div class="controls">
+						<input type="text" class="input-xlarge" name="input_iframe"  value="">
+						<span class="help-inline">是否镶嵌Iframe，有则填写</span>
+					</div>
+				</div>					
 			</fieldset>
 		</form>
 	</div>
@@ -162,56 +249,115 @@
 <script src="__INDEX__js/jquery.form.js"></script>
 <script>
 	$(function(){
-
+		//添加登录规则
 		$('.box-icon').click(function(){
-			$("input[name='id']").val('');
-			$('#myModal .modal-header h3').html('添加公司');
+			$('input[name="id"]').val('');
+			$('#myModal .modal-header h3').html('添加登录规则');
+			$('.input-xlarge').each(function(index,evlenmt){
+				if($(this).parents('.control-group').find('.control-label font').html()!=undefined)
+				{
+					$(this).parents('.control-group').addClass('error');
+					$(this).next('.help-inline').show();
+				}
+			})
 			$('#myModal').modal({backdrop: 'static', keyboard: false});
 		})
+		$('.input-xlarge').blur(function(){
+			if($(this).parents('.control-group').find('.control-label font').html()!=undefined&&$(this).val()=='')
+			{
+				$(this).parents('.control-group').addClass('error');
+				$(this).next('.help-inline').show();
+			}else if ($(this).parents('.control-group').find('.control-label font').html()!=undefined&&$(this).val()!='')
+			{
+				$(this).parents('.control-group').removeClass('error');
+				$(this).next('.help-inline').hide();
+			}
+		})
+		//修改登录规则
 		$('.btn-info').click(function(){
-			$('#myModal .modal-header h3').html('修改公司');
+			$('#myModal .modal-header h3').html('修改登录规则');
+			var routeId = $(this).attr('alt');
+			$('input[name="id"]').val(routeId);
 			$('#myModal').modal({backdrop: 'static', keyboard: false});			
-			var  id = $(this).parents('tr').find('td').eq(0).html();
-			var  company = $(this).parents('tr').find('td').eq(1).html();
-			var  contact_person = $(this).parents('tr').find('td').eq(2).html();
-			var  mobile = $(this).parents('tr').find('td').eq(3).html();
-			$("input[name='id']").val(id);
-			$("input[name='company").val(company);
-			$("input[name='company").next().hide();	
-			$("input[name='company']").parents('.control-group').removeClass('error')
-			$("input[name='contact_person").val(contact_person);
-			$("input[name='contact_person").next().hide();	
-			$("input[name='contact_person']").parents('.control-group').removeClass('error')
-			$("input[name='mobile").val(mobile);
-			$("input[name='mobile").next().hide();	
-			$("input[name='mobile']").parents('.control-group').removeClass('error')
-		})
-		$('input[name="company"]').blur(function(){
-			if ($(this).val()!='')
-			{
-				$("input[name='company").next().hide();	
-				$("input[name='company']").parents('.control-group').removeClass('error')
-			}
-		})
-		$('input[name="contact_person"]').blur(function(){
-			if ($(this).val()!='')
-			{
-				$("input[name='contact_person").next().hide();	
-				$("input[name='contact_person']").parents('.control-group').removeClass('error')
-			}
-		})
-		$('input[name="mobile"]').blur(function(){
-			if ($(this).val()!='')
-			{
-				$("input[name='mobile").next().hide();	
-				$("input[name='mobile']").parents('.control-group').removeClass('error')
-			}
+			$.ajax({    
+				type: 'POST',    
+				url: "{:url('index/outside/loginDetails')}",
+				dataType:"json",    
+				data:{
+					"id":routeId
+				},
+				success:function(data)
+				{
+					if (data.status!=200)
+					{
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}else
+					{
+						var route = data.data;
+						var value = '';
+						$('.input-xlarge').each(function(index,evlenmt){
+							switch(index)
+							{
+								case 0:
+								value = route.username;
+								break;
+								case 1:
+								value = route.input_user;
+								break;
+								case 2:
+								value = route.password;
+								break;
+								case 3:
+								value = route.input_pass;
+								break;
+								case 4:
+								value = route.input_submit;
+								break;
+								case 5:
+								value = route.login_url;
+								break;
+								case 6:
+								value = route.outside_url;
+								break;
+								case 7:
+								value = route.platform;
+								break;
+								case 8:
+								value = route.input_code;
+								break;
+								case 9:
+								value = route.input_code_enter;
+								break;
+								case 10:
+								value = route.input_iframe;
+								break;
+
+							}
+							$(this).val(value);
+							if ($(this).parents('.control-group').hasClass('error'))
+							{
+								$(this).parents('.control-group').removeClass('error');
+								$(this).next('.help-inline').hide();
+							}						
+						})
+					}       
+				},
+				error:function(xhr){ 
+					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');
+					$('.alert-error').css('display','block')
+					$('.alert-error').fadeOut(3000)
+				} 	
+
+			});
 		})
 		//删除
-		$('.btn-danger').click(function(){
+		$('.label').click(function(){
 			var _this = $(this);
-			var company_id = $(this).attr('alt');
-			if (company_id=='')
+			var routeId = $(this).attr('alt');
+			if (routeId=='')
 			{
 				alert('参数错误，刷新当前页面！');
 				window.location.reload();
@@ -219,23 +365,32 @@
 			}			
 			$.ajax({    
 				type: 'POST',    
-				url: "{:url('index/outside/delete')}",
+				url: "{:url('index/outside/loginStatus')}",
 				dataType:"json",    
 				data:{
-					"company_id":company_id
+					"id":routeId
 				},
 				success:function(data)
 				{
-					if(data.status==200)
+					if (data.status==404)
 					{
-						_this.parents('tr').remove();
-						return false;
-					}else
-					{
-						$('.alert-error').find('strong').html(data.msg);
+						$('.alert-error').find('strong').html(data.message);
 						$('.alert-error').css('display','block')
 						$('.alert-error').fadeOut(3000)
-					}    
+						return false;
+					}else if(data.status==0)
+					{
+						_this.parent('td').html('<span style="cursor:pointer;" class="label label-success" alt="'+routeId+'">启用</span>');
+					}else if(data.status==200)
+					{
+						_this.parent('td').html('<span style="cursor:pointer;" class="label label-important" alt="'+routeId+'">禁用</span>');	
+					}else
+					{
+						$('.alert-error').find('strong').html(data.message);
+						$('.alert-error').css('display','block')
+						$('.alert-error').fadeOut(3000)
+						return false;
+					}       
 				},
 				error:function(xhr){ 
 					$('.alert-error').find('strong').html('请求数据失败，请联系技术人员');

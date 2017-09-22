@@ -38,7 +38,7 @@
 							<th style="text-align: center;">联系人</th>
 							<th style="text-align: center;">联系方式</th>
 							<th style="text-align: center;">登录规则</th>
-							<th style="text-align: center;">发布规则</th>
+							<th style="text-align: center;">发布规则</th>							
 							<th style="text-align: center;">录入时间</th>
 							<th style="text-align: center;">操作</th>   									  
 						</tr>
@@ -51,7 +51,7 @@
 							<td style="text-align: center;">{:$vo.contact_person}</td>
 							<td style="text-align: center;">{:$vo.mobile}</td>
 							<td style="text-align: center;"><a href="{:url('index/outside/loginroute',array('company_id'=>$vo['id']))}" style="text-decoration: underline;">登录规则</a></td>
-							<td style="text-align: center;"><a href="" style="text-decoration: underline;">发布规则</a></td>
+							<td style="text-align: center;"><a href="{:url('index/outside/publishrules',array('company_id'=>$vo['id']))}" style="text-decoration: underline;">发布规则</a></td>						
 							<td style="text-align: center;">{:$vo.addtime}</td>
 							<td style="text-align: center;">
 								<a class="btn btn-info" href="javascript:void(0)">
