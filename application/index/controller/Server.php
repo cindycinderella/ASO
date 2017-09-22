@@ -77,9 +77,15 @@ class Server extends Controller {
             $server_name = input('post.server_name');
             $server_ip = input('post.server_ip');
             $server_host = input('post.server_host');
+            $baidu_tongji = input('post.baidu_tongji');
+            $baidu_publish = input('post.baidu_publish');
+            $so_publish = input('post.so_publish');
             $data = array(
                 'server_name' => $server_name,
                 'server_ip' => $server_ip,
+                'baidu_tongji' => $baidu_tongji,
+                'baidu_publish' => $baidu_publish,
+                'so_publish' => $so_publish,
                 'server_host' => $server_host
             );
             if ($server_id)
@@ -106,7 +112,7 @@ class Server extends Controller {
         if (isset($server_id) && $server_id)
         {
             $add = "修改素材";
-            $server = Db::table('server')->field('id,server_name,server_ip,server_host')
+            $server = Db::table('server')->field('id,server_name,server_ip,server_host,baidu_tongji,baidu_publish,so_publish')
                 ->where("id=$server_id")
                 ->find();
             if (empty($server))
@@ -119,6 +125,9 @@ class Server extends Controller {
             $server = array(
                 'id' => '',
                 'server_name' => '',
+                'baidu_tongji' => '',
+                'baidu_publish' => '',
+                'so_publish' => '',
                 'server_ip' => '',
                 'server_host' => ''
             );
