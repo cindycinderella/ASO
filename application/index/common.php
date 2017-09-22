@@ -468,3 +468,79 @@ function switchToEndWindow($driver)
         }
     }
 }
+
+/**
+ * 判断元素是否存在
+ *
+ * @param WebDriver $driver            
+ * @param WebDriverBy $locator            
+ */
+function isElementExsit($driver, $locator)
+{
+    try
+    {
+        $nextbtn = $driver->findElement($locator);
+        return true;
+    }
+    catch (\Exception $e)
+    {
+        return false;
+    }
+}
+
+/*
+ * 验证码识别
+ */
+function spot_code($vcodeDst)
+{
+    // 定义常量
+    define("APP_ID", '9407883');
+    define("API_KEY", 'qVW6G40PGEqe62gA4b7Vpjsp');
+    define("SECRET_KEY", 'Zff1FEpee0vNxFGaLOKjCEq8E05iicTm');
+    // 初始化
+    $aipOcr = new AipOcr(APP_ID, API_KEY, SECRET_KEY);
+    $return = $aipOcr->basicGeneral(file_get_contents($vcodeDst));
+    if ($return['words_result_num'] == '0')
+    {
+        $user['user_name'] = 'bmtaso'; // 用户帐号
+        $user['user_pw'] = 'BMTaso@123'; // 用户密码
+        $user['user_token'] = 'bmtaso'; // （有软件token的填写token，没有的请填写作者帐号）
+        if (class_exists('CURLFile'))
+        {
+            $data_arr['upload'] = new CURLFile(realpath($vcodeDst));
+        }
+        else
+        {
+            $data_arr['upload'] = '@' . realpath($vcodeDst);
+        }
+        $data_arr['yzm_minlen'] = null;
+        $data_arr['yzm_maxlen'] = null;
+        $data_arr['yzmtype_mark'] = 0;
+        if (is_array($data_arr))
+        {
+            $data = $user + $data_arr;
+        }
+        $http = curl_init("http://v1-http-api.jsdama.com/api.php?mod=php&act=upload");
+        curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($http, CURLOPT_POST, 1);
+        curl_setopt($http, CURLOPT_POSTFIELDS, $data);
+        $result = curl_exec($http);
+        curl_close($http);
+        $result = json_decode($result,true);
+        if ($result['result']==1)
+        {
+            //识别不出请求联众答题返还点数
+            $http = curl_init("http://v1-http-api.jsdama.com/api.php?mod=php&act=point");
+            curl_setopt($http, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($http, CURLOPT_POST, 1);
+            curl_setopt($http, CURLOPT_POSTFIELDS, $user);
+            $result = curl_exec($http);
+            curl_close($http);
+            return '验证码未识别';
+            exit;
+        }
+        return $result['data']['val'];
+    }
+    $words = str_replace(" ",'',$return['words_result'][0]['words']);
+    return $words;
+}

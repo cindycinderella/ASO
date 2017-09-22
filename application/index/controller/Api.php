@@ -681,6 +681,13 @@ class Api extends Controller {
         }
         foreach ($domain as $info)
         {
+            //判断是否执行成功
+            $date = date("Y-m-d", strtotime("-1 day"));
+            $success = Db::name('recruit')->field('id')->where("site_id = {$info['site_id']} and date = '{$date}' ")->find();
+            if (!empty($success))
+            {
+                continue;
+            }
             // 获取收录
             $host = 'http://localhost:4444/wd/hub';
             $desired_capabilities = DesiredCapabilities::phantomjs(); // 静默
