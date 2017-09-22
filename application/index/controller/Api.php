@@ -666,6 +666,7 @@ class Api extends Controller {
             debug_log("定时执行任务-----Key不正确", 'getSeach');
             exit();
         }
+        debug_log("定时执行任务-----时间---".date("Y-m-d H:i:s",time()),'getSeach');
         $domain = Db::name('domain')->field('domain,site_id')->select();
         $key = 0;
         $siteProfile = Db::name('recruit')->field('id')
