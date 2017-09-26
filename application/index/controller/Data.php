@@ -304,13 +304,13 @@ class Data extends Controller {
         switch ($type)
         {
             case 1:
-                $pattern = '/\[(.*?)\]/is';
+                $pattern = '/\[(.*?)\+0800\]/';
                 preg_match_all($pattern, $info, $result);
                 $key = array_search(max($result[1]), $result[1]);
                 $time = strtotime($result[1][$key]);
             break;
             case 2:
-                $pattern = '/\[(.*?)\]/is';
+                $pattern = '/\[(.*?)\+0800\]/';
                 preg_match_all($pattern, $info, $result);
                 $time = strtotime($result[1][count($result[1]) - 1]);
             break;
