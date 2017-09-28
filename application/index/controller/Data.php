@@ -307,12 +307,13 @@ class Data extends Controller {
                 $pattern = '/\[(.*?)\+0800\]/';
                 preg_match_all($pattern, $info, $result);
                 $key = array_search(max($result[1]), $result[1]);
-                $time = strtotime($result[1][$key]);
+                $time = strtotime($result[1][$key].' +0800');
             break;
             case 2:
                 $pattern = '/\[(.*?)\+0800\]/';
-                preg_match_all($pattern, $info, $result);
-                $time = strtotime($result[1][count($result[1]) - 1]);
+                 preg_match_all($pattern, $info, $result);
+                $key = array_search(max($result[1]), $result[1]);
+                $time = strtotime($result[1][$key].' +0800');
             break;
             case 3:
                 $pattern = '/\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/';
