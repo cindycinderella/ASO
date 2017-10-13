@@ -203,6 +203,7 @@ class Api extends Controller {
     // 获取百度关键字排名
     public function getRanking()
     {
+        $this->exce();
         $keys = input('key');
         $kei = '1323AD56GHJ9353VGDVGHHJBJKLO21IAMLOO21';
         if ($keys !== $kei)
@@ -427,6 +428,7 @@ class Api extends Controller {
     // 获取360关键字排名
     public function getRings()
     {
+        $this->exce();
         $keys = input('key');
         $kei = 'ADACAAW213234G78875FHHF76873SZCZC222';
         if ($keys !== $kei)
@@ -659,6 +661,7 @@ class Api extends Controller {
     // 360 百度收录量
     public function getRecord()
     {
+        $this->exce();
         $keys = input('key');
         $kei = 'ADACAAWGFHGXCXVAHHF76873SZCZC222';
         if ($keys !== $kei)
@@ -766,10 +769,6 @@ class Api extends Controller {
     {
         $command = "ps -aux |grep phantomjs |awk '{print $2}' |xargs kill -9";
          $retval = array();
-         exec($command, $retval, $status);
-         if ($status == 0)
-         {
-           return json($retval);
-         }
+         exec($command, $retval, $status);      
     }
 }
