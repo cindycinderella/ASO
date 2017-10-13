@@ -694,7 +694,7 @@ class Api extends Controller {
             // 获取收录
             $host = 'http://localhost:4444/wd/hub';
             $desired_capabilities = DesiredCapabilities::phantomjs(); // 静默
-            $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
+            $driver = RemoteWebDriver::create($host, $desired_capabilities, 60*1000,60*1000);
             $url = "https://www.baidu.com/";
             $driver->get($url);
             $driver->manage()
@@ -764,7 +764,7 @@ class Api extends Controller {
     // PHP关闭进程
     public function exce()
     {
-        $command = "ps -aux |grep phantomjs |awk '{print $2}'";
+        $command = "ps -aux |grep phantomjs |awk '{print $2}' |xargs kill -9";
          $retval = array();
          exec($command, $retval, $status);
          if ($status == 0)
