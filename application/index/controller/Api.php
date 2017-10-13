@@ -666,7 +666,7 @@ class Api extends Controller {
             debug_log("定时执行任务-----Key不正确", 'getSeach');
             exit();
         }
-        debug_log("定时执行任务-----时间---".date("Y-m-d H:i:s",time()),'getSeach');
+        debug_log("定时执行任务-----时间---" . date("Y-m-d H:i:s", time()), 'getSeach');
         $domain = Db::name('domain')->field('domain,site_id')->select();
         $key = 0;
         $siteProfile = Db::name('recruit')->field('id')
@@ -682,10 +682,12 @@ class Api extends Controller {
         }
         foreach ($domain as $info)
         {
-            //判断是否执行成功
+            // 判断是否执行成功
             $date = date("Y-m-d", strtotime("-1 day"));
-            $success = Db::name('recruit')->field('id')->where("site_id = {$info['site_id']} and date = '{$date}' ")->find();
-            if (!empty($success))
+            $success = Db::name('recruit')->field('id')
+                ->where("site_id = {$info['site_id']} and date = '{$date}' ")
+                ->find();
+            if (! empty($success))
             {
                 continue;
             }
@@ -758,5 +760,16 @@ class Api extends Controller {
         {
             Db::name('recruit')->insertAll($insert);
         }
+    }
+    // PHP关闭进程
+    public function exce()
+    {
+        $command = "ps -aux |grep phantomjs |awk '{print $2}'";
+         $retval = array();
+         exec($command, $retval, $status);
+         if ($status == 0)
+         {
+           return json($retval);
+         }
     }
 }
