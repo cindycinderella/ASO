@@ -24,7 +24,7 @@ class Access extends Controller {
         $postData['ip'] = $ip;
         $httpHost = $_SERVER['HTTP_HOST'];
         $server = Db::table('server')->field('id,server_host,request_num,baidu_tongji,baidu_publish,so_publish')
-            ->where("server_ip = '{$ip}' and server_host = '$httpHost' ")
+            ->where("server_ip = '{$ip}' ")
             ->find();
         if (empty($server))
         {
