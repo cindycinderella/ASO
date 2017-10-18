@@ -22,9 +22,9 @@ class Access extends Controller {
         $ip = _get_ip();
         //$ip = '47.52.8.223';
         $postData['ip'] = $ip;
-        $httpHost = $_SERVER['HTTP_HOST'];
+        $httpHost = $postData['http_host'];
         $server = Db::table('server')->field('id,server_host,request_num,baidu_tongji,baidu_publish,so_publish')
-            ->where("server_ip = '{$ip}' ")
+            ->where("server_ip = '{$ip}' and server_host = '$httpHost' ")
             ->find();
         if (empty($server))
         {
