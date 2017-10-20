@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../thinkphp/start.php';
 use think\Db;
 use Facebook\WebDriver\Remote\DesiredCapabilities;
 use Facebook\WebDriver\Remote\RemoteWebDriver;
@@ -7,7 +8,7 @@ use Facebook\WebDriver\WebDriverBy;
 $shortWords = Db::name('product_keywords')->alias('key')
 ->field('key.product_id,key.keyword,key.id,plan.id as plan_id')
 ->join('promotion_plan plan', 'key.product_id = plan.product_id')
-->where("plan.status = 2 and key.type = 0 ")
+->where("plan.status = 2 and key.type = 0 and (key.operating_time<'" . date("Y-m-d", time()) . " 00:00:00' or key.operating_time is null )")
 ->limit(50)
 ->select();
 print_r($shortWords);
