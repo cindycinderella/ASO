@@ -14,8 +14,8 @@ try
     $url = "https://www.baidu.com/";
     $driver->get($url);
     $driver->manage()
-    ->window()
-    ->maximize(); // 网页最大化
+        ->window()
+        ->maximize(); // 网页最大化
     $driver->findElement(WebDriverBy::id('kw'))->sendKeys($keyword);
     $driver->findElement(WebDriverBy::id('su'))->click();
     sleep(2);
@@ -53,190 +53,28 @@ try
             $title[] = $arr;
         }
         $html = $driver->findElement(WebDriverBy::cssSelector('html'))->getAttribute('innerHTML');
-        $html = preg_replace('/(\"\/\/www.baidu.com)/is', '"https://www.baidu.com', $html);
+        echo $html = preg_replace('/(\"\/\/www.baidu.com)/is', '"https://www.baidu.com', $html);
         $script = "<script>document.getElementById('kw').value ='{$keyword}';$('#page a').remove();
         $('#su').click(function(){window.open('" . $driver->getCurrentUrl() . "');});";
-        foreach ($title as $info)
-        {
-            if (empty($info))
-            {
-                continue;
-            }
-            preg_match("/$preg/si", $info['title'], $match);
-            if (! empty($match))
-            {
-                if (strlen($info['url']) >= 22)
-                {
-                    // url大于22个字符
-                    preg_match('/((\w+)*\.)*(\w+)/i', $info['url'], $main);
-                    // 含有比配前面部分
-                    $planInfo = Db::name('promotion_plan')->field('website')
-                    ->where("website like '{$main[0]}%' and product_id = {$wordsInfo['product_id']}")
-                    ->find();
-                    if (! empty($planInfo))
-                    {
-                        $ord[] = $info['order'];
-                        $script .= "document.getElementById('{$info['order']}').style.border='solid 5px red';";
-                        continue;
-                    }
-                }
-                else
-                {
-                    // 不含有
-                    if (stripos($domainPreg, $info['url']) !== false)
-                    {
-                        $ord[] = $info['order'];
-                        $script .= "document.getElementById('{$info['order']}').style.border='solid 5px red';";
-                        continue;
-                    }
-                }
-            }
-        }
-        $script .= "</script>";
-        if (! empty($ord))
-        {
-            $content = explode("</body>", $html);
-            $str = $content[0] . $script . '</body>' . $content[1];
-            $path = "baidu_html/" . date("Ymd");
-            if (! is_dir($path))
-            {
-                mkdir($path, 0777, true);
-            }
-            $pathInfo = $path . "/" . rand(1111111111, 9999999999) . ".html";
-            file_put_contents($pathInfo, $str);
-            $data[$keyword][] = array(
-                'page' => $i + 1,
-                'order' => $ord,
-                'product_id' => $wordsInfo['product_id'],
-                'plan_id' => $wordsInfo['plan_id'],
-                "html" => $pathInfo
-            );
-        }
-        if ($i > 0)
-        {
-            $next = $driver->findElements(WebDriverBy::className('n'));
-            foreach ($next as $nextKey => $nextInfo)
-            {
-                if ($nextKey == 1 && $i > 0)
-                {
-                    $nextInfo->click();
-                }
-            }
-        }
-        else
-        {
-            $driver->findElement(WebDriverBy::className('n'))->click();
-        }
-        sleep(2);
     }
     $driver->quit();
-    foreach ($data as $dataWord => $dataInfo)
-    {
-        $id ++;
-        $keywordInsert[$key]['id'] = $id;
-        $keywordInsert[$key]['type'] = 0;
-        $keywordInsert[$key]['keyword'] = $dataWord;
-        $wordsOrder = '';
-        $position = array();
-        $pathHtml = '';
-        foreach ($dataInfo as $infos)
-        {
-            if (! isset($ranking[$infos['plan_id']][$infos['page']]))
-            {
-                $ranking[$infos['plan_id']][$infos['page']]['baidu'] = 0;
-            }
-            $ranking[$infos['plan_id']][$infos['page']]['baidu'] += count($infos['order']);
-            $position[] = $infos['page'];
-            $planId = $infos['plan_id'];
-            $productId = $infos['product_id'];
-            foreach ($infos['order'] as $ords)
-            {
-                $wordsOrder .= $ords . ",";
-            }
-            $pathHtml[$infos['page']] = $infos['html'];
-        }
-        // 上一天的关键词排名详情
-        $time = date("Y-m-d", strtotime("-2 day"));
-        $keywordInfo = Db::name('plan_keyword')->where(" `update` = '{$time}' and keyword = '{$dataWord}' and type = 0 and plan_id = $planId and product_id = $productId")
-        ->field("position,ranking_num,ranking_max")
-        ->find();
-        if (empty($keywordInfo))
-        {
-            $keywordInfo['position'] = 0;
-            $keywordInfo['ranking_num'] = 0;
-            $keywordInfo['ranking_max'] = 0;
-        }
-        $wordsOrder = explode(",", $wordsOrder);
-        $wordsOrder = array_filter($wordsOrder);
-        $wordsOrder = array_unique($wordsOrder);
-        $keywordInsert[$key]['plan_id'] = $planId;
-        $keywordInsert[$key]['product_id'] = $productId;
-        $keywordInsert[$key]['position'] = min($position);
-        $keywordInsert[$key]['prev_position'] = $keywordInfo['position']; // 上一天的该关键词的位置
-        $keywordInsert[$key]['ranking_num'] = count($wordsOrder);
-        $keywordInsert[$key]['prev_ranking_num'] = $keywordInfo['ranking_num']; // 上一天该关键词的上榜个数
-        $keywordInsert[$key]['ranking_max'] = min($wordsOrder);
-        $keywordInsert[$key]['prev_ranking_max'] = $keywordInfo['ranking_max']; // 上一天的该关键词的最高排名
-        $keywordInsert[$key]['stype'] = 1;
-        $keywordInsert[$key]['update'] = $yestoday;
-        $keywordInsert[$key]['html'] = json_encode($pathHtml);
-        $key + 2;
-    }
 }
 catch (\Exception $e)
 {
     $driver->quit();
     echo $keyword;
-    exit;
-    $keywordId = $wordsInfo['id'];
-    $date['operating_time'] = null;
-    Db::name('product_keywords')->where("id = $keywordId")->update($date);
-    continue;
+    exit();
 }
 
-Db::name('plan_keyword')->insertAll($keywordInsert);
-foreach ($ranking as $planIdKey => $rankingInfo)
-{
-    foreach ($rankingInfo as $stype => $rankInfo)
-    {
-        // 判断该广告计划今天有没有执行
-        $keywordRanking = Db::name('plan_keyword_ranking')->field('id,baidu')
-        ->where("plan_id = {$planIdKey} and addtime ='{$yestoday}' and stype = {$stype} ")
-        ->find();
-        if (empty($keywordRanking))
-        {
-            $rankingInsert['type'] = 0;
-            $rankingInsert['baidu'] = $rankInfo['baidu'];
-            $rankingInsert['so'] = 0;
-            $rankingInsert['sougou'] = 0;
-            $rankingInsert['plan_id'] = $planIdKey;
-            $rankingInsert['addtime'] = $yestoday;
-            $rankingInsert['stype'] = $stype;
-            Db::name('plan_keyword_ranking')->insert($rankingInsert);
-        }
-        else
-        {
-            $updateRanking = array(
-                'baidu' => $keywordRanking['baidu'] + $rankInfo['baidu']
-            );
-            Db::name('plan_keyword_ranking')->where("id = {$keywordRanking['id']}")->update($updateRanking);
-        }
-    }
-}
-
-
-
-
-
-
-
-exit;
+exit();
 /**
- * this is a demo for php fork and pipe usage. fork use
+ * this is a demo for php fork and pipe usage.
+ * fork use
  * to create child process and pipe is used to sychoroize
  * the child process and its main process.
+ * 
  * @author bourneli
- * @date: 2012-7-6
+ *         @date: 2012-7-6
  */
 define("PC", 10); // 进程个数
 define("TO", 4); // 超时
