@@ -1,81 +1,10 @@
 <?php
-require '../vendor/autoload.php';
-use Facebook\WebDriver\Remote\DesiredCapabilities;
-use Facebook\WebDriver\Remote\RemoteWebDriver;
-use Facebook\WebDriver\WebDriverBy;
-$keywordInsert = array();
-$ranking = array();
-$yestoday = date("Y-m-d", strtotime("-1 day"));
-try
-{
-    $keyword = 'SEO';
-    $host = 'http://localhost:4444/wd/hub';
-    $desired_capabilities = DesiredCapabilities::phantomjs(); // 静默
-    $driver = RemoteWebDriver::create($host, $desired_capabilities, 5000);
-    $url = "https://www.baidu.com/";
-    $driver->get($url);
-    $driver->manage()
-        ->window()
-        ->maximize(); // 网页最大化
-    $driver->findElement(WebDriverBy::id('kw'))->sendKeys($keyword);
-    $driver->findElement(WebDriverBy::id('su'))->click();
-    sleep(2);
-    $data = array();
-    for ($i = 0; $i < 3; $i ++)
-    {
-        $title = array();
-        $showurl = array();
-        $body = $driver->findElement(WebDriverBy::id('content_left'))->getAttribute('innerHTML');
-        preg_match_all('/(?<title><div[^>]*\s+id="(?<id>[1-4][0-9]|5[0]?|[1-9])"[^>]*>([\s\S]*?)<\/h3>)|(?<url>(<span class=\"c-showurl\">(.*?)<\/span>)|(<div class=\"f13\">(.*?)<\/div>))/si', $body, $titleArr);
-        $titles = array_values(array_filter($titleArr['title']));
-        $orders = array_values(array_filter($titleArr['id']));
-        $showurl = array_values(array_filter($titleArr['url']));
-        if (empty($titleArr))
-        {
-            continue;
-        }
-        $ord = array();
-        foreach ($titles as $order => $titleInfo)
-        {
-            $titleInfo = preg_replace("/<style[^>]*>[^>]*<\/style>/i", '', $titleInfo);
-            $show = strip_tags($titleInfo);
-            $showUrl = strip_tags($showurl[$order]);
-            preg_match('/(\S)*(\S)\.(?:com|cn|xin|shop|ltd|club|top|wang|site|vip|net|cc|ren|biz|red|link|mobi|info|org|com\.cn|net\.cn|org\.cn|gov\.cn|name|ink|pro|tv|kim|group)/i', $showUrl, $main);
-            if (empty($main))
-            {
-                $main[0] = $show;
-            }
-            $showurl[] = $main[0];
-            $arr = array(
-                'title' => trim($show),
-                "order" => $orders[$order],
-                "url" => $main[0]
-            );
-            $title[] = $arr;
-        }
-        $html = $driver->findElement(WebDriverBy::cssSelector('html'))->getAttribute('innerHTML');
-        echo $html = preg_replace('/(\"\/\/www.baidu.com)/is', '"https://www.baidu.com', $html);
-        $script = "<script>document.getElementById('kw').value ='{$keyword}';$('#page a').remove();
-        $('#su').click(function(){window.open('" . $driver->getCurrentUrl() . "');});";
-    }
-    $driver->quit();
-}
-catch (\Exception $e)
-{
-    $driver->quit();
-    echo $keyword;
-    exit();
-}
-
-exit();
 /**
- * this is a demo for php fork and pipe usage.
- * fork use
+ * this is a demo for php fork and pipe usage. fork use
  * to create child process and pipe is used to sychoroize
  * the child process and its main process.
- * 
  * @author bourneli
- *         @date: 2012-7-6
+ * @date: 2012-7-6
  */
 define("PC", 10); // 进程个数
 define("TO", 4); // 超时
