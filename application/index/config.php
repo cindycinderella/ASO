@@ -8,7 +8,7 @@
 // +----------------------------------------------------------------------
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
-
+error_reporting(E_ERROR | E_WARNING | E_PARSE);
 return [
    
     // 视图输出字符串内容替换
@@ -18,5 +18,6 @@ return [
 	'__INDEX__' => '/static/index/',
 	'__TEMPLATE__' => '/public/static/index/',
 	'__UPLOADS__' => '/public/uploads/',
+
 	]
 ];

@@ -244,6 +244,7 @@ function _get_curl_post($url, $postdata = array())
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $tmpInfo = curl_exec($ch);
     curl_close($ch);
     if ($tmpInfo)
@@ -544,3 +545,167 @@ function spot_code($vcodeDst)
     $words = str_replace(" ",'',$return['words_result'][0]['words']);
     return $words;
 }
+
+/*
+ * 文件上传
+ */
+function getFiles(){
+            $i=0;
+            foreach($_FILES as $key => $file)
+            {
+                if(is_string($file['name'])){
+
+                    $files[$i]=$file;
+                    $i++;
+
+                }elseif(is_array($file['name']))
+                {
+
+                    foreach($file['name'] as $key=>$val)
+                    {
+                        $files[$i]['name']=$file['name'][$key];
+                        $files[$i]['type']=$file['type'][$key];
+                        $files[$i]['tmp_name']=$file['tmp_name'][$key];
+                        $files[$i]['error']=$file['error'][$key];
+                        $files[$i]['size']=$file['size'][$key];
+                        $i++;
+                    }
+                }
+            }
+            return $files;
+}
+
+/*
+ * @param $fileInfo
+ * @param string $uploadPath
+ * @return mixed
+ */
+function uploadFile($fileInfo,$uploadPath='./uploads/replace/TXT')
+{
+
+            if($fileInfo['error'] > 0)
+            {
+                switch ($fileInfo['error'])
+                {
+                    case 4:
+                        $mes = '请选择上传文件！';
+                        break;
+                    case 6:
+                        $mes = '没有找到临时目录！';
+                        break;
+                    case 8:
+                        $mes = '系统错误';
+                        break;
+
+                }
+                exit($mes);
+            }
+
+            $ext = pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
+            $allowExt = array('txt');
+            if(!is_array($allowExt))
+            {
+                exit('系统错误');
+            }
+
+            if(!in_array($ext, $allowExt))
+            {
+                exit('上传文件类型错误');
+            }
+
+            if(!is_uploaded_file($fileInfo['tmp_name']))
+            {
+                exit('文件上传方式不合法');
+            }
+
+            if(!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0777, true);
+                chmod($uploadPath, 0777);
+            }
+
+            $uniName = date('YmdHis')."_".rand(1000,9999).'.'.$ext;
+            $destination = $uploadPath . '/' . $uniName;
+
+            if(!@move_uploaded_file($fileInfo['tmp_name'], $destination)) {
+                exit('文件上传失败');
+            }
+            $res['success']=true;
+            $res['dest']=$destination;
+            $res['type'] = $fileInfo['type'];
+            return $res;
+
+}
+
+function replace_datainfo(){
+
+            if(input("post.type_model") == 1)
+            {
+                $title = input("post.title");
+                $replace_title = input("post.replace_title");
+                $replace_title_num = input("post.replace_title_num");
+                $content = input("post.content");
+                $replace_content = input("post.replace_content");
+                $replace_content_num = input("post.replace_content_num");
+                $replace_img_src  = input("post.replace_img_src");
+                $replace_img_src_num  = input("post.replace_img_src_num");
+                $img_property  = input("post.img_property");
+                $replace_right_img_src  = input("post.replace_right_img_src/a");
+            }
+            if (input("post.type_model") == 2)
+            {
+                $replace_right_img_src  = input("post.replace_right_img_src/a");
+                $replace_right_img_src_num  = input("post.replace_right_img_src_num/a");
+                $replace_right_a_href  = input("post.replace_right_a_href/a");
+                $replace_right_a_href_num  = input("post.replace_right_a_href_num/a");
+                $replace_right_a_content  = input("post.replace_right_a_content/a");
+                $replace_right_a_content_num  = input("post.replace_right_a_content_num/a");
+                $replace_right_a_title  = input("post.replace_right_a_title/a");
+                $replace_right_a_title_num  = input("post.replace_right_a_title_num/a");
+                $replace_right_a_alt  = input("post.replace_right_a_alt/a");
+                $replace_right_a_alt_num  = input("post.replace_right_a_alt_num/a");
+
+            }
+
+}
+
+/*获取网页内容
+ * @param $url string
+ * @return mixed
+ */
+function curl_all($url){
+
+            $UserAgent = 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; SLCC1; .NET CLR 2.0.50727; .NET CLR 3.0.04506; .NET CLR 3.5.21022; .NET CLR 1.0.3705; .NET CLR 1.1.4322)';
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_HEADER, 0);
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($curl, CURLOPT_ENCODING, '');
+            curl_setopt($curl, CURLOPT_USERAGENT, $UserAgent);
+            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+            $data = curl_exec($curl);
+            return $data;
+            //echo curl_errno($curl);
+}
+
+
+function mikdir($uploadPath = './uploads/replace',$uniName='' ){
+
+            if(!file_exists($uploadPath))
+            {
+                mkdir($uploadPath, 0777, true);
+                chmod($uploadPath, 0777);
+            }
+            if($uniName =='')
+            {
+                $uniName = md5(uniqid(microtime(true), true)).'.'.'html';
+            }
+
+            $destination = $uploadPath . '/' . $uniName;
+            return $destination;
+
+}
+
+
+?>

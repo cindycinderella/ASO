@@ -40,6 +40,7 @@ class Redis extends Driver
      */
     public function __construct($options = [])
     {
+
         if (!extension_loaded('redis')) {
             throw new \BadFunctionCallException('not support: redis');
         }
@@ -171,6 +172,11 @@ class Redis extends Driver
             return true;
         }
         return $this->handler->flushDB();
+    }
+
+    public  function  list_push($list){
+
+        // return 111;
     }
 
 }

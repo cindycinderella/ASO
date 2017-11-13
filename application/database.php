@@ -13,13 +13,13 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => '47.92.69.104',
     // 数据库名
     'database'        => 'aso_db',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'bmtaso',
     // 密码
-    'password'        => 'lizongdi',
+    'password'        => 'BMT@aso123',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
